@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Pharmacy;
+use App\Models\UnverifiedPharmacy;
 
 class RegisteredUserController extends Controller
 {
@@ -39,6 +41,10 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'userType' => $request->userType,
+            'department'=>$request->department,
+            'phone'=>$request->phone,
+            'file'=> null, //Default value if no file is uploaded
         ]);
 
         event(new Registered($user));
@@ -47,4 +53,6 @@ class RegisteredUserController extends Controller
 
         return redirect(route('dashboard', absolute: false));
     }
+
+
 }

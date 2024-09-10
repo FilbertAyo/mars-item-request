@@ -1,5 +1,16 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+
+
+
+
+
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="row justify-content-center w-100">
+            <div class="text-center mb-3">
+                <h3><strong class="text-success">Admin</strong></h3>
+
+            </div>
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -16,8 +27,28 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <div class="mt-4">
+            <x-input-label for="phone" :value="__('Phone number')" />
+            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autocomplete="phone" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+        </div>
+
+        <div class="mt-4"  style="display: none;">
+            <x-input-label for="userType" :value="__('userType')" />
+            <x-text-input class="block mt-1 w-full" type="text" name="userType" value="0" />
+        </div>
+
+        <div class="mt-4"  style="display: none;">
+            <x-input-label for="userType" :value="__('userType')" />
+            <x-text-input class="block mt-1 w-full" type="text" name="department" value="System admin" />
+        </div>
+
+
+
+
         <!-- Password -->
         <div class="mt-4">
+
             <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
@@ -39,14 +70,29 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <button type="submit" class="btn btn-block btn-success mt-4">Register</button>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
+
+
     </form>
+        </div>
+    </div>
+
+    </div>
+
+
+
+
+
+    <script>
+    function updateSelectedImage(input) {
+        const span = document.getElementById('selectedImage');
+        if (input.files && input.files[0]) {
+            span.textContent = input.files[0].name;
+        } else {
+            span.textContent = 'Choose an image';
+        }
+    }
+</script>
+
 </x-guest-layout>
