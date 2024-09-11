@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Mars communications | Purchase request</title>
+        <title>Mars communications </title>
 
         {{-- added --}}
         <link rel="canonical" href="{{ asset('https://v5.getbootstrap.com/docs/5.0/examples/dashboard/') }}">
@@ -57,7 +57,7 @@
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
 				<a class="sidebar-brand" href="index.html">
-          <span class="align-middle">Mars comm</span>
+                    <img src="/image/logo.png" alt="" class="img-fluid align-middle" style="max-height: 50px;">
         </a>
 
         <ul class="sidebar-nav">
@@ -65,7 +65,7 @@
 
           <li class="sidebar-item {{ Request::routeIs('department.index') ? 'active' : '' }}">
               <a class="sidebar-link" href="{{ route('department.index') }}">
-                  <span class="align-middle">Dashboard</span>
+                  <span class="align-middle">Item purchase</span>
               </a>
           </li>
 
@@ -103,7 +103,7 @@
 						<strong class="d-inline-block mb-2">MC2024</strong>
 
 						<div class="d-grid">
-							<a href="upgrade-to-pro.html" class="btn btn-success"></a>
+							<div  class="btn btn-primary"></div>
 						</div>
 					</div>
 

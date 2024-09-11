@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ExbitorController;
 use App\Http\Controllers\LocationController;
@@ -35,4 +36,5 @@ require __DIR__ . '/auth.php';
 
 Route::resource('admin', AdminController::class);
 Route::resource('department', DepartmentController::class);
+Route::resource('branch', BranchController::class);
 

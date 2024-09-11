@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('userType')->default(0);
             $table->string('department');
             $table->string('phone');
+            $table->string('status');
             $table->rememberToken();
             $table->timestamps();
         });

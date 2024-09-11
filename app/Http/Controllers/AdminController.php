@@ -47,6 +47,7 @@ class AdminController extends Controller
             'userType' => $request->userType,
             'department'=>$request->department,
             'phone'=>$request->phone,
+            'status'=>'active',
             'file'=> null, //Default value if no file is uploaded
         ]);
 
@@ -62,7 +63,9 @@ class AdminController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        return view('details',compact('user'));
     }
 
     /**

@@ -25,8 +25,15 @@ class User extends Authenticatable
         'file',
         'department',
         'userType',
-        'phone'
+        'phone',
+        'status'
     ];
+
+    public function items()
+{
+    return $this->hasMany(Item::class);
+}
+
 
     /**
      * The attributes that should be hidden for serialization.

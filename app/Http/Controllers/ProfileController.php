@@ -15,16 +15,17 @@ class ProfileController extends Controller
     public function redirect()
     {
 
-       $userType = Auth::user()->userType;
+        $userType = Auth::user()->userType;
 
-       if($userType=='0'){
-        return redirect()->route('admin.index');
-       }elseif($userType == '1'){
-        return redirect()->route('department.index');
-       }
-       else{
-        redirect()->back()->with('status',"You're not authorized");
-       }
+        if ($userType == '0') {
+            return redirect()->route('admin.index');
+        } elseif ($userType == '1') {
+            return redirect()->route('department.index');
+        } elseif ($userType == '2') {
+            return redirect()->route('branch.index');
+        } else {
+            redirect()->back()->with('status', "You're not authorized");
+        }
     }
 
     public function edit(Request $request): View

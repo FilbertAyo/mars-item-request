@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
             'userType' => $request->userType,
             'department'=>$request->department,
             'phone'=>$request->phone,
+            'status'=>'active',
             'file'=> null, //Default value if no file is uploaded
         ]);
 

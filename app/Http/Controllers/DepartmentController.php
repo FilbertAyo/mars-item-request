@@ -13,7 +13,9 @@ class DepartmentController extends Controller
     public function index()
     {
 
-        return view('pages.stageone.department');
+        $item = Item::where('user_id', auth()->id())->get();
+
+        return view('pages.stageone.department', compact('item'));
     }
 
     /**
@@ -46,7 +48,9 @@ class DepartmentController extends Controller
             'quantity' => $request->quantity,
             'price' => $request->price,
             'amount' => $amount, // Calculated amount
-            'reason' => $request->reason
+            'reason' => $request->reason,
+            'status' => 'pending',
+            'user_id' => auth()->id(),
         ]);
 
         // Redirect or return response
@@ -59,7 +63,9 @@ class DepartmentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $item = Item::findOrFail($id);
+
+        return view('pages.stageone.dep_details',compact('item'));
     }
 
     /**

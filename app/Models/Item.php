@@ -9,10 +9,18 @@ class Item extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'user_id',  // foreign key
         'name',
         'quantity',
         'price',
         'amount',
-        'reason'
+        'reason',
+        'status'
     ];
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

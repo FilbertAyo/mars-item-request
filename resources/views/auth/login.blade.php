@@ -64,16 +64,19 @@
                 <!-- Content with Overlay -->
                 <div class="text-white text-center position-relative" style="z-index: 2;">
                     <h2 class="fade-in">Welcome Again</h2>
-                    <p class="fade-in delay-1">Company Purchase Management System</p>
+                    <div class="text-center mb-4 justify-content-center">
+                        <img src="/image/longlogo.png" alt="Logo" style="width: 400px;">
+                    </div>
+                    {{-- <p class="fade-in delay-1">Mars communication management system</p> --}}
                 </div>
             </div>
 
             <!-- Right Login Form -->
             <div class="col-md-6 d-flex justify-content-center align-items-center">
                 <div class="col-md-8 col-lg-6">
-                    <div class="text-center mb-4 justify-content-center">
-                        <img src="/image/marslogo.png" alt="Logo" style="height: 60px;">
-                    </div>
+
+                    
+                
 
                     <!-- Form Wrapper with Background and Padding -->
                     <div class="bg-light p-4 rounded shadow">

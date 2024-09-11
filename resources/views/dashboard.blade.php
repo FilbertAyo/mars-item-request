@@ -57,7 +57,7 @@
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
 				<a class="sidebar-brand" href="index.html">
-          <span class="align-middle">Mars comm</span>
+                    <img src="/image/logo.png" alt="" class="img-fluid align-middle" style="max-height: 50px;">
         </a>
 
         <ul class="sidebar-nav">
@@ -103,7 +103,7 @@
 						<strong class="d-inline-block mb-2">MC2024</strong>
 
 						<div class="d-grid">
-							<a href="upgrade-to-pro.html" class="btn btn-success"></a>
+							<div class="btn btn-primary"></div>
 						</div>
 					</div>
 
@@ -116,7 +116,9 @@
             <div class="container-fluid">
 
                 <div class="mb-1" style="display: flex;justify-content: space-between;">
-                    <h1 class="h3 mb-3"> Users</h1> <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                    <h1 class="h3 mb-3"> Users <a class="badge bg-primary text-white text-sm ms-2">
+                        {{ Auth::user()->department }}
+                    </a></h1> <button type="button" class="btn btn-dark" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
                         Add User
                     </button>
@@ -134,7 +136,7 @@
                         <div class="card flex-fill">
                             <div class="card-header">
 
-                                <h5 class="card-title mb-0">Users registration</h5>
+                                <h5 class="card-title mb-0">User registration</h5>
                             </div>
                             <table class="table table-hover my-0">
                                 <thead>
@@ -165,7 +167,9 @@
                                                             </button>
                                                     </form> --}}
 
-                                                    <span class="badge bg-success">Active</span>
+                                                    <span class="badge bg-success">{{ $user->status }}</span>
+                                                    <a href="{{ route('admin.show',$user->id) }}" class="badge bg-primary text-white">view</a>
+
 
                                                     </td>
                                             </tr>
@@ -221,8 +225,8 @@
                             <label for="day" class="form-label">Department</label>
                             <select class="form-select" id="day" name="department">
                                 <option value="" selected>Select department | manager</option>
-                                <option value="Dep1">Dep1</option>
-                                <option value="Dep2">Dep2</option>
+                                <option value="IT department">IT department</option>
+                                <option value="Sales department">Sales department</option>
                                 <option value="Branch manager">Branch Manager</option>
                                 <option value="General manager">General Manager</option>
                             </select>
@@ -239,8 +243,8 @@
                                 const dateTimeInput = document.getElementById('userType');
 
                                 const userType = {
-                                    'Dep1': '1',
-                                    'Dep2': '1',
+                                    'IT department': '1',
+                                    'Sales department': '1',
                                     'Branch manager': '2',
                                     'General manager': '3',
                                 };
