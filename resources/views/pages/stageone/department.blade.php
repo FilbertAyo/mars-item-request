@@ -31,7 +31,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Name of item</th>
-                                        <th>Category</th>
+                                        {{-- <th>Category</th> --}}
                                         <th>Quantity</th>
                                         <th>Expected price</th>
                                         <th>Total amount</th>
@@ -44,7 +44,7 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                                <td class="d-none d-xl-table-cell">{{ $item->category }}</td>
+                                                {{-- <td class="d-none d-xl-table-cell">{{ $item->category }}</td> --}}
                                                 <td class="d-none d-xl-table-cell">{{ $item->quantity }}</td>
                                                 <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
                                                 <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
@@ -56,7 +56,13 @@
                                                                 <i class="bi bi-trash"></i> Delete
                                                             </button>
                                                     </form> --}}
-                                                    <span class="badge bg-danger">{{ $item->status }}</span>
+                                                    @if ($item->status == 'pending')
+                                                        <span class="badge bg-danger">{{ $item->status }}</span>
+                                                    @elseif($item->status == 'processing')
+                                                        <span class="badge bg-warning">{{ $item->status }}</span>
+                                                    @else
+                                                        <span class="badge bg-success">{{ $item->status }}</span>
+                                                    @endif
                                                     <a href="{{ route('department.show', $item->id) }}"
                                                         class="badge bg-primary text-white">view</a>
 
@@ -103,7 +109,7 @@
                             <label for="itemName" class="form-label">Item name</label>
                             <input type="text" class="form-control" id="itemName" name="name" required>
                         </div>
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label for="day" class="form-label">Department</label>
                             <select class="form-select" id="day" name="department">
                                 <option value="" selected>Select category</option>
@@ -111,7 +117,7 @@
                                 <option value="Dep2">category 2</option>
 
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
                             <input type="number" class="form-control" id="quantity" name="quantity" required>

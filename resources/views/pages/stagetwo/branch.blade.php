@@ -92,9 +92,9 @@
                         <div class="container-fluid p-0">
 
                             <div class="mb-1">
-                                <h1 class="h3 mb-3">Requests  <a class="badge bg-primary text-white text-sm ms-2">
-                                    {{ Auth::user()->department }}
-                                </a></h1> 
+                                <h1 class="h3 mb-3">Requests <a class="badge bg-primary text-white text-sm ms-2">
+                                        {{ Auth::user()->department }}
+                                    </a></h1>
                             </div>
 
                             <div class="row">
@@ -122,16 +122,25 @@
                                                         <tr>
                                                             <td>{{ $index + 1 }}</td>
                                                             <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                                            <td class="d-none d-xl-table-cell">{{ $item->category }}
+                                                            <td class="d-none d-xl-table-cell">
+                                                                {{ $item->user->department }}
                                                             </td>
                                                             <td class="d-none d-xl-table-cell">{{ $item->quantity }}
                                                             </td>
                                                             <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
                                                             <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
                                                             <td>
-                                                         
-                                                                <span
-                                                                    class="badge bg-danger">{{ $item->status }}</span>
+
+                                                                @if ($item->status == 'pending')
+                                                                    <span
+                                                                        class="badge bg-danger">{{ $item->status }}</span>
+                                                                @elseif($item->status == 'processing')
+                                                                    <span
+                                                                        class="badge bg-warning">{{ $item->status }}</span>
+                                                                @else
+                                                                    <span
+                                                                        class="badge bg-success">{{ $item->status }}</span>
+                                                                @endif
                                                                 <a href="{{ route('branch.show', $item->id) }}"
                                                                     class="badge bg-primary text-white">view</a>
 
@@ -158,11 +167,6 @@
 
 
                 </div>
-
-
-                <script src="js/app.js"></script>
-
-
 
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -222,6 +226,8 @@
 
 
     <script src="{{ asset('static/js/app.js') }}"></script>
+
+    <script src="js/app.js"></script>
 
 </body>
 

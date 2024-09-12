@@ -37,4 +37,6 @@ require __DIR__ . '/auth.php';
 Route::resource('admin', AdminController::class);
 Route::resource('department', DepartmentController::class);
 Route::resource('branch', BranchController::class);
+Route::get('/item/approve/{id}', [BranchController::class, 'approve'])->name('item.approve');
+
 

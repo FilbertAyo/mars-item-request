@@ -32,8 +32,31 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $item = Item::find($request->id);
+        $item->status = 'processing';
+        $item->save();
+
+        return redirect()->back()->with('success','approval sent successfully');
+
     }
+
+    public function approve($id)
+{
+    // Find the item by ID
+    $item = Item::find($id);
+
+    if ($item) {
+        // Update the status to 'processing'
+        $item->status = 'processing';
+        $item->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Approval sent successfully.');
+    }
+
+    // If item is not found, redirect with error
+    return redirect()->back()->with('error', 'Item not found.');
+}
 
     /**
      * Display the specified resource.

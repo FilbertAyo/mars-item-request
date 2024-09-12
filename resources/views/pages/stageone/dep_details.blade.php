@@ -70,21 +70,11 @@
                                 <h5 class="card-title mb-0">Reasons for the request</h5>
                             </div>
                             <div class="card-body d-flex">
-                                <div class="align-self-center w-100">
 
 
-                                    <table class="table mb-0">
-                                        <tbody>
-                                            <tr>
-                                                {{-- <td> --}}
-                                                {{ $item->reason }}
-                                                {{-- </td> --}}
-                                            </tr>
+                                {{ $item->reason }}
 
-                                        </tbody>
-                                    </table>
 
-                                </div>
 
                             </div>
 
@@ -93,7 +83,14 @@
                     </div>
                 </div>
                 <div class="d-grid">
+                    @if( $item->status == 'pending')
                     <span class="btn btn-danger">{{ $item->status }}</span>
+                    @elseif( $item->status == 'processing')
+                    <span class="btn btn-warning">{{ $item->status }}</span>
+                    @else
+                    <span class="btn btn-success">{{ $item->status }}</span>
+                    @endif
+
                 </div>
 
 
