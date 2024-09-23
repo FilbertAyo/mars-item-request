@@ -12,12 +12,14 @@ class BranchController extends Controller
      */
     public function index()
     {
-
-        $item = Item::all();
-
+        // Get the authenticated user
+        $user = auth()->user();
+        
+        $item = Item::where('branch', $user->branch)->get();
+    
         return view('pages.stagetwo.branch', compact('item'));
     }
-
+    
     /**
      * Show the form for creating a new resource.
      */

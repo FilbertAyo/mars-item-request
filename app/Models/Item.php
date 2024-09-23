@@ -17,6 +17,7 @@ class Item extends Model
         'reason',
         'justification',
         'status',
+        'branch',
         'branch_comment',
         'gm_comment'
     ];

@@ -47,6 +47,7 @@ class DepartmentController extends Controller
             'amount' => $amount, // Calculated amount
             'reason' => $request->reason,
             'justification' => $request->justification,
+            'branch'=>$request->branch,
             'status' => 'pending',
             'user_id' => auth()->id(),
         ]);

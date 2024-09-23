@@ -50,7 +50,7 @@
                             <table class="table table-hover my-0" id= "table-id">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>No</th>
+                                     
                                         <th>Name of item</th>
                                         {{-- <th>Category</th> --}}
                                         <th>Quantity</th>
@@ -63,9 +63,8 @@
                                     @if ($item->count() > 0)
                                         @foreach ($item as $index => $item)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
+                                                {{-- <td>{{ $index + 1 }}</td> --}}
                                                 <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                                {{-- <td class="d-none d-xl-table-cell">{{ $item->category }}</td> --}}
                                                 <td class="d-none d-xl-table-cell">{{ $item->quantity }}</td>
                                                 <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
                                                 <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
@@ -143,6 +142,9 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('department.store') }}">
                         @csrf
+
+                        <input type="text" class="form-control" id="itemName" name="branch" value="{{ Auth::user()->branch }} " style="display: none">
+
                         <div class="mb-3">
                             <label for="itemName" class="form-label">Item name</label>
                             <input type="text" class="form-control" id="itemName" name="name" required>
@@ -174,7 +176,7 @@
                             <textarea class="form-control" id="description" name="reason" rows="4" required></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </form>
 
                 </div>
