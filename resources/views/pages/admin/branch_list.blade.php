@@ -63,13 +63,13 @@
         <ul class="sidebar-nav">
           <li class="sidebar-header">Pages</li>
 
-          <li class="sidebar-item active">
+          <li class="sidebar-item ">
               <a class="sidebar-link" href="{{ route('admin.index') }}">
                   <span class="align-middle">Users</span>
               </a>
           </li>
 
-         <li class="sidebar-item">
+         <li class="sidebar-item active">
               <a class="sidebar-link" href="{{ url('/branch_list') }}">
                  <span class="align-middle">Branch</span>
               </a>
@@ -95,11 +95,11 @@
             <div class="container-fluid">
 
                 <div class="mb-1" style="display: flex;justify-content: space-between;">
-                    <h1 class="h3 mb-3"> Users <a class="badge bg-primary text-white text-sm ms-2">
+                    <h1 class="h3 mb-3"> Branches List <a class="badge bg-primary text-white text-sm ms-2">
                         {{ Auth::user()->department }}
                     </a></h1> <button type="button" class="btn btn-dark" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
-                        Add User
+                        Add Branch
                     </button>
                 </div>
 
@@ -115,47 +115,38 @@
                         <div class="card flex-fill">
                             <div class="card-header">
 
-                                <h5 class="card-title mb-0">User registration</h5>
+                                <h5 class="card-title mb-0">Branches</h5>
                             </div>
                             <table class="table table-hover my-0">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>No</th>
                                         <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone number</th>
-                                        <th>Department | Management</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if ($user->count() > 0)
-                                        @foreach ($user as $index => $user)
+                                    @if ($branch->count() > 0)
+                                        @foreach ($branch as $index => $branch)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td class="d-none d-xl-table-cell">{{ $user->name }}</td>
-                                                <td class="d-none d-xl-table-cell">{{ $user->email }}</td>
-                                                <td>{{ $user->phone }}</td>
-                                                <td>{{ $user->department }}</td>
+                                                <td class="d-none d-xl-table-cell">{{ $branch->name }}</td>
+
                                                 <td>
-                                                    {{-- <form action="{{ route('admin.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this agenda?');">
+                                                    <form action="{{ url('/destroy_branch/' . $branch->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this branch?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn-sm btn-danger">
                                                                 <i class="bi bi-trash"></i> Delete
                                                             </button>
-                                                    </form> --}}
-
-                                                    <span class="badge bg-success">{{ $user->status }}</span>
-                                                    <a href="{{ route('admin.show',$user->id) }}" class="badge bg-primary text-white">view</a>
-
+                                                    </form>
 
                                                     </td>
                                             </tr>
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="7" class="text-center">No user found</td>
+                                            <td colspan="3" class="text-center">No Branch found</td>
                                         </tr>
                                     @endif
 
@@ -182,69 +173,20 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New User</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">New Branch</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.store') }}">
+                    <form method="POST" action="{{ url('/add_branch') }}">
                         @csrf
                         <div class="mb-3">
-                            <label for="topic" class="form-label">Full name</label>
-                            <input type="text" class="form-control" id="topic" name="name">
+                            <label for="topic" class="form-label">Branch name</label>
+                            <input type="text" class="form-control" id="topic" name="name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="topicType" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="topicType" name="email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="topicType" class="form-label">Phone number</label>
-                            <input type="text" class="form-control" id="topicType" name="phone">
-                        </div>
-                        <div class="mb-3">
-                            <label for="day" class="form-label">Branch</label>
-                            <select class="form-select" id="day" name="department">
-                                <option value="" selected>Select branch</option>
-                                <option value="IT department">Samora Branch</option>
-                                <option value="Sales department">NHC branch</option>
-                                <option value="Branch manager">Old Uhuru Branch</option>
-                                <option value="General manager">New Uhuru Branch</option>
-                                <option value="General manager">Jamhuri Branch</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="day" class="form-label">Department</label>
-                            <select class="form-select" id="day" name="department">
-                                <option value="" selected>Select department | manager</option>
-                                <option value="IT department">IT department</option>
-                                <option value="Sales department">Sales department</option>
-                                <option value="Branch manager">Branch Manager</option>
-                                <option value="General manager">General Manager</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="dateTime" class="form-label">Approval stage</label>
-                            <input type="text" class="form-control" id="userType" name="userType" readonly>
-                        </div>
-                        <button type="submit" class="btn btn-success">Save</button>
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const daySelect = document.getElementById('day');
-                                const dateTimeInput = document.getElementById('userType');
+                        <button type="submit" class="btn btn-primary">Save</button>
 
-                                const userType = {
-                                    'IT department': '1',
-                                    'Sales department': '1',
-                                    'Branch manager': '2',
-                                    'General manager': '3',
-                                };
 
-                                daySelect.addEventListener('change', function() {
-                                    const selectedDay = daySelect.value;
-                                    dateTimeInput.value = userType[selectedDay] || '';
-                                });
-                            });
-                        </script>
                     </form>
 
                 </div>

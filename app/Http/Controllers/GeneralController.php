@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
-class BranchController extends Controller
+class GeneralController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,9 +13,60 @@ class BranchController extends Controller
     public function index()
     {
 
-        $item = Item::all();
+        $item = Item::whereIn('status', ['processing', 'approved', 'rejected'])
+            ->where('branch_comment', 'no comment')
+            ->get();
 
-        return view('pages.stagetwo.branch', compact('item'));
+        return view('pages.stagethree.general', compact('item'));
+    }
+
+
+    public function record()
+    {
+        $item = Item::whereIn('status', ['approved'])->get();
+    
+        // Calculate the sum of the 'amount' column
+        $totalAmount = Item::whereIn('status', ['approved'])->sum('amount');
+    
+        // Pass both the item and the total amount to the view
+        return view('pages.stagethree.record', compact('item', 'totalAmount'));
+    }
+    
+
+    public function reject(Request $request, $id)
+    {
+        // Find the item by ID
+        $item = Item::find($id);
+
+        if ($item) {
+            // Update the status to 'processing'
+            $item->gm_comment = $request->gm_comment;
+            $item->status = 'rejected';
+            $item->save();
+
+            // Redirect back with success message
+            return redirect()->back()->with('success', 'Feedback sent successfully.');
+        }
+
+        // If item is not found, redirect with error
+        return redirect()->back()->with('error', 'Item not found.');
+    }
+    public function approve($id)
+    {
+        // Find the item by ID
+        $item = Item::find($id);
+
+        if ($item) {
+            // Update the status to 'processing'
+            $item->status = 'approved';
+            $item->save();
+
+            // Redirect back with success message
+            return redirect()->back()->with('success', 'Approval sent successfully.');
+        }
+
+        // If item is not found, redirect with error
+        return redirect()->back()->with('error', 'Item not found.');
     }
 
     /**
@@ -29,43 +80,10 @@ class BranchController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function reject(Request $request, $id)
+    public function store(Request $request)
     {
-        // Find the item by ID
-        $item = Item::find($id);
-
-        if ($item) {
-            // Update the status to 'processing'
-            $item->branch_comment = $request->branch_comment;
-            $item->status = 'rejected';
-            $item->save();
-
-            // Redirect back with success message
-            return redirect()->back()->with('success', 'Feedback sent successfully.');
-        }
-
-        // If item is not found, redirect with error
-        return redirect()->back()->with('error', 'Item not found.');
+        //
     }
-
-    public function approve($id)
-    {
-        // Find the item by ID
-        $item = Item::find($id);
-
-        if ($item) {
-            // Update the status to 'processing'
-            $item->status = 'processing';
-            $item->save();
-
-            // Redirect back with success message
-            return redirect()->back()->with('success', 'Approval sent successfully.');
-        }
-
-        // If item is not found, redirect with error
-        return redirect()->back()->with('error', 'Item not found.');
-    }
-
 
     /**
      * Display the specified resource.
@@ -74,7 +92,7 @@ class BranchController extends Controller
     {
         $item = Item::findOrFail($id);
 
-        return view('pages.stagetwo.b_details', compact('item'));
+        return view('pages.stagethree.g_details', compact('item'));
     }
 
     /**

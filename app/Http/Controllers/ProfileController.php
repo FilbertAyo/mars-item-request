@@ -23,6 +23,8 @@ class ProfileController extends Controller
             return redirect()->route('department.index');
         } elseif ($userType == '2') {
             return redirect()->route('branch.index');
+        } elseif ($userType == '3') {
+            return redirect()->route('general.index');
         } else {
             redirect()->back()->with('status', "You're not authorized");
         }

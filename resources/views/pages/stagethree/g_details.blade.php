@@ -98,9 +98,9 @@
                                 <h1 class="h3 mb-3">Request details
                                     @if ($item->status == 'rejected')
                                     <span class="badge bg-danger text-white text-sm ms-2">
-                                        You {{ $item->status }} this request
+                                        You reject this request
                                     </span>
-                                @elseif($item->status == 'processing')
+                                @elseif($item->status == 'approved')
                                     <span class="badge bg-success text-white text-sm ms-2">
                                         You approve this request
                                     </span>
@@ -108,7 +108,7 @@
                                 </h1>
 
 
-                                @if ($item->status == 'pending')
+                                @if ($item->status == 'processing')
                                     <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle"
                                         role="button" data-bs-target="#staticBackdrop">
                                         Check
@@ -259,7 +259,7 @@
                             <div class="modal-footer">
                                 <button class="btn btn-danger" data-bs-target="#exampleModalToggle2"
                                     data-bs-toggle="modal" data-bs-dismiss="modal">Reject</button>
-                                <a href="{{ route('item.approve', ['id' => $item->id]) }}"
+                                <a href="{{ route('purchase.approve', ['id' => $item->id]) }}"
                                     class="btn btn-success">Approve</a>
                             </div>
                         </div>
@@ -276,11 +276,11 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('item.reject', ['id' => $item->id]) }}">
+                                <form method="POST" action="{{ route('purchase.reject', ['id' => $item->id]) }}">
                                     @csrf
 
                                     <div class="mb-3">
-                                        <textarea class="form-control" id="description" name="branch_comment" rows="4" required></textarea>
+                                        <textarea class="form-control" id="description" name="gm_comment" rows="4" required></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-success"

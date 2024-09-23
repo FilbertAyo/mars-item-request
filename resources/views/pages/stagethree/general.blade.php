@@ -65,8 +65,8 @@
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
 
-                            <li class="sidebar-item {{ Request::routeIs('branch.index') ? 'active' : '' }}">
-                                <a class="sidebar-link" href="{{ route('branch.index') }}">
+                            <li class="sidebar-item {{ Request::routeIs('general.index') ? 'active' : '' }}">
+                                <a class="sidebar-link" href="{{ route('general.index') }}">
                                     <span class="align-middle">Item purchase</span>
                                 </a>
                             </li>
@@ -91,10 +91,15 @@
                     <main class="content">
                         <div class="container-fluid p-0">
 
-                            <div class="mb-1">
+                            <div class="mb-1" style="display: flex;justify-content: space-between;">
+
                                 <h1 class="h3 mb-3">Requests <a class="badge bg-primary text-white text-sm ms-2">
                                         {{ Auth::user()->department }}
                                     </a></h1>
+
+                                    <a class="btn btn-primary" href="{{ url('/record') }}">
+                                        Records
+                                    </a>
                             </div>
 
                             <div class="row">
@@ -144,7 +149,7 @@
                                                                     <span
                                                                         class="badge bg-success">{{ $item->status }}</span>
                                                                 @endif
-                                                                <a href="{{ route('branch.show', $item->id) }}"
+                                                                <a href="{{ route('general.show', $item->id) }}"
                                                                     class="badge bg-primary text-white">view</a>
 
 

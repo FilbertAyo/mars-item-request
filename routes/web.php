@@ -5,7 +5,9 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DetailController;
 use App\Http\Controllers\ExbitorController;
+use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\OrderController;
@@ -33,10 +35,23 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 
-
+// admin
 Route::resource('admin', AdminController::class);
+Route::get('/branch_list', [AdminController::class, 'branch_list']);
+Route::post('/add_branch', [AdminController::class, 'branch_store']);
+Route::delete('/destroy_branch/{id}', [AdminController::class, 'destroy_branch']);
+
+// department
 Route::resource('department', DepartmentController::class);
+
+// branch manager
 Route::resource('branch', BranchController::class);
 Route::get('/item/approve/{id}', [BranchController::class, 'approve'])->name('item.approve');
+Route::post('/item/reject/{id}', [BranchController::class, 'reject'])->name('item.reject');
 
 
+//general manager
+Route::resource('general', GeneralController::class);
+Route::get('/purchase/approve/{id}', [GeneralController::class, 'approve'])->name('purchase.approve');
+Route::post('/purchase/reject/{id}', [GeneralController::class, 'reject'])->name('purchase.reject');
+Route::get('record', [GeneralController::class, 'record']);

@@ -45,7 +45,7 @@
         <div class="container d-flex align-items-center justify-content-between" style="min-height: 70vh;">
             <!-- Text content on the left -->
             <div class="text-left">
-                <h1 class="display-4"> Mars Communications management system</h1>
+                <h1 class="display-4"> Mars Communications Management System</h1>
                 <p class="lead mb-3">Managing all your communication needs with ease clicks.</p>
                 @if (Route::has('login'))
                 @auth

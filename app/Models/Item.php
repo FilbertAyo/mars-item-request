@@ -15,7 +15,9 @@ class Item extends Model
         'price',
         'amount',
         'reason',
-        'status'
+        'status',
+        'branch_comment',
+        'gm_comment'
     ];
 
     public function user()

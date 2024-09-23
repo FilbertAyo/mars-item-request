@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('amount');
             $table->string('reason');
             $table->string('status');
+            $table->string('branch_comment')->default('no comment');
+            $table->string('gm_comment')->default('no comment');
             $table->timestamps();
         });
     }

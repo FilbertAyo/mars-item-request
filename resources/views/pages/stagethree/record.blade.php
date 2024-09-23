@@ -65,8 +65,8 @@
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
 
-                            <li class="sidebar-item {{ Request::routeIs('branch.index') ? 'active' : '' }}">
-                                <a class="sidebar-link" href="{{ route('branch.index') }}">
+                            <li class="sidebar-item {{ Request::routeIs('general.index') ? 'active' : '' }}">
+                                <a class="sidebar-link" href="{{ route('general.index') }}">
                                     <span class="align-middle">Item purchase</span>
                                 </a>
                             </li>
@@ -90,83 +90,75 @@
 
                     <main class="content">
                         <div class="container-fluid p-0">
-
-                            <div class="mb-1">
-                                <h1 class="h3 mb-3">Requests <a class="badge bg-primary text-white text-sm ms-2">
-                                        {{ Auth::user()->department }}
-                                    </a></h1>
+                    
+                            <!-- Page Title and Department Badge -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h1 class="h3 mb-0">Item Purchase Records 
+                                    <span class="badge bg-primary ms-2">{{ Auth::user()->department }}</span>
+                                </h1>
                             </div>
-
-                            <div class="row">
-                                <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-                                    <div class="card flex-fill">
-                                        <div class="card-header">
-
-                                            <h5 class="card-title mb-0">Department item purchase requests</h5>
+                    
+                            <!-- Total Amount Highlight -->
+                            <div class="row mb-0">
+                                <div class="col-12">
+                                    <div class="card bg-light text-dark shadow-sm">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <h4 class="mb-0">Total Purchase Amount</h4>
+                                            <h3 class="text-success fw-bold mb-0">
+                                                {{ number_format($totalAmount, 2) }} TSH
+                                            </h3>
                                         </div>
-                                        <table class="table table-hover my-0">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Name of item</th>
-                                                    <th>Department</th>
-                                                    <th>Quantity</th>
-                                                    <th>Expected price</th>
-                                                    <th>Total amount</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if ($item->count() > 0)
-                                                    @foreach ($item as $index => $item)
-                                                        <tr>
-                                                            <td>{{ $index + 1 }}</td>
-                                                            <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                                            <td class="d-none d-xl-table-cell">
-                                                                {{ $item->user->department }}
-                                                            </td>
-                                                            <td class="d-none d-xl-table-cell">{{ $item->quantity }}
-                                                            </td>
-                                                            <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
-                                                            <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
-                                                            <td>
-
-                                                                @if ($item->status == 'pending')
-                                                                    <span
-                                                                        class="badge bg-info">{{ $item->status }}</span>
-                                                                @elseif($item->status == 'processing')
-                                                                    <span
-                                                                        class="badge bg-warning">{{ $item->status }}</span>
-                                                                @elseif($item->status == 'rejected')
-                                                                    <span
-                                                                        class="badge bg-danger">{{ $item->status }}</span>
-                                                                @else
-                                                                    <span
-                                                                        class="badge bg-success">{{ $item->status }}</span>
-                                                                @endif
-                                                                <a href="{{ route('branch.show', $item->id) }}"
-                                                                    class="badge bg-primary text-white">view</a>
-
-
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td colspan="7" class="text-center">You have no request yet
-                                                        </td>
-                                                    </tr>
-                                                @endif
-
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
-
                             </div>
-
+                    
+                            <!-- Item Table -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <h5 class="card-title mb-0">Purchase Records</h5>
+                                        </div>
+                    
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped my-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Name of Item</th>
+                                                        <th>Department</th>
+                                                        <th>Quantity</th>
+                                                        <th>Expected Price</th>
+                                                        <th>Total Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($item->count() > 0)
+                                                        @foreach ($item as $index => $item)
+                                                            <tr>
+                                                                <td>{{ $index + 1 }}</td>
+                                                                <td>{{ $item->name }}</td>
+                                                                <td>{{ $item->user->department }}</td>
+                                                                <td>{{ $item->quantity }}</td>
+                                                                <td>{{ number_format($item->price, 2) }}</td>
+                                                                <td>{{ number_format($item->amount, 2) }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="6" class="text-center text-muted">No purchase records found</td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
                         </div>
                     </main>
+                    
 
 
                 </div>

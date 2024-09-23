@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
+use App\Models\Detail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -91,4 +92,41 @@ class AdminController extends Controller
     {
         //
     }
+
+    public function branch_list()
+    {
+        $branch = Detail::all();
+
+        return view('pages.admin.branch_list',compact('branch'));
+    }
+
+    public function branch_store(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255', // Add validation rules for the fields you need
+
+        ]);
+
+        Detail::create($validatedData);
+
+        return redirect()->back()->with('success', 'New branch added successfully');
+    }
+
+    public function destroy_branch(string $id)
+    {
+        // Find the branch by ID
+        $branch = Detail::find($id);
+
+        if ($branch) {
+            $branch->delete();
+
+            return redirect()->back()->with('success', 'Branch deleted successfully');
+        } else {
+            // Redirect back with error message if branch not found
+            return redirect()->back()->with('error', 'Branch not found');
+        }
+    }
+
+
 }

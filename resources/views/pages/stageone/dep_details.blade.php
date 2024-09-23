@@ -11,7 +11,17 @@
             <div class="container-fluid p-0">
 
                 <div class="mb-1" style="display: flex;justify-content: space-between;">
-                    <h1 class="h3 mb-3">Request details</h1>
+                    <h1 class="h3 mb-3">Request details
+                        @if ($item->status == 'rejected')
+                            <span class="badge bg-danger text-white text-sm ms-2">
+                                Your request is {{ $item->status }}
+                            </span>
+                        @elseif($item->status == 'approved')
+                            <span class="badge bg-success text-white text-sm ms-2">
+                                Your request is {{ $item->status }}
+                            </span>
+                        @endif
+                    </h1>
                     <a href="{{ route('department.index') }}" class="btn btn-dark">
                         Back
                     </a>
@@ -82,15 +92,51 @@
 
                     </div>
                 </div>
-                <div class="d-grid">
-                    @if( $item->status == 'pending')
-                    <span class="btn btn-danger">{{ $item->status }}</span>
-                    @elseif( $item->status == 'processing')
-                    <span class="btn btn-warning">{{ $item->status }}</span>
-                    @else
-                    <span class="btn btn-success">{{ $item->status }}</span>
+
+                <div class="row">
+                    @if ($item->branch_comment != 'no comment')
+                        <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
+                            <div class="card flex-fill w-100">
+                                <div class="card-header">
+
+                                    <h5 class="card-title mb-0">Branch manager comment</h5>
+                                </div>
+                                <div class="card-body d-flex">
+                                    {{ $item->branch_comment }}
+                                </div>
+
+                            </div>
+
+                        </div>
                     @endif
 
+                    @if ($item->gm_comment != 'no comment')
+                        <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
+                            <div class="card flex-fill w-100">
+                                <div class="card-header">
+
+                                    <h5 class="card-title mb-0">General manager comment</h5>
+                                </div>
+                                <div class="card-body d-flex">
+                                    {{ $item->gm_comment }}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @endif
+
+                </div>
+                <div class="d-grid">
+                    @if ($item->status == 'pending')
+                        <span class="btn btn-info">{{ $item->status }}</span>
+                    @elseif($item->status == 'processing')
+                        <span class="btn btn-warning">{{ $item->status }}</span>
+                    @elseif($item->status == 'rejected')
+                        <span class="btn btn-danger">{{ $item->status }}</span>
+                    @else
+                        <span class="btn btn-success">{{ $item->status }}</span>
+                    @endif
                 </div>
 
 
