@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('quantity');
             $table->string('price');
             $table->string('amount');
+            $table->string('justification');
             $table->string('reason');
             $table->string('status');
             $table->string('branch_comment')->default('no comment');

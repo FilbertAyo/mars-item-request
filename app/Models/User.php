@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'file',
         'department',
+        'branch',
+       
         'userType',
         'phone',
         'status'

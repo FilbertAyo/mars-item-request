@@ -17,9 +17,10 @@ class AdminController extends Controller
      */
     public function index()
     {
+        $branches = Detail::all();
         $user = User::all();
 
-        return view('dashboard', compact('user'));
+        return view('dashboard', compact('user','branches'));
     }
 
     /**
@@ -48,6 +49,7 @@ class AdminController extends Controller
             'userType' => $request->userType,
             'department'=>$request->department,
             'phone'=>$request->phone,
+            'branch'=>$request->branch,
             'status'=>'active',
             'file'=> null, //Default value if no file is uploaded
         ]);

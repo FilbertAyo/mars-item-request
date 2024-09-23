@@ -125,6 +125,7 @@
                                         <th>Email</th>
                                         <th>Phone number</th>
                                         <th>Department | Management</th>
+                                        <th>Branch</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -137,6 +138,7 @@
                                                 <td class="d-none d-xl-table-cell">{{ $user->email }}</td>
                                                 <td>{{ $user->phone }}</td>
                                                 <td>{{ $user->department }}</td>
+                                                <td>{{ $user->branch }}</td>
                                                 <td>
                                                     {{-- <form action="{{ route('admin.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this agenda?');">
                                                             @csrf
@@ -201,31 +203,35 @@
                             <input type="text" class="form-control" id="topicType" name="phone">
                         </div>
                         <div class="mb-3">
-                            <label for="day" class="form-label">Branch</label>
-                            <select class="form-select" id="day" name="department">
+                            <label for="branch" class="form-label">Branch</label>
+                            <select class="form-select" id="branch" name="branch">
                                 <option value="" selected>Select branch</option>
-                                <option value="IT department">Samora Branch</option>
-                                <option value="Sales department">NHC branch</option>
-                                <option value="Branch manager">Old Uhuru Branch</option>
-                                <option value="General manager">New Uhuru Branch</option>
-                                <option value="General manager">Jamhuri Branch</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->name }}">{{ $branch->name }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="row mb-3">
+                        <div class="col-md-6">
                             <label for="day" class="form-label">Department</label>
                             <select class="form-select" id="day" name="department">
+                                
                                 <option value="" selected>Select department | manager</option>
+                                <option value="All department">All department</option>
                                 <option value="IT department">IT department</option>
                                 <option value="Sales department">Sales department</option>
+                                <option value="Account and Finance">Account and Finance</option>
                                 <option value="Branch manager">Branch Manager</option>
                                 <option value="General manager">General Manager</option>
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-md-6">
                             <label for="dateTime" class="form-label">Approval stage</label>
                             <input type="text" class="form-control" id="userType" name="userType" readonly>
                         </div>
-                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {

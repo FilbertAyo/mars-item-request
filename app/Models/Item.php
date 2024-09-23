@@ -15,6 +15,7 @@ class Item extends Model
         'price',
         'amount',
         'reason',
+        'justification',
         'status',
         'branch_comment',
         'gm_comment'

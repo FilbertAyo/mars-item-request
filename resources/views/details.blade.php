@@ -139,6 +139,8 @@
 
                                             <h5 class="card-title mb-0">{{ $user->name }}</h5>
                                             <div class="text-muted mb-2">{{ $user->email }} | {{ $user->phone }}
+
+                                                <h5 class="card-title mb-0 text-success">{{ $user->branch }}</h5>
                                             </div>
 
                                             <div>
@@ -152,19 +154,19 @@
 
 
                                     </div>
-                                    {{-- <div class="d-grid"> --}}
-                                    {{-- <a href="#" class="btn btn-danger">Deactivate</a> --}}
-                                    <form action="{{ route('admin.destroy', $user->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Deactivate user</button>
-                                    </form>
-                                    {{-- </div> --}}
+                                  
+                                  
                                 </div>
 
 
                             </div>
-
+                            
+                            <form action="{{ route('admin.destroy', $user->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger flex">Deactivate user</button>
+                            </form>
+                          
                         </div>
                     </main>
 

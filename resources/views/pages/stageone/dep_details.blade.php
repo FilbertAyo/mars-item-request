@@ -61,6 +61,10 @@
                                                 <td>Time of request</td>
                                                 <td class="text-end">{{ $item->created_at }}</td>
                                             </tr>
+                                            <tr>
+                                                <td>Justification</td>
+                                                <td class="text-end text-warning">{{ $item->justification }}</td>
+                                            </tr>
 
                                         </tbody>
                                     </table>

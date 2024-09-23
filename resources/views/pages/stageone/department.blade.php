@@ -147,24 +147,28 @@
                             <label for="itemName" class="form-label">Item name</label>
                             <input type="text" class="form-control" id="itemName" name="name" required>
                         </div>
-                        {{-- <div class="mb-3">
-                            <label for="day" class="form-label">Department</label>
-                            <select class="form-select" id="day" name="department">
-                                <option value="" selected>Select category</option>
-                                <option value="Dep1">category 1</option>
-                                <option value="Dep2">category 2</option>
-
-                            </select>
-                        </div> --}}
-                        <div class="mb-3">
+                      
+                        <div class="row mb-3">
+                        <div class="col-6">
                             <label for="quantity" class="form-label">Quantity</label>
                             <input type="number" class="form-control" id="quantity" name="quantity" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-6">
                             <label for="price" class="form-label">Expected price at each</label>
                             <input type="number" step="0.01" class="form-control" id="price" name="price"
                                 required>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="day" class="form-label">Justification</label>
+                        <select class="form-select" id="day" name="justification">
+                            <option value="" selected>Select justificaton</option>
+                            <option value="Replacement">Replacement</option>
+                            <option value="New employee">New employee</option>
+                            <option value="Damage">Damage</option>
+                            <option value="Other">Other .. </option>
+                        </select>
+                    </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Reason</label>
                             <textarea class="form-control" id="description" name="reason" rows="4" required></textarea>

@@ -12,7 +12,6 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-
         $item = Item::where('user_id', auth()->id())->get();
 
         return view('pages.stageone.department', compact('item'));
@@ -34,8 +33,6 @@ class DepartmentController extends Controller
         // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
-            // 'quantity' => 'required|integer',
-            // 'price' => 'required|numeric',
             'reason' => 'required|string'
         ]);
 
@@ -49,6 +46,7 @@ class DepartmentController extends Controller
             'price' => $request->price,
             'amount' => $amount, // Calculated amount
             'reason' => $request->reason,
+            'justification' => $request->justification,
             'status' => 'pending',
             'user_id' => auth()->id(),
         ]);
