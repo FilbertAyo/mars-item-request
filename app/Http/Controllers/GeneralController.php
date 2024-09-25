@@ -21,17 +21,36 @@ class GeneralController extends Controller
     }
 
 
-    public function record()
+    public function record(Request $request)
     {
-        $item = Item::whereIn('status', ['approved'])->get();
-    
-        // Calculate the sum of the 'amount' column
-        $totalAmount = Item::whereIn('status', ['approved'])->sum('amount');
-    
-        // Pass both the item and the total amount to the view
+        // Get filter values from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $pType = $request->input('p_type', 'All'); // Default to 'All'
+
+        // Start the query to filter approved items
+        $query = Item::where('status', 'approved');
+
+        // Apply date range filter if both start and end dates are provided
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        // Apply purchase type filter if it's not "All"
+        if ($pType !== 'All') {
+            $query->where('p_type', $pType);
+        }
+
+        // Get the filtered items
+        $item = $query->get();
+
+        // Calculate the sum of the 'amount' column for the filtered items
+        $totalAmount = $query->sum('amount');
+
+        // Pass the filtered items and the total amount to the view
         return view('pages.stagethree.record', compact('item', 'totalAmount'));
     }
-    
+
 
     public function reject(Request $request, $id)
     {

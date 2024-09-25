@@ -65,15 +65,12 @@
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
 
-                            <li class="sidebar-item {{ Request::routeIs('branch.index') ? 'active' : '' }}">
-                                <a class="sidebar-link" href="{{ route('branch.index') }}">
+                            <li class="sidebar-item active">
+                                <a class="sidebar-link" href="{{ route('general.index') }}">
                                     <span class="align-middle">Item purchase</span>
                                 </a>
                             </li>
-
                         </ul>
-
-
 
                         <div class="sidebar-cta-content">
                             <strong class="d-inline-block mb-2">MC2024</strong>

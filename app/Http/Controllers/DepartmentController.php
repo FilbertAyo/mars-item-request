@@ -33,29 +33,33 @@ class DepartmentController extends Controller
         // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'reason' => 'required|string'
+            'reason' => 'required|string',
+            'quantity' => 'required|numeric',  // Add validation for quantity
+            'price' => 'required|numeric',     // Add validation for price
         ]);
 
         // Calculate the amount
         $amount = $request->quantity * $request->price;
+
+        // Determine the p_type based on the amount
+        $p_type = $amount < 1000000 ? 'Minor' : 'Major';
 
         // Store the data in the database
         Item::create([
             'name' => $request->name,
             'quantity' => $request->quantity,
             'price' => $request->price,
-            'amount' => $amount, // Calculated amount
+            'amount' => $amount,
+            'p_type' => $p_type,  // Set p_type here
             'reason' => $request->reason,
             'justification' => $request->justification,
-            'branch'=>$request->branch,
+            'branch' => $request->branch,
             'status' => 'pending',
             'user_id' => auth()->id(),
         ]);
 
-        // Redirect or return response
-        return redirect()->back()->with('success', 'request sent successfully.');
+        return redirect()->back()->with('success', 'Request sent successfully.');
     }
-
 
     /**
      * Display the specified resource.

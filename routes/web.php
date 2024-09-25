@@ -55,3 +55,5 @@ Route::resource('general', GeneralController::class);
 Route::get('/purchase/approve/{id}', [GeneralController::class, 'approve'])->name('purchase.approve');
 Route::post('/purchase/reject/{id}', [GeneralController::class, 'reject'])->name('purchase.reject');
 Route::get('record', [GeneralController::class, 'record']);
+Route::get('/items/filter', [GeneralController::class, 'record'])->name('items.filter');
+

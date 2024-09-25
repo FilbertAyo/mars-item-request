@@ -50,7 +50,7 @@
                             <table class="table table-hover my-0" id= "table-id">
                                 <thead class="table-dark">
                                     <tr>
-                                     
+
                                         <th>Name of item</th>
                                         {{-- <th>Category</th> --}}
                                         <th>Quantity</th>
@@ -87,8 +87,6 @@
                                                     @endif
                                                     <a href="{{ route('department.show', $item->id) }}"
                                                         class="badge bg-primary text-white">view</a>
-
-
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -127,10 +125,6 @@
     </div>
 
 
-    <script src="js/app.js"></script>
-
-
-
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -149,7 +143,7 @@
                             <label for="itemName" class="form-label">Item name</label>
                             <input type="text" class="form-control" id="itemName" name="name" required>
                         </div>
-                      
+
                         <div class="row mb-3">
                         <div class="col-6">
                             <label for="quantity" class="form-label">Quantity</label>
@@ -329,5 +323,9 @@
             }
         }
     </script>
+
+
+<script src="{{ asset('js/app.js') }}"></script>
+
 
 </x-app-layout>
