@@ -1,7 +1,6 @@
 <x-app-layout>
 
 
-
     <div class="main">
         @include('layouts.navigation')
 
@@ -156,15 +155,24 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="day" class="form-label">Justification</label>
-                        <select class="form-select" id="day" name="justification">
-                            <option value="" selected>Select justificaton</option>
-                            <option value="Replacement">Replacement</option>
-                            <option value="New employee">New employee</option>
-                            <option value="Damage">Damage</option>
-                            <option value="Other">Other .. </option>
-                        </select>
+                        <label for="justification" class="form-label">Justification</label>
+                        <div class="input-group">
+                            <!-- Justification Dropdown -->
+                            <select class="form-select" id="justification" name="justification">
+                                <option value="" selected>Select justification</option>
+                                @foreach($justification as $just)
+                                    <option value="{{ $just->id }}">{{ $just->justification }}</option>
+                                @endforeach
+                                <option value="Other">Other...</option>
+                            </select>
+
+                            <!-- Button to open the modal, placed next to the select dropdown -->
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addJustificationModal">
+                                New Justification
+                            </button>
+                        </div>
                     </div>
+
                         <div class="mb-3">
                             <label for="description" class="form-label">Reason</label>
                             <textarea class="form-control" id="description" name="reason" rows="4" required></textarea>
@@ -175,6 +183,29 @@
 
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addJustificationModal" tabindex="-1" aria-labelledby="addJustificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addJustificationModalLabel">Add Justification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url('/justify') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="newJustification" class="form-label">Justification</label>
+                            <input type="text" class="form-control" id="newJustification" name="justification" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add Justification</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

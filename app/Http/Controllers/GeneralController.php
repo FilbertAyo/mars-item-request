@@ -76,7 +76,7 @@ class GeneralController extends Controller
         $item = Item::find($id);
 
         if ($item) {
-            // Update the status to 'processing'
+            $item->gm_comment = "no comment";
             $item->status = 'approved';
             $item->save();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Justification;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -14,7 +15,9 @@ class DepartmentController extends Controller
     {
         $item = Item::where('user_id', auth()->id())->get();
 
-        return view('pages.stageone.department', compact('item'));
+        $justification = Justification::all();
+
+        return view('pages.stageone.department', compact('item','justification'));
     }
 
     /**
@@ -23,6 +26,21 @@ class DepartmentController extends Controller
     public function create()
     {
         //
+    }
+
+    public function justify(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'justification' => 'required|string|max:255',
+
+        ]);
+
+        Justification::create([
+            'justification' => $request->justification,
+        ]);
+
+        return redirect()->back()->with('success', 'Justification added successfully.');
     }
 
     /**

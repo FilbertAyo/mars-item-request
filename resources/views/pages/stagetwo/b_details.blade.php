@@ -8,32 +8,33 @@
 
     <title>Mars communications </title>
 
-    {{-- added --}}
-    <link rel="canonical" href="{{ asset('https://v5.getbootstrap.com/docs/5.0/examples/dashboard/') }}">
+     {{-- added --}}
+     <link rel="canonical" href="{{ asset('https://v5.getbootstrap.com/docs/5.0/examples/dashboard/') }}">
 
-    <link rel="preconnect" href="{{ asset('https://fonts.gstatic.com') }}">
-    <link rel="shortcut icon" href="{{ asset('static/img/icons/icon-48x48.png') }}" />
-    <link rel="canonical" href="{{ asset('https://demo-basic.adminkit.io/') }}" />
-    <link href="{{ asset('static/css/app.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+     <link rel="preconnect" href="{{ asset('https://fonts.gstatic.com') }}">
+     <link rel="shortcut icon" href="{{ asset('static/img/icons/icon-48x48.png') }}" />
+     <link rel="canonical" href="{{ asset('https://demo-basic.adminkit.io/') }}" />
+     <link href="{{ asset('static/css/app.css') }}" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
-        integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
-        integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous">
-    </script>
+     <link rel="stylesheet" href="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css') }}"
+         integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+     <script src="{{ asset('https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js') }}"
+         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+     </script>
+     <script src="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js') }}"
+         integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous">
+     </script>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="{{ asset('https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap') }}" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+     <!-- Fonts -->
+     <link rel="preconnect" href="{{ asset('https://fonts.bunny.net') }}">
+     <link href="{{ asset('https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap') }}" rel="stylesheet" />
+     <!-- Scripts -->
+     @vite(['resources/css/app.css', 'resources/js/app.js'])
+     {{-- search  --}}
+     <script src="{{ asset('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js') }}"></script>
 
 
 </head>
@@ -65,7 +66,7 @@
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
 
-                            <li class="sidebar-item {{ Request::routeIs('branch.index') ? 'active' : '' }}">
+                            <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{ route('branch.index') }}">
                                     <span class="align-middle">Item purchase</span>
                                 </a>

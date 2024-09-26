@@ -94,14 +94,15 @@
 
                                 <h1 class="h3 mb-3">Request details
                                     @if ($item->status == 'rejected')
-                                    <span class="badge bg-danger text-white text-sm ms-2">
-                                        You reject this request
-                                    </span>
-                                @elseif($item->status == 'approved')
-                                    <span class="badge bg-success text-white text-sm ms-2">
-                                        You approve this request
-                                    </span>
-                                @endif
+                                        <span class="badge bg-danger text-white text-sm ms-2">
+                                            You reject this request
+                                        </span>
+                                    @elseif($item->status == 'approved')
+                                        <span class="badge bg-success text-white text-sm ms-2">
+                                            You approve this request
+                                        </span>
+                                    @endif
+
                                 </h1>
 
 
@@ -109,6 +110,16 @@
                                     <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle"
                                         role="button" data-bs-target="#staticBackdrop">
                                         Check
+                                    </a>
+                                @elseif($item->status == 'approved')
+                                    <a class="btn btn-danger" data-bs-toggle="modal" href="#exampleModalToggle"
+                                        role="button" data-bs-target="#staticBackdrop">
+                                        Reject
+                                    </a>
+                                    @elseif($item->status == 'rejected')
+                                    <a class="btn btn-success" data-bs-toggle="modal" href="#exampleModalToggle"
+                                        role="button" data-bs-target="#staticBackdrop">
+                                        Approve
                                     </a>
                                 @endif
                             </div>
@@ -182,39 +193,39 @@
                             </div>
 
                             <div class="row">
-                            @if($item->branch_comment != 'no comment')
-                            <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
-                                <div class="card flex-fill w-100">
-                                    <div class="card-header">
+                                @if ($item->branch_comment != 'no comment')
+                                    <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
+                                        <div class="card flex-fill w-100">
+                                            <div class="card-header">
 
-                                        <h5 class="card-title mb-0">Branch manager comment</h5>
-                                    </div>
-                                    <div class="card-body d-flex">
-                                        {{ $item->branch_comment }}
-                                    </div>
+                                                <h5 class="card-title mb-0">Branch manager comment</h5>
+                                            </div>
+                                            <div class="card-body d-flex">
+                                                {{ $item->branch_comment }}
+                                            </div>
 
-                                </div>
+                                        </div>
+
+                                    </div>
+                                @endif
+
+                                @if ($item->gm_comment != 'no comment')
+                                    <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
+                                        <div class="card flex-fill w-100">
+                                            <div class="card-header">
+
+                                                <h5 class="card-title mb-0">General manager comment</h5>
+                                            </div>
+                                            <div class="card-body d-flex">
+                                                {{ $item->gm_comment }}
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                @endif
 
                             </div>
-                            @endif
-
-                            @if($item->gm_comment != 'no comment')
-                            <div class="col-6 col-md-6 col-xxl-6 d-flex order-xxl-6">
-                                <div class="card flex-fill w-100">
-                                    <div class="card-header">
-
-                                        <h5 class="card-title mb-0">General manager comment</h5>
-                                    </div>
-                                    <div class="card-body d-flex">
-                                        {{ $item->gm_comment }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            @endif
-
-                        </div>
 
                             <div class="d-grid">
 
@@ -254,10 +265,18 @@
                                 Do you approve or reject this item?
                             </div>
                             <div class="modal-footer">
+                                @if ($item->status == 'processing')
                                 <button class="btn btn-danger" data-bs-target="#exampleModalToggle2"
                                     data-bs-toggle="modal" data-bs-dismiss="modal">Reject</button>
                                 <a href="{{ route('purchase.approve', ['id' => $item->id]) }}"
                                     class="btn btn-success">Approve</a>
+                                    @elseif($item->status == 'approved')
+                                    <button class="btn btn-danger" data-bs-target="#exampleModalToggle2"
+                                    data-bs-toggle="modal" data-bs-dismiss="modal">Reject</button>
+                                    @elseif($item->status == 'rejected')
+                                    <a href="{{ route('purchase.approve', ['id' => $item->id]) }}"
+                                        class="btn btn-success">Approve</a>
+                                        @endif
                             </div>
                         </div>
                     </div>

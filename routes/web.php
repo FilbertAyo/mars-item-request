@@ -43,6 +43,7 @@ Route::delete('/destroy_branch/{id}', [AdminController::class, 'destroy_branch']
 
 // department
 Route::resource('department', DepartmentController::class);
+Route::post('/justify', [DepartmentController::class, 'justify']);
 
 // branch manager
 Route::resource('branch', BranchController::class);
