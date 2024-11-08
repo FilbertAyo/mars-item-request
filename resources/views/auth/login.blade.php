@@ -13,7 +13,7 @@
             background-position: center;
             filter: brightness(50%);
             z-index: 1;
-            animation: backgroundAnimation 10s infinite alternate ease-in-out;
+
         }
 
         /* Gradient overlay */
@@ -27,38 +27,7 @@
             z-index: 2;
         }
 
-        /* Animation for background image */
-        @keyframes backgroundAnimation {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.1);
-                opacity: 0.9;
-            }
-        }
 
-        /* Fade-in animation for text */
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 2s forwards;
-        }
-
-        .delay-1 {
-            animation-delay: 1s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
     </style>
 
     <!-- Session Status -->
@@ -89,7 +58,7 @@
             <div class="col-md-6 d-flex justify-content-center align-items-center">
                 <div class="col-md-8 col-lg-6">
 
-            
+
 
                     <!-- Form Wrapper with Background and Padding -->
                     <div class="bg-light p-4 rounded shadow">

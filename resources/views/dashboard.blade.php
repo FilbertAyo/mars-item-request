@@ -97,7 +97,8 @@
                 <div class="mb-1" style="display: flex;justify-content: space-between;">
                     <h1 class="h3 mb-3"> Users <a class="badge bg-primary text-white text-sm ms-2">
                         {{ Auth::user()->department }}
-                    </a></h1> <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                    </a></h1>
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
                         Add User
                     </button>
@@ -214,10 +215,11 @@
 
                         <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="day" class="form-label">Department</label>
+                            <label for="day" class="form-label">Role | Department</label>
                             <select class="form-select" id="day" name="department">
-                                
-                                <option value="" selected>Select department | manager</option>
+
+                                <option value="" selected>--Select Role --</option>
+                                <option value="Petty Cash">Petty Cash</option>
                                 <option value="All department">All department</option>
                                 <option value="IT department">IT department</option>
                                 <option value="Sales department">Sales department</option>
@@ -243,6 +245,7 @@
                                     'Sales department': '1',
                                     'Branch manager': '2',
                                     'General manager': '3',
+                                    'Petty Cash': '4',
                                 };
 
                                 daySelect.addEventListener('change', function() {

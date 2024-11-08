@@ -25,6 +25,8 @@ class ProfileController extends Controller
             return redirect()->route('branch.index');
         } elseif ($userType == '3') {
             return redirect()->route('general.index');
+        } elseif ($userType == '4') {
+            return redirect()->route('petty.index');
         } else {
             redirect()->back()->with('status', "You're not authorized");
         }

@@ -64,38 +64,17 @@
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
 
-                            <li class="sidebar-item {{ Request::routeIs('admin.index') ? 'active' : '' }}">
+                            <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{ route('admin.index') }}">
                                     <span class="align-middle">Users</span>
                                 </a>
                             </li>
 
-                            {{-- <li class="sidebar-item {{ Request::routeIs('exbitor.index') ? 'active' : '' }}">
-              <a class="sidebar-link" href="{{ route('exbitor.index') }}">
-                 <span class="align-middle">Exhibitors</span>
-              </a>
-          </li>
-
-          <li class="sidebar-item {{ Request::routeIs('speaker.index') ? 'active' : '' }}">
-              <a class="sidebar-link" href="{{ route('speaker.index') }}">
-                  <span class="align-middle">Speakers</span>
-              </a>
-          </li>
-          <li class="sidebar-item {{ Request::routeIs('visitor.index') ? 'active' : '' }}">
-            <a class="sidebar-link" href="{{ route('visitor.index') }}">
-                <span class="align-middle">Visitors</span>
-            </a>
-        </li>
-          <li class="sidebar-item {{ Request::routeIs('location.index') ? 'active' : '' }}">
-            <a class="sidebar-link" href="{{ route('location.index') }}">
-                 <span class="align-middle">Location</span>
-            </a>
-        </li>
-        <li class="sidebar-item {{ Request::routeIs('meeting.index') ? 'active' : '' }}">
-            <a class="sidebar-link" href="{{ route('meeting.index') }}">
-                 <span class="align-middle">Meetings</span>
-            </a>
-        </li> --}}
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ url('/branch_list') }}">
+                                   <span class="align-middle">Branch</span>
+                                </a>
+                            </li>
                         </ul>
 
 
@@ -154,19 +133,19 @@
 
 
                                     </div>
-                                  
-                                  
+
+
                                 </div>
 
 
                             </div>
-                            
+
                             <form action="{{ route('admin.destroy', $user->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger flex">Deactivate user</button>
                             </form>
-                          
+
                         </div>
                     </main>
 

@@ -6,6 +6,7 @@ use App\Models\Agenda;
 use App\Models\Detail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -87,13 +88,21 @@ class AdminController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+
+        if ($user) {
+            $user->delete();
+
+            return redirect()->route('admin.index')->with('success', 'Branch deleted successfully');
+        } else {
+            // Redirect back with error message if branch not found
+            return redirect()->route('admin.index')->with('error', 'Branch not found');
+        }
     }
+
 
     public function branch_list()
     {

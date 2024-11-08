@@ -11,6 +11,7 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PettyController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -18,9 +19,7 @@ use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\VisitorController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ProfileController::class, 'redirect']) ->middleware(['auth', 'verified']);
 
 Route::get('/dashboard', [ProfileController::class, 'redirect'])
     ->middleware(['auth', 'verified'])->name('dashboard');
@@ -58,3 +57,5 @@ Route::post('/purchase/reject/{id}', [GeneralController::class, 'reject'])->name
 Route::get('record', [GeneralController::class, 'record']);
 Route::get('/items/filter', [GeneralController::class, 'record'])->name('items.filter');
 
+//petty cash
+Route::resource('petty', PettyController::class);
