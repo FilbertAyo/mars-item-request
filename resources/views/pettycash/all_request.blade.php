@@ -67,16 +67,32 @@
 
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
-
+                            @if(auth()->user()->userType == 3)
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ route('general.index') }}">
+                                    <span class="align-middle">Item purchase</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
+                                    <span class="align-middle">Last Approval</span>
+                                </a>
+                            </li>
+                            @endif
                             <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{ route('petty.index') }}">
                                     <span class="align-middle">Petty Cash</span>
                                 </a>
                             </li>
+                            @if(auth()->user()->userType == 5 || auth()->user()->userType == 6)
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
+                                    <span class="align-middle">Approval</span>
+                                </a>
+                            </li>
+                            @endif
 
                         </ul>
-
-
 
                         <div class="sidebar-cta-content">
                             <strong class="d-inline-block mb-2">MC2024</strong>
@@ -109,6 +125,13 @@
                             </div>
 
                             <div class="row">
+                                @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
+
                                 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
                                     <div class="card flex-fill">
 
@@ -140,8 +163,9 @@
                                         <table class="table table-hover my-0" id= "table-id">
                                             <thead class="table-dark">
                                                 <tr>
-
-                                                    <th>Name of item</th>
+                                                    <th>No.</th>
+                                                    <th>Request for</th>
+                                                    <th>Petty cash type</th>
                                                     <th>Amount</th>
                                                     <th>Status</th>
                                                 </tr>
@@ -150,9 +174,9 @@
                                                 @if ($requests->count() > 0)
                                                     @foreach ($requests as $index => $item)
                                                         <tr>
-
+                                                            <td>{{ $item->id }}</td>
                                                             <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-
+                                                            <td class="d-none d-xl-table-cell">{{ $item->request_type }}
                                                             <td class="d-none d-xl-table-cell">{{ $item->amount }}
 
                                                             <td>
@@ -222,8 +246,10 @@
 
                                         <div class="form-group" style="display: none;">
                                             <input type="text" name="request_by"
-                                                value=" {{ Auth::user()->name }}" class="form-control" readonly>
+                                                value="{{ Auth::user()->name }}" class="form-control" readonly>
                                             <input type="text" name="status" value="pending"
+                                                class="form-control" readonly>
+                                                <input type="text" name="user_id" value="{{ Auth::user()->id }}"
                                                 class="form-control" readonly>
                                         </div>
 
@@ -239,7 +265,7 @@
                                         </div>
                                         <!-- Name Field -->
                                         <div class="form-group mt-3">
-                                            <label for="name">Name</label>
+                                            <label for="name">Request for</label>
                                             <input type="text" name="name" class="form-control" required>
                                         </div>
 
@@ -256,11 +282,9 @@
                                             <textarea name="reason" class="form-control" required></textarea>
                                         </div>
 
-
-
                                         <!-- Office Expense Item List (Visible by Default) -->
                                         <div class="form-group mt-3" id="office_expense_section">
-                                            <label for="items">Office Items:</label>
+                                            <label for="items">List of Items:</label>
                                             <div id="items_container">
                                                 <div class="input-group mb-2">
                                                     <input type="text" name="items[]" class="form-control"
@@ -293,10 +317,10 @@
                         document.getElementById('request_type').addEventListener('change', function() {
                             var requestType = this.value;
 
-                            if (requestType === 'petty_cash') {
+                            if (requestType === 'Petty Cash') {
                                 document.getElementById('office_expense_section').style.display = 'block';
                                 document.getElementById('attachment_section').style.display = 'none';
-                            } else if (requestType === 'refund') {
+                            } else if (requestType === 'Reimbursement') {
                                 document.getElementById('office_expense_section').style.display = 'none';
                                 document.getElementById('attachment_section').style.display = 'block';
                             }
@@ -340,150 +364,6 @@
         </main>
     </div>
 
-
-    <script>
-        getPagination('#table-id');
-        $('#maxRows').trigger('change');
-
-        function getPagination(table) {
-
-            $('#maxRows').on('change', function() {
-                $('.pagination').html(''); // reset pagination div
-                var trnum = 0; // reset tr counter
-                var maxRows = parseInt($(this).val()); // get Max Rows from select option
-
-                var totalRows = $(table + ' tbody tr').length; // numbers of rows
-                $(table + ' tr:gt(0)').each(function() { // each TR in  table and not the header
-                    trnum++; // Start Counter
-                    if (trnum > maxRows) { // if tr number gt maxRows
-
-                        $(this).hide(); // fade it out
-                    }
-                    if (trnum <= maxRows) {
-                        $(this).show();
-                    } // else fade in Important in case if it ..
-                }); //  was fade out to fade it in
-                if (totalRows > maxRows) { // if tr total rows gt max rows option
-                    var pagenum = Math.ceil(totalRows / maxRows); // ceil total(rows/maxrows) to get ..
-                    //	numbers of pages
-                    for (var i = 1; i <= pagenum;) {
-                        $('.pagination').append('<li data-page="' + i + '">\
-            <div class="card text-center" style="width: 70px; margin: 2px;">\
-              <div class="card-body p-0">\
-                <span class="page-link">' + i++ + '</span>\
-              </div>\
-            </div>\
-          </li>').show();
-                    }
-                    // end for i
-
-
-                } // end if row count > max rows
-                $('.pagination li:first-child').addClass('active'); // add active class to the first li
-
-                //SHOWING ROWS NUMBER OUT OF TOTAL DEFAULT
-                showig_rows_count(maxRows, 1, totalRows);
-                //SHOWING ROWS NUMBER OUT OF TOTAL DEFAULT
-
-                $('.pagination li').on('click', function(e) { // on click each page
-                    e.preventDefault();
-                    var pageNum = $(this).attr('data-page'); // get it's number
-                    var trIndex = 0; // reset tr counter
-                    $('.pagination li').removeClass('active'); // remove active class from all li
-                    $(this).addClass('active'); // add active class to the clicked
-
-                    //SHOWING ROWS NUMBER OUT OF TOTAL
-                    showig_rows_count(maxRows, pageNum, totalRows);
-                    //SHOWING ROWS NUMBER OUT OF TOTAL
-
-                    $(table + ' tr:gt(0)').each(function() { // each tr in table not the header
-                        trIndex++; // tr index counter
-                        // if tr index gt maxRows*pageNum or lt maxRows*pageNum-maxRows fade if out
-                        if (trIndex > (maxRows * pageNum) || trIndex <= ((maxRows * pageNum) -
-                                maxRows)) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        } //else fade in
-                    }); // end of for each tr in table
-                }); // end of on click pagination list
-            });
-        }
-
-        // SI SETTING
-        $(function() {
-            // Just to append id number for each row
-            default_index();
-        });
-
-        //ROWS SHOWING FUNCTION
-        function showig_rows_count(maxRows, pageNum, totalRows) {
-            //Default rows showing
-            var end_index = maxRows * pageNum;
-            var start_index = ((maxRows * pageNum) - maxRows) + parseFloat(1);
-            var string = 'Showing ' + start_index + ' to ' + end_index + ' of ' + totalRows + ' entries';
-            $('.rows_count').html(string);
-        }
-
-        // CREATING INDEX
-        function default_index() {
-            $('table tr:eq(0)').prepend('<th> ID </th>')
-
-            var id = 0;
-
-            $('table tr:gt(0)').each(function() {
-                id++
-                $(this).prepend('<td>' + id + '</td>');
-            });
-        }
-
-        // All Table search script
-        function FilterkeyWord_all_table() {
-
-            // Count td if you want to search on all table instead of specific column
-
-            var count = $('.table').children('tbody').children('tr:first-child').children('td').length;
-
-            // Declare variables
-            var input, filter, table, tr, td, i;
-            input = document.getElementById("search_input_all");
-            var input_value = document.getElementById("search_input_all").value;
-            filter = input.value.toLowerCase();
-            if (input_value != '') {
-                table = document.getElementById("table-id");
-                tr = table.getElementsByTagName("tr");
-
-                // Loop through all table rows, and hide those who don't match the search query
-                for (i = 1; i < tr.length; i++) {
-
-                    var flag = 0;
-
-                    for (j = 0; j < count; j++) {
-                        td = tr[i].getElementsByTagName("td")[j];
-                        if (td) {
-
-                            var td_text = td.innerHTML;
-                            if (td.innerHTML.toLowerCase().indexOf(filter) > -1) {
-                                //var td_text = td.innerHTML;
-                                //td.innerHTML = 'shaban';
-                                flag = 1;
-                            } else {
-                                //DO NOTHING
-                            }
-                        }
-                    }
-                    if (flag == 1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            } else {
-                //RESET TABLE
-                $('#maxRows').trigger('change');
-            }
-        }
-    </script>
 
     <script src="{{ asset('static/js/app.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>

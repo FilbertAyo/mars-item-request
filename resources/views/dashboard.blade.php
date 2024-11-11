@@ -220,7 +220,8 @@
 
                                 <option value="" selected>--Select Role --</option>
                                 <option value="Petty Cash">Petty Cash</option>
-                                <option value="All department">All department</option>
+                                <option value="Petty Cash Admin">Petty Cash Admin</option>
+                                <option value="Cashier">Cashier</option>
                                 <option value="IT department">IT department</option>
                                 <option value="Sales department">Sales department</option>
                                 <option value="Account and Finance">Account and Finance</option>
@@ -246,6 +247,8 @@
                                     'Branch manager': '2',
                                     'General manager': '3',
                                     'Petty Cash': '4',
+                                    'Petty Cash Admin': '5',
+                                    'Cashier': '6',
                                 };
 
                                 daySelect.addEventListener('change', function() {

@@ -12,6 +12,6 @@ class PettyList extends Model
 
     public function petty()
     {
-        return $this->belongsTo(Petty::class);
+        return $this->belongsTo(Petty::class,'petty_id', 'id');
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\ExbitorController;
 use App\Http\Controllers\GeneralController;
@@ -59,3 +60,10 @@ Route::get('/items/filter', [GeneralController::class, 'record'])->name('items.f
 
 //petty cash
 Route::resource('petty', PettyController::class);
+Route::get('petty_first_approval', [PettyController::class, 'first_approval']);
+Route::get('/first_approval/{id}', [PettyController::class, 'first_show'])->name('first_approval.show');
+Route::get('f_approve/{id}', [PettyController::class, 'f_approve'])->name('f_approve.approve');
+Route::get('l_approve/{id}', [PettyController::class, 'l_approve'])->name('l_approve.approve');
+Route::get('c_approve/{id}', [PettyController::class, 'c_approve'])->name('c_approve.approve');
+Route::post('/petty/reject/{id}', [PettyController::class, 'reject'])->name('petty.reject');
+Route::resource('deposit', DepositController::class);

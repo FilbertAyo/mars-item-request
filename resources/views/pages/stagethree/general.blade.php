@@ -66,12 +66,24 @@
 
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
-
+                            @if(auth()->user()->userType == 3)
                             <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{ route('general.index') }}">
                                     <span class="align-middle">Item purchase</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
+                                    <span class="align-middle">Last Approval</span>
+                                </a>
+                            </li>
+                            @endif
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{ route('petty.index') }}">
+                                    <span class="align-middle">Petty Cash</span>
+                                </a>
+                            </li>
+                        
 
                         </ul>
 
