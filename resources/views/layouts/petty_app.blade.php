@@ -19,7 +19,8 @@
 
 
 
-    <link rel="stylesheet" href="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css') }}"
+    <link rel="stylesheet"
+        href="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css') }}"
         integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
     <script src="{{ asset('https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js') }}"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
@@ -37,61 +38,20 @@
 
     {{-- search  --}}
     <script src="{{ asset('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+
+    @include('elements.alert')
+    @yield('content')
 
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
 
-        <!-- Page Content -->
-        <main>
-            <div class="wrapper">
-
-                <nav id="sidebar" class="sidebar js-sidebar">
-                    <div class="sidebar-content js-simplebar">
-                        <a class="sidebar-brand" href="index.html">
-                            <img src="/image/logo.png" alt="" class="img-fluid align-middle"
-                                style="max-height: 50px;">
-                        </a>
-
-                        <ul class="sidebar-nav">
-                            <li class="sidebar-header">Pages</li>
-
-                            <li class="sidebar-item {{ Request::routeIs('department.index') ? 'active' : '' }}">
-                                <a class="sidebar-link" href="{{ route('department.index') }}">
-                                    <span class="align-middle">Item purchase</span>
-                                </a>
-                            </li>
-                        </ul>
-
-
-                        <div class="sidebar-cta-content">
-                            <strong class="d-inline-block mb-2">MC2024</strong>
-
-                            <div class="d-grid">
-                                <div class="btn btn-primary"></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </nav>
-                {{ $slot }}
-            </div>
-        </main>
-    </div>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="{{ asset('static/js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 
 </body>
 

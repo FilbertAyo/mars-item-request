@@ -1,47 +1,7 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('layouts.petty_app')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@section('content')
 
-    <title>Mars communications </title>
-
-    {{-- added --}}
-    <link rel="canonical" href="{{ asset('https://v5.getbootstrap.com/docs/5.0/examples/dashboard/') }}">
-
-    <link rel="preconnect" href="{{ asset('https://fonts.gstatic.com') }}">
-    <link rel="shortcut icon" href="{{ asset('static/img/icons/icon-48x48.png') }}" />
-    <link rel="canonical" href="{{ asset('https://demo-basic.adminkit.io/') }}" />
-    <link href="{{ asset('static/css/app.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-
-
-    <link rel="stylesheet"
-        href="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css') }}"
-        integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-    <script src="{{ asset('https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js') }}"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-    </script>
-    <script src="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js') }}"
-        integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous">
-    </script>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="{{ asset('https://fonts.bunny.net') }}">
-    <link href="{{ asset('https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap') }}" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    {{-- search  --}}
-    <script src="{{ asset('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js') }}"></script>
-
-</head>
-
-<body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
 
 
@@ -122,17 +82,13 @@
                                 <h1 class="h3">Petty cash details
 
                                     @if ($request->status == 'pending')
-                                        <span
-                                            class="badge bg-info text-white text-sm ms-2">{{ $request->status }}</span>
+                                        <span class="badge bg-info text-white text-sm ms-2">{{ $request->status }}</span>
                                     @elseif($request->status == 'processing')
-                                        <span
-                                            class="badge bg-warning text-white text-sm ms-2">{{ $request->status }}</span>
+                                        <span class="badge bg-warning text-white text-sm ms-2">{{ $request->status }}</span>
                                     @elseif($request->status == 'rejected')
-                                        <span
-                                            class="badge bg-danger text-white text-sm ms-2">{{ $request->status }}</span>
+                                        <span class="badge bg-danger text-white text-sm ms-2">{{ $request->status }}</span>
                                     @else
-                                        <span
-                                            class="badge bg-success text-white text-sm ms-2">{{ $request->status }}</span>
+                                        <span class="badge bg-success text-white text-sm ms-2">{{ $request->status }}</span>
                                     @endif
                                 </h1>
 
@@ -152,11 +108,10 @@
                                     @endif
                                 @elseif(auth()->user()->userType == 6)
                                     @if ($request->status == 'approved')
-
-                                <a class="btn btn-primary" href="javascript:void(0);"
-                                    onclick="confirmApproval('{{ route('c_approve.approve', ['id' => $request->id]) }}')">
-                                    Pay
-                                </a>
+                                        <a class="btn btn-primary" href="javascript:void(0);"
+                                            onclick="confirmApproval('{{ route('c_approve.approve', ['id' => $request->id]) }}')">
+                                            Pay
+                                        </a>
                                     @endif
                                 @endif
 
@@ -174,21 +129,7 @@
                             </div>
 
                             <div class="row">
-                                @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                @elseif(session('error'))
-
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-
-                                @endif
+                               
 
                                 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
 
@@ -205,7 +146,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <p><strong>Requested by:</strong>
-                                                            {{ $request->name }}</p>
+                                                            {{ $request->request_by }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -267,8 +208,7 @@
                                                                     <h5 class="modal-title" id="imageModalLabel">
                                                                         Attachment Image</h5>
                                                                     <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
+                                                                        data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body text-center">
                                                                     <img src="{{ asset($request->attachment) }}"
@@ -352,8 +292,7 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form method="POST"
-                                        action="{{ route('petty.reject', ['id' => $request->id]) }}">
+                                    <form method="POST" action="{{ route('petty.reject', ['id' => $request->id]) }}">
                                         @csrf
 
                                         <div class="mb-3">
@@ -369,9 +308,4 @@
                         </div>
                     </div>
 
-                    <script src="{{ asset('static/js/app.js') }}"></script>
-                    <script src="{{ asset('js/app.js') }}"></script>
-
-</body>
-
-</html>
+                @endsection

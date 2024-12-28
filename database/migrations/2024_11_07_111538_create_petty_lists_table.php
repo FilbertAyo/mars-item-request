@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('petty_lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('petty_id')->constrained('requests')->onDelete('cascade');
+            $table->foreignId('petty_id')->onDelete('cascade');
             $table->string('item_name');
             $table->timestamps();
         });

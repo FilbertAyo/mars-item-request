@@ -1,67 +1,16 @@
 <x-guest-layout>
 
-    <style>
-        /* Background animation */
-        .animated-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('/image/imag8.jpg'); /* Replace with your background image */
-            background-size: cover;
-            background-position: center;
-            filter: brightness(50%);
-            z-index: 1;
-
-        }
-
-        /* Gradient overlay */
-        .gradient-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)); /* Adjust colors and opacity as needed */
-            z-index: 2;
-        }
-
-
-    </style>
-
-    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="container-fluid vh-100">
         <div class="row h-100">
 
-             <!-- Left Color Wall -->
-             <div class="col-md-6 d-flex justify-content-center align-items-center position-relative">
-                <!-- Background Animation -->
-                <div class="animated-bg"></div>
-
-                <!-- Gradient Overlay -->
-                {{-- <div class="gradient-overlay"></div> --}}
-
-                <!-- Content with Overlay -->
-                <div class="text-white text-center position-relative" style="z-index: 3;">
-                    <h2 class="fade-in">Welcome Again</h2>
-                    <div class="text-center mb-4 justify-content-center">
-                        <img src="/image/longlogo.png" alt="Logo" style="width: 400px;">
-                    </div>
-                    {{-- <p class="fade-in delay-1">Mars communication management system</p> --}}
-                </div>
-            </div>
 
             <!-- Right Login Form -->
-            <div class="col-md-6 d-flex justify-content-center align-items-center">
-                <div class="col-md-8 col-lg-6">
-
-
+            <div class="col-md-12 d-flex justify-content-center align-items-center">
 
                     <!-- Form Wrapper with Background and Padding -->
-                    <div class="bg-light p-4 rounded shadow">
+                    <div class="bg-light p-4 rounded shadow" style="width: 30%;">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
 
@@ -102,8 +51,7 @@
                             </div>
                         </form>
                     </div>
-                    <!-- End Form Wrapper -->
-                </div>
+
             </div>
 
 

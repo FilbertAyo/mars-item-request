@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FirstApprovalMail;
+use App\Mail\LastApprovalMail;
+use App\Mail\PettyRequestMail;
 use App\Models\Deposit;
 use App\Models\Petty;
 use App\Models\PettyList;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PettyController extends Controller
 {
@@ -61,7 +66,7 @@ class PettyController extends Controller
         }
 
         // Save each office item if the request type is petty_cash
-        if ($request->request_type === 'petty_cash' && $request->has('items')) {
+        if ($request->request_type === 'Petty Cash' && $request->has('items')) {
             foreach ($request->items as $item) {
                 PettyList::create([
                     'petty_id' => $newRequest->id,
@@ -70,79 +75,104 @@ class PettyController extends Controller
             }
         }
 
+        $users = User::where('userType', 5)->get();
+
+        $name = User::find($request->user_id)->name;
+        $reason = $newRequest->name;
+        $id = $newRequest->id;
+        $email = $users->pluck('email')->toArray();
+
+        Mail::to($email)->send(new PettyRequestMail($name, $email,$reason, $id));
+
         return redirect()->back()->with('success', 'Request saved successfully.');
     }
 
     public function f_approve($id)
-{
-    // Find the request by its ID
-    $request = Petty::findOrFail($id);
+    {
+        // Find the request by its ID
+        $request = Petty::findOrFail($id);
 
-    // Change the status to "processing"
-    $request->status = 'processing';
-    $request->save();
+        // Change the status to "processing"
+        $request->status = 'processing';
+        $request->save();
 
-    // Redirect back with a success message
-    return redirect()->back()->with('success', 'Request approved and status updated');
-}
+        $users = User::where('userType', 3)->get();
+        $name = User::find($request->user_id)->name;
+        $email = $users->pluck('email')->toArray();
+        $reason = $request->name;
+        $id = $request->id;
 
-public function l_approve($id)
-{
-    // Find the request by its ID
-    $request = Petty::findOrFail($id);
-    // Change the status to "processing"
-    $request->status = 'approved';
-    $request->save();
-    // Redirect back with a success message
-    return redirect()->back()->with('success', 'Request approved and status updated');
-}
+        Mail::to($email)->send(new FirstApprovalMail($name,$reason, $id));
 
-public function c_approve($id)
-{
-    // Find the request by its ID
-    $request = Petty::findOrFail($id);
-
-    // Get the latest remaining amount from the Deposit table
-    $latestDeposit = Deposit::latest()->first();
-
-
-    if (!$latestDeposit) {
-        return redirect()->back()->with('error', 'No deposit available for this request.');
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Request approved and status updated');
     }
 
-    if ($latestDeposit->remaining < $request->amount) {
-        return redirect()->back()->with('error', 'Insufficient balance of your petty cash account');
+    public function l_approve($id)
+    {
+        // Find the request by its ID
+        $request = Petty::findOrFail($id);
+        // Change the status to "processing"
+        $request->status = 'approved';
+        $request->save();
+
+        $users = User::where('userType', 6)->get();
+        $name = User::find($request->user_id)->name;
+        $email = $users->pluck('email')->toArray();
+        $reason = $request->name;
+        $id = $request->id;
+
+        Mail::to($email)->send(new LastApprovalMail($name,$reason, $id));
+
+        return redirect()->back()->with('success', 'Request approved and status updated');
     }
 
-    $latestDeposit->remaining -= $request->amount;
-    $latestDeposit->save();
+    public function c_approve($id)
+    {
+        // Find the request by its ID
+        $request = Petty::findOrFail($id);
 
-    // Change the status to "paid" for the request
-    $request->status = 'paid';
-    $request->save();
-
-    return redirect()->back()->with('success', 'Payment successful, and the amount has been deducted.');
-}
+        // Get the latest remaining amount from the Deposit table
+        $latestDeposit = Deposit::latest()->first();
 
 
-public function reject(Request $request, $id)
-{
-    // Find the item by ID
-    $req = Petty::find($id);
+        if (!$latestDeposit) {
+            return redirect()->back()->with('error', 'No deposit available for this request.');
+        }
 
-    if ($req) {
-        // Update the status to 'processing'
-        $req->comment = $request->comment;
-        $req->status = 'rejected';
-        $req->save();
+        if ($latestDeposit->remaining < $request->amount) {
+            return redirect()->back()->with('error', 'Insufficient balance of your petty cash account');
+        }
 
-        // Redirect back with success message
-        return redirect()->back()->with('success', 'Feedback sent successfully.');
+        $latestDeposit->remaining -= $request->amount;
+        $latestDeposit->save();
+
+        // Change the status to "paid" for the request
+        $request->status = 'paid';
+        $request->save();
+
+        return redirect()->back()->with('success', 'Payment successful, and the amount has been deducted.');
     }
 
-    // If item is not found, redirect with error
-    return redirect()->back()->with('error', 'Request not found.');
-}
+
+    public function reject(Request $request, $id)
+    {
+        // Find the item by ID
+        $req = Petty::find($id);
+
+        if ($req) {
+            // Update the status to 'processing'
+            $req->comment = $request->comment;
+            $req->status = 'rejected';
+            $req->save();
+
+            // Redirect back with success message
+            return redirect()->back()->with('success', 'Feedback sent successfully.');
+        }
+
+        // If item is not found, redirect with error
+        return redirect()->back()->with('error', 'Request not found.');
+    }
 
     /**
      * Display the specified resource.
@@ -151,14 +181,14 @@ public function reject(Request $request, $id)
     {
         $request = Petty::with('pettyLists')->findOrFail($id);
 
-        return view('pettycash.all_details',compact('request'));
+        return view('pettycash.all_details', compact('request'));
     }
 
     public function first_show($id)
     {
         $request = Petty::with('pettyLists')->findOrFail($id);
 
-        return view('pettycash.first_details',compact('request'));
+        return view('pettycash.first_details', compact('request'));
     }
 
 

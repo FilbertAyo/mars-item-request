@@ -13,6 +13,10 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Pharmacy;
 use App\Models\UnverifiedPharmacy;
+use App\Otp\UserRegistrationOtp;
+// use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Notification;
+use SadiqSalau\LaravelOtp\Facades\Otp;
 
 class RegisteredUserController extends Controller
 {
@@ -48,6 +52,18 @@ class RegisteredUserController extends Controller
             'status'=>'active',
             'file'=> null, //Default value if no file is uploaded
         ]);
+
+
+        // $otp = Otp::identifier($request->email)->send(
+        //     Notification::route('mail', $request->email)->notify(
+        //         new UserRegistrationOtp(
+        //             name: $request->name,
+        //             email: $request->email,
+        //             password: $request->password
+        //         )
+        //     )
+        // );
+        // return redirect(__($otp['status']));
 
         event(new Registered($user));
 
