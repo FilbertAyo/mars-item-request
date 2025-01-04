@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SuccessPayment extends Mailable
+class EmployeeConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,7 +29,7 @@ class SuccessPayment extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Payment Completed',
+            subject: 'Reimbursement',
         );
     }
 
@@ -39,7 +39,7 @@ class SuccessPayment extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.complete',
+            view: 'mail.paid',
             with: [
                 'name' => $this->name,
                 'reason' => $this->reason,

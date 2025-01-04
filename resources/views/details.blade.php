@@ -4,17 +4,6 @@
 
     <div class="min-h-screen bg-gray-100">
 
-
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
-
-        <!-- Page Content -->
         <main>
             <div class="wrapper">
 
@@ -42,12 +31,13 @@
 
 
 
-                        <div class="sidebar-cta-content">
-                            <strong class="d-inline-block mb-2">MC2024</strong>
-
-                            <div class="d-grid">
-                                <a href="upgrade-to-pro.html" class="btn btn-success"></a>
-                            </div>
+                        <div class="sidebar-cta-content text-center p-2 bg-danger">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit">
+                                    <strong class="d-inline-block">Logout</strong>
+                                </button>
+                            </form>
                         </div>
 
                     </div>
@@ -56,7 +46,7 @@
                     @include('layouts.navigation')
 
                     <main class="content">
-                        <div class="container-fluid p-0">
+
 
                             <div class="mb-3" style="display: flex;justify-content: space-between;">
                                 <h1 class="h3 d-inline align-middle">Profile</h1>
@@ -92,16 +82,11 @@
                                             </div>
                                         </div>
 
-
-
-
                                     </div>
-
-
                                 </div>
-
-
                             </div>
+
+                            @if($user->status == 'active')
 
                             <form action="{{ route('admin.destroy', $user->id) }}" method="POST">
                                 @csrf
@@ -109,18 +94,19 @@
                                 <button type="submit" class="btn btn-danger flex">Deactivate user</button>
                             </form>
 
-                        </div>
+                            @else
+                            <form action="{{ route('admin.activate', $user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-success flex">Activate user</button>
+                            </form>
+
+                            @endif
+
                     </main>
 
 
                 </div>
-
-
                 <script src="js/app.js"></script>
-
-
-
-
             </div>
         </main>
     </div>

@@ -97,21 +97,37 @@ class AdminController extends Controller
         //
     }
 
-
     public function destroy(string $id)
-    {
-        $user = User::find($id);
+{
+    $user = User::find($id);
 
-        if ($user) {
-            $user->delete();
+    if ($user) {
+        // Update the user's status to 'inactive'
+        $user->status = 'inactive';
+        $user->save();
 
-            return redirect()->route('admin.index')->with('success', 'Branch deleted successfully');
-        } else {
-            // Redirect back with error message if branch not found
-            return redirect()->route('admin.index')->with('error', 'Branch not found');
-        }
+        return redirect()->route('admin.index')->with('success', 'User status updated to inactive successfully');
+    } else {
+        // Redirect back with error message if user not found
+        return redirect()->route('admin.index')->with('error', 'User not found');
     }
+}
 
+public function activate(string $id)
+{
+    $user = User::find($id);
+
+    if ($user) {
+        // Update the user's status to 'inactive'
+        $user->status = 'active';
+        $user->save();
+
+        return redirect()->route('admin.index')->with('success', 'User status updated to active successfully');
+    } else {
+        // Redirect back with error message if user not found
+        return redirect()->route('admin.index')->with('error', 'User not found');
+    }
+}
 
     public function branch_list()
     {

@@ -76,12 +76,13 @@
 
 
 
-                        <div class="sidebar-cta-content">
-                            <strong class="d-inline-block mb-2">MC2024</strong>
-
-                            <div class="d-grid">
-                                <a href="upgrade-to-pro.html" class="btn btn-primary"></a>
-                            </div>
+                         <div class="sidebar-cta-content text-center p-2 bg-danger">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit">
+                                    <strong class="d-inline-block">Logout</strong>
+                                </button>
+                            </form>
                         </div>
 
                     </div>

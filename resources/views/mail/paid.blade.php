@@ -7,25 +7,25 @@
     <link rel="stylesheet" href="{{ asset('css/mail.css') }}">
 </head>
 <body>
+
     <div class="container">
         <div class="header">
-            <h1>New Petty Cash Request from {{ $name }}</h1>
+            <h1>Payment Completed</h1>
         </div>
 
         <div class="content">
-            <p>Hello,</p>
-            <p>A new petty cash request for <strong>{{ $reason }}</strong> has successfully passed the first approval and is now awaiting your review.</p>
+            <p>Hello {{ $name }}, </p>
+            <p>Your petty cash request for "{{ $reason }}" has been approved, and the amount has been disbursed successfully.</p>
 
-            <p>To review the details and provide your approval, please click the button below:</p>
-            <a href="https://marscommltd.com/first_approval/{{ $id }}" class="btn">View Request</a>
+            <p>To review the request details for your records, please click the button below:</p>
+            <a href="https://marscommltd.com/first_approval/{{ $id }}" class="btn">Review</a>
         </div>
 
         <div class="footer">
             <p>If you have any issues or need help, feel free to <a href="mailto:marscommunication.team@gmail.com">contact us</a>.</p>
-            <p>Thank you for being part of Mars! 🚀</p>
+            <p>Thank you for your dedication and efforts! 🚀</p>
         </div>
     </div>
-
 
 </body>
 </html>

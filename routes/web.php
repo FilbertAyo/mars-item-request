@@ -40,6 +40,7 @@ Route::resource('admin', AdminController::class);
 Route::get('/branch_list', [AdminController::class, 'branch_list']);
 Route::post('/add_branch', [AdminController::class, 'branch_store']);
 Route::delete('/destroy_branch/{id}', [AdminController::class, 'destroy_branch']);
+Route::post('/activate/{id}', [AdminController::class, 'activate'])->name('admin.activate');
 
 // department
 Route::resource('department', DepartmentController::class);

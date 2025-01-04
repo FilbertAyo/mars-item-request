@@ -45,9 +45,21 @@
 <body class="font-sans antialiased">
 
     @include('elements.alert')
-    @yield('content')
 
+    @if (Auth::user()->status == 'active')
+        @yield('content')
+    @else
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="card text-center shadow-lg p-4">
+            <div class="card-body">
+                <h1 class="card-title text-danger" style="font-size: 20px;">Account Deactivated</h1>
+                <p class="card-text mt-3">Your account is currently inactive. Please contact support for further assistance.</p>
+                <a href="https://wa.me/255741400900" class="btn btn-primary mt-3" target="_blank">Contact Support</a>
 
+            </div>
+        </div>
+    </div>
+    @endif
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="{{ asset('static/js/app.js') }}"></script>

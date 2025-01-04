@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmployeeConfirmation;
 use App\Mail\FirstApprovalMail;
 use App\Mail\LastApprovalMail;
 use App\Mail\PettyRequestMail;
+use App\Mail\SuccessPayment;
 use App\Models\Deposit;
 use App\Models\Petty;
 use App\Models\PettyList;
@@ -150,6 +152,16 @@ class PettyController extends Controller
         // Change the status to "paid" for the request
         $request->status = 'paid';
         $request->save();
+
+        $users = User::whereIn('userType', [3, 4, 5])->get();
+        $name = User::find($request->user_id)->name;
+        $user_email = User::find($request->user_id)->email;
+        $email = $users->pluck('email')->toArray();
+        $reason = $request->name;
+        $id = $request->id;
+
+        Mail::to($email)->send(new SuccessPayment($name,$reason, $id));
+        Mail::to($user_email)->send(new EmployeeConfirmation($name,$reason, $id));
 
         return redirect()->back()->with('success', 'Payment successful, and the amount has been deducted.');
     }
