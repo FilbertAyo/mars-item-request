@@ -47,7 +47,6 @@
 
                     <main class="content">
 
-
                         <div class="mb-1" style="display: flex;justify-content: space-between;">
                             <h1 class="h3 mb-3"> Users <a class="badge bg-primary text-white text-sm ms-2">
                                     {{ Auth::user()->department }}
@@ -80,6 +79,9 @@
                                         <tbody>
                                             @if ($user->count() > 0)
                                                 @foreach ($user as $index => $user)
+                                                    @if ($user->userType == 0)
+                                                        @continue
+                                                    @endif
                                                     <tr>
                                                         <td>{{ $index + 1 }}</td>
                                                         <td class="d-none d-xl-table-cell">{{ $user->name }}</td>
@@ -88,16 +90,10 @@
                                                         <td>{{ $user->department }}</td>
                                                         <td>{{ $user->branch }}</td>
                                                         <td>
-                                                          
-
-                                                            <span
-                                                                class="badge {{ $user->status === 'active' ? 'bg-success' : 'bg-danger' }}">
+                                                            <span class="badge {{ $user->status === 'active' ? 'bg-success' : 'bg-danger' }}">
                                                                 {{ ucfirst($user->status) }}
                                                             </span>
-                                                            <a href="{{ route('admin.show', $user->id) }}"
-                                                                class="badge bg-primary text-white">view</a>
-
-
+                                                            <a href="{{ route('admin.show', $user->id) }}" class="badge bg-primary text-white">view</a>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -106,8 +102,8 @@
                                                     <td colspan="7" class="text-center">No user found</td>
                                                 </tr>
                                             @endif
-
                                         </tbody>
+
                                     </table>
                                 </div>
                             </div>

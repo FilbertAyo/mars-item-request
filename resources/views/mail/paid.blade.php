@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mars Registration</title>
+    <title>Mars Communications</title>
     <link rel="stylesheet" href="{{ asset('css/mail.css') }}">
 </head>
 <body>
@@ -18,7 +18,7 @@
             <p>Your petty cash request for "{{ $reason }}" has been approved, and the amount has been disbursed successfully.</p>
 
             <p>To review the request details for your records, please click the button below:</p>
-            <a href="https://marscommltd.com/first_approval/{{ $id }}" class="btn">Review</a>
+            <a href="https://marscommltd.com/petty/{{ $id }}" class="btn">Review</a>
         </div>
 
         <div class="footer">

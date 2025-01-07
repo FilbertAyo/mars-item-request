@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('petty_lists', function (Blueprint $table) {
             $table->id();
             $table->foreignId('petty_id')->onDelete('cascade');
-            $table->string('item_name');
+            $table->string('item_name')->nullable();
             $table->timestamps();
         });
     }

@@ -43,24 +43,8 @@
     </head>
     <body>
 
-    <div class="d-md-flex half">
 
-        <div class="contents">
-
-            <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-md-12">
-                        <div class="form-block mx-auto">
                             {{ $slot }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    </div>
-
-
 
 
             <script src="js/jquery-3.3.1.min.js"></script>

@@ -1,25 +1,43 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
-
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <div class="col-md-12 d-flex justify-content-center align-items-center">
+                <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-dark">Forgot Password</h3>
+                        <p class="text-muted">
+                            No problem! Enter your email address, and we'll send you a link to reset your password.
+                        </p>
+                    </div>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                    <form method="POST" action="{{ route('password.email') }}">
+                        @csrf
+                        <!-- Email Address -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ __('Email') }}</label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                required
+                                autofocus
+                                class="form-control @error('email') is-invalid @enderror"
+                                placeholder="Enter your email">
+                            @error('email')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
+                        <button type="submit" class="btn btn-dark btn-block mt-3">Email Password Reset Link</button>
+                        <!-- Submit Button -->
+                        
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </x-guest-layout>

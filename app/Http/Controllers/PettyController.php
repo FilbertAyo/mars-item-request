@@ -6,6 +6,7 @@ use App\Mail\EmployeeConfirmation;
 use App\Mail\FirstApprovalMail;
 use App\Mail\LastApprovalMail;
 use App\Mail\PettyRequestMail;
+use App\Mail\RejectMail;
 use App\Mail\SuccessPayment;
 use App\Models\Deposit;
 use App\Models\Petty;
@@ -177,6 +178,13 @@ class PettyController extends Controller
             $req->comment = $request->comment;
             $req->status = 'rejected';
             $req->save();
+
+            $name = User::find($req->user_id)->name;
+            $user_email = User::find($req->user_id)->email;
+            $reason = $req->name;
+            $id = $req->id;
+
+            Mail::to($user_email)->send(new RejectMail($name,$reason, $id));
 
             // Redirect back with success message
             return redirect()->back()->with('success', 'Feedback sent successfully.');
