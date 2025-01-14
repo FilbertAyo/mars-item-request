@@ -16,7 +16,7 @@
             <p>Hello,</p>
             <p>A new petty cash request has been submitted for: <strong>{{ $reason }}</strong>.</p>
             <p>To review the request and proceed with approval, please click the button below:</p>
-            <a href="https://marscommltd.com/first_approval/{{ $id }}" class="btn">View Request</a>
+            <a href="https://pettycash.marscommltd.com/first_approval/{{ $id }}" class="btn">View Request</a>
         </div>
 
         <div class="footer">

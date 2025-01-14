@@ -18,7 +18,7 @@
             <p>We regret to inform you that your petty cash request for "{{ $reason }}" has been rejected.</p>
 
             <p>To review the request details and understand the reason for rejection, please click the button below:</p>
-            <a href="https://marscommltd.com/petty/{{ $id }}" class="btn">View Details</a>
+            <a href="https://pettycash.marscommltd.com/petty/{{ $id }}" class="btn">View Details</a>
         </div>
 
         <div class="footer">

@@ -17,7 +17,7 @@
             <p>A new petty cash request for <strong>{{ $reason }}</strong> has successfully passed the first approval and is now awaiting your review.</p>
 
             <p>To review the details and provide your approval, please click the button below:</p>
-            <a href="https://marscommltd.com/first_approval/{{ $id }}" class="btn">View Request</a>
+            <a href="https://pettycash.marscommltd.com/first_approval/{{ $id }}" class="btn">View Request</a>
         </div>
 
         <div class="footer">

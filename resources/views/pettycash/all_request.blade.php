@@ -28,34 +28,34 @@
 
                         <ul class="sidebar-nav">
                             <li class="sidebar-header">Pages</li>
-                            @if(auth()->user()->userType == 3)
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{ route('general.index') }}">
-                                    <span class="align-middle">Item purchase</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
-                                    <span class="align-middle">Last Approval</span>
-                                </a>
-                            </li>
+                            @if (auth()->user()->userType == 3)
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link" href="{{ route('general.index') }}">
+                                        <span class="align-middle">Item purchase</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
+                                        <span class="align-middle">Last Approval</span>
+                                    </a>
+                                </li>
                             @endif
                             <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{ route('petty.index') }}">
                                     <span class="align-middle">Petty Cash</span>
                                 </a>
                             </li>
-                            @if(auth()->user()->userType == 5 || auth()->user()->userType == 6)
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
-                                    <span class="align-middle">Approval</span>
-                                </a>
-                            </li>
+                            @if (auth()->user()->userType == 5 || auth()->user()->userType == 6)
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link" href="{{ url('/petty_first_approval') }}">
+                                        <span class="align-middle">Approval</span>
+                                    </a>
+                                </li>
                             @endif
 
                         </ul>
 
-                         <div class="sidebar-cta-content text-center p-2 bg-danger">
+                        <div class="sidebar-cta-content text-center p-2 bg-danger">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit">
@@ -111,8 +111,7 @@
                                             <div class="position-relative tb_search" style="width: 30%;">
                                                 <input type="text" id="search_input_all"
                                                     onkeyup="FilterkeyWord_all_table()" placeholder="Search.."
-                                                    class="form-control  shadow-sm border-0"
-                                                    placeholder="Search any data">
+                                                    class="form-control  shadow-sm border-0" placeholder="Search any data">
                                             </div>
                                         </div>
 
@@ -138,8 +137,7 @@
                                                             <td>
 
                                                                 @if ($item->status == 'pending')
-                                                                    <span
-                                                                        class="badge bg-info">{{ $item->status }}</span>
+                                                                    <span class="badge bg-info">{{ $item->status }}</span>
                                                                 @elseif($item->status == 'processing')
                                                                     <span
                                                                         class="badge bg-warning">{{ $item->status }}</span>
@@ -201,11 +199,11 @@
                                         @csrf
 
                                         <div class="form-group" style="display: none;">
-                                            <input type="text" name="request_by"
-                                                value="{{ Auth::user()->name }}" class="form-control" readonly>
-                                            <input type="text" name="status" value="pending"
+                                            <input type="text" name="request_by" value="{{ Auth::user()->name }}"
                                                 class="form-control" readonly>
-                                                <input type="text" name="user_id" value="{{ Auth::user()->id }}"
+                                            <input type="text" name="status" value="pending" class="form-control"
+                                                readonly>
+                                            <input type="text" name="user_id" value="{{ Auth::user()->id }}"
                                                 class="form-control" readonly>
                                         </div>
 
@@ -213,16 +211,23 @@
                                         <!-- Petty Cash/Refund Selection -->
                                         <div class="form-group">
                                             <label for="request_type">Request Type:</label>
-                                            <select name="request_type" id="request_type" class="form-control"
-                                                required>
+                                            <select name="request_type" id="request_type" class="form-control" required>
                                                 <option value="Petty Cash">Petty Cash</option>
                                                 <option value="Reimbursement">Reimbursement</option>
                                             </select>
+
                                         </div>
                                         <!-- Name Field -->
                                         <div class="form-group mt-3">
                                             <label for="name">Request for</label>
-                                            <input type="text" name="name" class="form-control" required>
+                                            <select name="name" id="request_for" class="form-control" required>
+                                                <option value="Sales Delivery">Sales Delivery</option>
+                                                <option value="Transport">Transport</option>
+                                                <option value="Office Supplies">Office Supplies</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                            <input type="text" id="other_option" name="name" class="form-control mt-3" placeholder="Enter Other reason"
+                                                style="display: none;">
                                         </div>
 
                                         <!-- Amount Field -->
@@ -249,8 +254,8 @@
                                                         class="btn btn-danger btn-remove-item">Delete</button>
                                                 </div>
                                             </div>
-                                            <button type="button" id="add_item_btn"
-                                                class="btn btn-secondary mt-2">Add Item</button>
+                                            <button type="button" id="add_item_btn" class="btn btn-secondary mt-2">Add
+                                                Item</button>
                                         </div>
 
                                         <!-- Attach Receipt (Only visible for refund) -->
@@ -315,10 +320,25 @@
 
 
 
+                    <script>
+                        // Show or hide sections based on request type (petty cash or refund)
+                        document.getElementById('request_for').addEventListener('change', function() {
+                            var requestFor = this.value;
+
+                            if (requestFor === 'Others') {
+                                document.getElementById('other_option').style.display = 'block';
+                            }else{
+                                document.getElementById('other_option').style.display = 'none';
+                            }
+                        });
+                    </script>
+
+
+
                 </div>
             </div>
         </main>
     </div>
 
 
-   @endsection
+@endsection

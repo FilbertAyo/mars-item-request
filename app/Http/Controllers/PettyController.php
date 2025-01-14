@@ -154,7 +154,7 @@ class PettyController extends Controller
         $request->status = 'paid';
         $request->save();
 
-        $users = User::whereIn('userType', [3, 4, 5])->get();
+        $users = User::whereIn('userType', [3, 5, 6])->get();
         $name = User::find($request->user_id)->name;
         $user_email = User::find($request->user_id)->email;
         $email = $users->pluck('email')->toArray();

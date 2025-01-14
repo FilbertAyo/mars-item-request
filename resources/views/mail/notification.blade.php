@@ -21,7 +21,7 @@
             </ul>
 
             <p>You can now log in to your account using the link below:</p>
-            <a href="https://marscommltd.com" class="btn">Go to Dashboard</a>
+            <a href="https://pettycash.marscommltd.com" class="btn">Go to Dashboard</a>
 
             <p>Please keep this information secure and do not share it with anyone.</p>
         </div>

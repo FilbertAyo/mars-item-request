@@ -17,7 +17,7 @@
             <p>The petty cash request for <strong>{{ $reason }}</strong> has been fully approved and is now ready for disbursement.</p>
 
             <p>Please proceed with providing the funds to {{ $name }}. For your reference, click the button below to view the request details:</p>
-            <a href="https://marscommltd.com/final_approval/{{ $id }}" class="btn">View Request</a>
+            <a href="https://pettycash.marscommltd.com/final_approval/{{ $id }}" class="btn">View Request</a>
         </div>
 
         <div class="footer">
