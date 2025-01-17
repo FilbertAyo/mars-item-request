@@ -175,19 +175,27 @@
                                                                     @if ($item->status == 'pending')
                                                                         <span
                                                                             class="badge bg-info">{{ $item->status }}</span>
+                                                                            <a href="{{ route('first_approval.show', $item->id) }}"
+                                                                                class="badge bg-primary text-white">view</a>
                                                                     @elseif($item->status == 'processing')
                                                                         <span
                                                                             class="badge bg-warning">{{ $item->status }}</span>
+                                                                            <a href="{{ route('first_approval.show', $item->id) }}"
+                                                                                class="badge bg-primary text-white">view</a>
                                                                     @elseif($item->status == 'rejected')
                                                                         <span
                                                                             class="badge bg-danger">{{ $item->status }}</span>
+                                                                            <a href="{{ route('first_approval.show', $item->id) }}"
+                                                                                class="badge bg-primary text-white">view</a>
                                                                     @else
                                                                         <span
                                                                             class="badge bg-success">{{ $item->status }}</span>
+                                                                            <a href="{{ route('first_approval.show', $item->id) }}"
+                                                                                class="badge bg-primary text-white">view</a>
                                                                     @endif
-                                                                    <a href="{{ route('first_approval.show', $item->id) }}"
-                                                                        class="badge bg-primary text-white">view</a>
                                                                 </td>
+                                                                {{-- <td style="display: none;">
+                                                                    {{ $item->updated_at }}</td> --}}
                                                                 <td class="status" style="display: none;">
                                                                     {{ $item->status }}</td>
                                                             </tr>
@@ -230,22 +238,26 @@
 
 
     <script>
-        // JavaScript Function for Exporting "Paid" Rows Only
         document.getElementById("exportButton").addEventListener("click", function() {
             // Get date range values
-            const startDate = new Date(document.getElementById("startDate").value);
-            const endDate = new Date(document.getElementById("endDate").value);
+            const startDateInput = document.getElementById("startDate").value;
+            const endDateInput = document.getElementById("endDate").value;
+            const startDate = startDateInput ? new Date(startDateInput) : null;
+            const endDate = endDateInput ? new Date(endDateInput) : null;
 
             // Filter and Collect Paid Rows
             const tableRows = document.querySelectorAll("#myTable tr");
             let data = [];
             tableRows.forEach(row => {
                 const status = row.querySelector(".status")?.textContent.trim();
-                const dateRequested = new Date(row.querySelectorAll("td")[6]?.textContent.trim());
+                const dateRequestedText = row.querySelectorAll("td")[6]?.textContent.trim();
+                const dateRequested = dateRequestedText ? new Date(dateRequestedText) : null;
 
                 // Check if status is "paid" and within the selected date range
-                if (status === "paid" && (!isNaN(startDate) && !isNaN(endDate) && dateRequested >=
-                        startDate && dateRequested <= endDate)) {
+                if (
+                    status === "paid" &&
+                    (!startDate || !endDate || (dateRequested >= startDate && dateRequested <= endDate))
+                ) {
                     const rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
                     rowData.pop(); // Remove the "status" column data
                     data.push(rowData);
@@ -254,15 +266,18 @@
 
             // Convert Data to CSV Format
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "No.,Name,Needed for,Payment Type,Reason,Amount,Date Requested\n"; // Headers
+            csvContent += "No.,Name,Needed for,Payment Type,Reason,Amount,Date Requested,Status\n"; // Headers
             data.forEach(rowArray => {
                 let row = rowArray.join(",");
-                csvContent += row + "\r\n";
+                csvContent += row + "\r\n"; // Corrected line breaks
             });
 
             // Sum the "Amount" column and add to CSV
-            const totalAmount = data.reduce((sum, row) => sum + parseFloat(row[5].replace(/,/g, '')), 0);
-            csvContent += `,,,,,Total Amount,${totalAmount}\r\n`;
+            const totalAmount = data.reduce((sum, row) => {
+                const amount = parseFloat(row[5].replace(/,/g, '').replace(/[^0-9.]/g, '')); // Clean up amount field
+                return sum + (isNaN(amount) ? 0 : amount);
+            }, 0);
+            csvContent += `,,,,,Total Amount from ${startDateInput} to ${endDateInput},${totalAmount.toFixed(2)}\r\n`;
 
             // Download CSV File
             const encodedUri = encodeURI(csvContent);
@@ -274,6 +289,7 @@
             document.body.removeChild(link);
         });
     </script>
+
 
 
 @endsection
