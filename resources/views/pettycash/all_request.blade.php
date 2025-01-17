@@ -258,7 +258,6 @@
                                                 Item</button>
                                         </div>
 
-                                        <!-- Attach Receipt (Only visible for refund) -->
                                         <div class="form-group mt-3" id="attachment_section" style="display: none;">
                                             <label for="attachment">Attach Receipt (Optional):</label>
                                             <input type="file" name="attachment" class="form-control">

@@ -100,22 +100,21 @@
                                             Check
                                         </a>
                                     @endif
-                                @elseif(auth()->user()->userType == 3)
-                                    @if ($request->status == 'processing')
-                                        <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle"
-                                            role="button" data-bs-target="#staticBackdrop">
-                                            Check
-                                        </a>
-                                    @endif
-                                @elseif(auth()->user()->userType == 6)
-                                    @if ($request->status == 'approved')
-                                        <a class="btn btn-primary" href="javascript:void(0);"
-                                            onclick="confirmApproval('{{ route('c_approve.approve', ['id' => $request->id]) }}')">
-                                            Pay
-                                        </a>
-                                    @endif
+                                @elseif(auth()->user()->userType == 3 || auth()->user()->userType == 6)
+                                @if ($request->status == 'processing')
+                                    <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle"
+                                        role="button" data-bs-target="#staticBackdrop">
+                                        Check
+                                    </a>
                                 @endif
+                            @endif
 
+                            @if (auth()->user()->userType == 6 && $request->status == 'approved')
+                                <a class="btn btn-primary" href="javascript:void(0);"
+                                    onclick="confirmApproval('{{ route('c_approve.approve', ['id' => $request->id]) }}')">
+                                    Pay
+                                </a>
+                            @endif
 
                                 <script>
                                     function confirmApproval(url) {
