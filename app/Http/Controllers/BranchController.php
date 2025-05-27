@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
@@ -12,12 +13,9 @@ class BranchController extends Controller
      */
     public function index()
     {
-        // Get the authenticated user
-        $user = auth()->user();
+          $branches = Branch::withCount('departments')->get();
 
-        $item = Item::where('branch', $user->branch)->get();
-
-        return view('pages.stagetwo.branch', compact('item'));
+        return view('settings.branches.index', compact('branches'));
     }
 
     /**
@@ -31,52 +29,28 @@ class BranchController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function reject(Request $request, $id)
+    public function store(Request $request)
     {
-        // Find the item by ID
-        $item = Item::find($id);
+           // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255', // Add validation rules for the fields you need
 
-        if ($item) {
-            // Update the status to 'processing'
-            $item->branch_comment = $request->branch_comment;
-            $item->status = 'rejected';
-            $item->save();
+        ]);
 
-            // Redirect back with success message
-            return redirect()->back()->with('success', 'Feedback sent successfully.');
-        }
+        Branch::create($validatedData);
 
-        // If item is not found, redirect with error
-        return redirect()->back()->with('error', 'Item not found.');
+        return redirect()->back()->with('success', 'New branch added successfully');
     }
-
-    public function approve($id)
-    {
-        // Find the item by ID
-        $item = Item::find($id);
-
-        if ($item) {
-            // Update the status to 'processing'
-            $item->status = 'processing';
-            $item->save();
-
-            // Redirect back with success message
-            return redirect()->back()->with('success', 'Approval sent successfully.');
-        }
-
-        // If item is not found, redirect with error
-        return redirect()->back()->with('error', 'Item not found.');
-    }
-
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $item = Item::findOrFail($id);
+        $branch = Branch::findOrFail($id);
+        $departments = $branch->departments; // Assuming you have a relationship defined in the Branch model
 
-        return view('pages.stagetwo.b_details', compact('item'));
+        return view('settings.branches.view', compact('branch','departments'));
     }
 
     /**
@@ -100,6 +74,16 @@ class BranchController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+            // Find the branch by ID
+        $branch = Branch::find($id);
+
+        if ($branch) {
+            $branch->delete();
+
+            return redirect()->back()->with('success', 'Branch deleted successfully');
+        } else {
+            // Redirect back with error message if branch not found
+            return redirect()->back()->with('error', 'Branch not found');
+        }
     }
 }

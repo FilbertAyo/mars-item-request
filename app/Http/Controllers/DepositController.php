@@ -18,7 +18,7 @@ class DepositController extends Controller
         $latestDeposit = Deposit::latest()->first();
         $remaining = $latestDeposit ? $latestDeposit->remaining : 0;
 
-        return view("pettycash.cashier", compact("deposits", "remaining"));
+        return view("pettycash.finance.cashier", compact("deposits", "remaining"));
     }
 
 

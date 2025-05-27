@@ -10,10 +10,15 @@ class Petty extends Model
     use HasFactory;
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'comment', 'amount', 'reason', 'request_type', 'attachment', 'request_by', 'status',];
+    protected $fillable = ['user_id', 'request_for', 'comment', 'amount', 'reason', 'request_type', 'attachment', 'status',];
 
-    public function pettyLists()
+    public function user()
     {
-        return $this->hasMany(PettyList::class, 'petty_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function lists()
+    {
+        return $this->hasMany(PettyList::class, 'petty_id');
     }
 }

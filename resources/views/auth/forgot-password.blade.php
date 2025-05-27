@@ -5,11 +5,11 @@
     <div class="container-fluid vh-100">
         <div class="row h-100">
             <div class="col-md-12 d-flex justify-content-center align-items-center">
-                <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+                <div class="card p-5 w-100 " style="max-width: 500px;">
                     <div class="text-center mb-4">
                         <h3 class="fw-bold text-dark">Forgot Password</h3>
                         <p class="text-muted">
-                            No problem! Enter your email address, and we'll send you a link to reset your password.
+                           Enter your email address, and we'll send you a link to reset your password.
                         </p>
                     </div>
 
@@ -32,12 +32,15 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-dark btn-block mt-3">Email Password Reset Link</button>
+                         <button type="submit" class="btn btn-primary mt-3 w-100">SEND EMAIL</button>
                         <!-- Submit Button -->
-                        
+
                     </form>
                 </div>
             </div>
+
+
+
         </div>
     </div>
 </x-guest-layout>

@@ -17,7 +17,7 @@ class GeneralController extends Controller
             ->where('branch_comment', 'no comment')
             ->get();
 
-        return view('pages.stagethree.general', compact('item'));
+        return view('item-request.confirm.index', compact('item'));
     }
 
 
@@ -48,7 +48,7 @@ class GeneralController extends Controller
         $totalAmount = $query->sum('amount');
 
         // Pass the filtered items and the total amount to the view
-        return view('pages.stagethree.record', compact('item', 'totalAmount'));
+        return view('item-request.confirm.record', compact('item', 'totalAmount'));
     }
 
 

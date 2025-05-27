@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\NotificationMail;
 use App\Models\Agenda;
-use App\Models\Detail;
+use App\Models\Branch;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +22,9 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $branches = Detail::all();
         $user = User::all();
-
-        return view('dashboard', compact('user', 'branches'));
+    
+        return view('settings.users.index', compact('user'));
     }
 
     /**
@@ -32,7 +32,10 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        $branches = Branch::all();
+        $departments = Department::all();
+
+        return view('settings.users.create',compact('branches','departments'));
     }
 
     /**
@@ -43,7 +46,8 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-
+            'phone' => ['required', 'regex:/^0[76][0-9]{8}$/'],
+            'userType' => ['required', 'string'],
         ]);
 
         $randomNo = Str::random(6);
@@ -53,9 +57,9 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($randomNo),
             'userType' => $request->userType,
-            'department' => $request->department,
+            'department_id' => $request->department_id,
             'phone' => $request->phone,
-            'branch' => $request->branch,
+            'branch_id' => $request->branch_id,
             'status' => 'active',
             'file' => null, //Default value if no file is uploaded
         ]);
@@ -66,7 +70,7 @@ class AdminController extends Controller
         $email = $user->email;
         $password = $randomNo;
 
-        Mail::to($email)->send(new NotificationMail($name, $email, $password));
+        // Mail::to($email)->send(new NotificationMail($name, $email, $password));
 
         return redirect()->back()->with('success', 'New user registered successfully');
     }
@@ -78,7 +82,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return view('details', compact('user'));
+        return view('settings.users.view', compact('user'));
     }
 
     /**
@@ -129,38 +133,5 @@ public function activate(string $id)
     }
 }
 
-    public function branch_list()
-    {
-        $branch = Detail::all();
 
-        return view('pages.admin.branch_list', compact('branch'));
-    }
-
-    public function branch_store(Request $request)
-    {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255', // Add validation rules for the fields you need
-
-        ]);
-
-        Detail::create($validatedData);
-
-        return redirect()->back()->with('success', 'New branch added successfully');
-    }
-
-    public function destroy_branch(string $id)
-    {
-        // Find the branch by ID
-        $branch = Detail::find($id);
-
-        if ($branch) {
-            $branch->delete();
-
-            return redirect()->back()->with('success', 'Branch deleted successfully');
-        } else {
-            // Redirect back with error message if branch not found
-            return redirect()->back()->with('error', 'Branch not found');
-        }
-    }
 }

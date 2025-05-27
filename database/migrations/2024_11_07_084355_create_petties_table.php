@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('petties', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
-            $table->string('name');
+            $table->unsignedBigInteger('user_id');
+            $table->string('request_for')->nullable();
             $table->decimal('amount', 10, 2);
             $table->text('reason');
-            $table->string('request_by');
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->text('comment')->nullable();
             $table->enum('request_type', ['Petty Cash', 'Reimbursement']);
-            $table->string('attachment')->nullable(); // Path to the receipt file
+            $table->string('attachment')->nullable(); 
             $table->timestamps();
         });
     }

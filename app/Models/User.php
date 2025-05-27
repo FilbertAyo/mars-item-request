@@ -23,18 +23,28 @@ class User extends Authenticatable
         'email',
         'password',
         'file',
-        'department',
-        'branch',
-       
+        'department_id',
+        'branch_id',
         'userType',
         'phone',
         'status'
     ];
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+
     public function items()
-{
-    return $this->hasMany(Item::class);
-}
+    {
+        return $this->hasMany(Item::class);
+    }
 
 
     /**

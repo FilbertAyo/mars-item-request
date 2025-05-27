@@ -3,58 +3,68 @@
 
     <div class="container-fluid vh-100">
         <div class="row h-100">
-            <!-- Login Form Wrapper -->
-            <div class="col-12 d-flex justify-content-center align-items-center">
+            <!-- Left Image: visible only on large screens -->
+            <div class="d-none d-lg-block col-lg-6 p-0">
+                <div class="h-100 w-100"
+                    style="background: url('{{ asset('image/pettpic2.jpg') }}') center center / cover no-repeat;"></div>
+            </div>
+
+            <!-- Right Form: always visible, centered on smaller screens -->
+            <div class="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center">
 
 
-                <!-- Form Card -->
-                <div class="bg-light p-5 rounded shadow col-12 col-sm-12 col-md-8 col-lg-6 col-xl-5">
-                    <div class="mb-3" style="height: 80px;">
-                        <img src="{{ asset('image/marslogo.png') }}" alt="Mars Logo" style="height: 100%; width: auto; object-fit: contain;">
-                    </div>
-
-                    <form method="POST" action="{{ route('login') }}">
+              <div class="card text-center p-5 w-100" style="max-width: 500px;">
+                <div class="brand-logo mb-2">
+                  <img src="{{ asset('image/marslogo.png') }}" style="height: 50px;">
+                </div>
+                <h5 class="font-weight-bold">Sign in to continue.</h5>
+                  <form method="POST" action="{{ route('login') }}" class="pt-3">
                         @csrf
-
-                        <!-- Email Address -->
-                        <div class="form-group">
-                            <label for="email">{{ __('Email') }}</label>
-                            <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
+                  <div class="form-group">
+                            <input id="email" class="form-control" type="email" name="email" placeholder="Username"
+                                value="{{ old('email') }}" required autofocus autocomplete="username">
                             @error('email')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
-                        <!-- Password -->
-                        <div class="form-group mt-4">
-                            <label for="password">{{ __('Password') }}</label>
-                            <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input id="password" class="form-control" type="password" placeholder="********" name="password" required
+                                    autocomplete="current-password">
+
+                            </div>
                             @error('password')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
-                        <!-- Remember Me -->
-                        <div class="form-group mt-4 form-check">
-                            <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
-                            <label for="remember_me" class="form-check-label">{{ __('Remember me') }}</label>
-                        </div>
-
-                        <!-- Login Button -->
-                        <button type="submit" class="btn btn-dark btn-block mt-3">Login</button>
-
-                        <!-- Forgot Password -->
-                        <div class="mt-4 text-center">
-                            @if (Route::has('password.request'))
-                                <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
+                  <div class=" form group m-2">
+                    <button type="submit" class="btn btn-primary mt-3 w-100">SIGN IN</button>
+                  </div>
+                  <div class="my-2 d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                      <label class="form-check-label text-muted">
+                        <input type="checkbox" class="form-check-input"> Keep me signed in </label>
+                    </div>
+                    @if (Route::has('password.request'))
+                                <a class="text-sm text-danger hover:text-gray-900"
+                                    href="{{ route('password.request') }}">
                                     {{ __('Forgot your password?') }}
                                 </a>
                             @endif
-                        </div>
-                    </form>
-                </div>
-                <!-- End Form Card -->
+                  </div>
+
+                  <div class="text-center mt-4 font-weight-light"> Don't have an account? <a href="https://wa.me/255741400900" target="_blank" class="text-primary">Contact Admin</a>
+                  </div>
+                </form>
+              </div>
+
             </div>
+
+            </div>
+
         </div>
-    </div>
+
+
 </x-guest-layout>

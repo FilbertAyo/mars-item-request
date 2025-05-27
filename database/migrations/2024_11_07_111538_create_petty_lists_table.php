@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('petty_lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('petty_id')->onDelete('cascade');
+            $table->foreignId('petty_id')->constrained()->onDelete('cascade');
             $table->string('item_name')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->decimal('price', 15, 2)->nullable();
             $table->timestamps();
         });
     }

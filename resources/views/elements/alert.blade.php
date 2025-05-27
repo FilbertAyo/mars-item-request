@@ -1,47 +1,64 @@
-
-
-
 @if (session('success'))
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
+        document.addEventListener("DOMContentLoaded", function() {
+            $.notify({
+                icon: 'bi-check-circle-fill',
+                title: 'Done!',
+                message: '{{ session('success') }}',
+            }, {
+                type: 'success',
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                },
+                time: 1000,
             });
         });
     </script>
 @elseif (session('error'))
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "{{ session('error') }}",
-                showConfirmButton: false,
-                timer: 2000
+        document.addEventListener("DOMContentLoaded", function() {
+            $.notify({
+                icon: 'bi-exclamation-circle-fill',
+                title: 'Error!',
+                message: "{{ session('error') }}",
+            }, {
+                type: 'danger',
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                },
+                time: 2000,
             });
         });
     </script>
 @endif
 
-
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @foreach ($errors->all() as $error)
+                $.notify({
+                    icon: 'bi-exclamation-circle-fill',
+                    title: 'Validation Error',
+                    message: "{{ $error }}",
+                }, {
+                    type: 'danger',
+                    placement: {
+                        from: "bottom",
+                        align: "right"
+                    },
+                    time: 2000,
+                });
+            @endforeach
+        });
+    </script>
+@endif
 
 
 <script>
-    // Show the spinner before the page is refreshed
-    window.addEventListener('beforeunload', function() {
-        // Display the spinner overlay
-        document.getElementById('spinner-overlay').style.display = 'flex';
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.body.addEventListener("click", function (event) {
+    document.addEventListener("DOMContentLoaded", function() {
+        document.body.addEventListener("click", function(event) {
             if (event.target.matches(".permission-alert")) {
                 Swal.fire({
                     icon: "error",
@@ -91,4 +108,3 @@
         return false; // Prevent default form submission behavior
     }
 </script>
-
