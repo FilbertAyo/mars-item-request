@@ -45,7 +45,6 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'userType' => $request->userType,
             'department'=>$request->department,
             'phone'=>$request->phone,
             'branch'=>'Samora Branch - Main',

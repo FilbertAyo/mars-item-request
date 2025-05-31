@@ -86,4 +86,6 @@ class BranchController extends Controller
             return redirect()->back()->with('error', 'Branch not found');
         }
     }
+
+    
 }

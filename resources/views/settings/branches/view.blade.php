@@ -33,12 +33,14 @@
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Departments List</h4>
+                        @can('update other settings')
                     <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <span class="btn-label">
                           <i class="bi bi-plus-lg"></i>
                         </span>
                         New Department
                     </button>
+                    @endcan
                 </div>
 
                 <div class="card-body">
@@ -111,7 +113,7 @@
                             <input type="text" class="form-control" id="topic" name="name" required>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Save</button>
+                         <x-primary-button label="Add" />
                     </form>
                 </div>
 

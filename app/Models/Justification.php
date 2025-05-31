@@ -9,6 +9,13 @@ class Justification extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'justification',
+        'name',
+        'status'
     ];
+
+ public function items()
+{
+    return $this->hasMany(Item::class);
+}
+
 }

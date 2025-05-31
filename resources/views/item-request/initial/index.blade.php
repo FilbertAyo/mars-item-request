@@ -1,8 +1,6 @@
 <x-app-layout>
-
-
     <div class="page-header">
-        <h3 class="fw-bold mb-3">Requests</h3>
+        <h3 class="fw-bold mb-3">Item Requests</h3>
         <ul class="breadcrumbs mb-3">
             <li class="nav-home">
                 <a href="{{ route('dashboard') }}">
@@ -10,17 +8,12 @@
                 </a>
             </li>
             <li class="separator">
-               <i class="bi bi-arrow-right"></i>
+                <i class="bi bi-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Tables</a>
+                <a href="#">Item Request</a>
             </li>
-            <li class="separator">
-               <i class="bi bi-arrow-right"></i>
-            </li>
-            <li class="nav-item">
-                <a href="#">Datatables</a>
-            </li>
+           
         </ul>
     </div>
 
@@ -31,12 +24,12 @@
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Requests List</h4>
-                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <a href="{{ route('item-request.create') }}" class="btn btn-primary">
                         <span class="btn-label">
-                          <i class="bi bi-plus-lg"></i>
+                            <i class="bi bi-plus-lg"></i>
                         </span>
                         New Request
-                    </button>
+                    </a>
                 </div>
 
                 <div class="card-body">
@@ -44,52 +37,55 @@
                         <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
+
+                                    <th>No.</th>
                                     <th>Name of item</th>
-                                    {{-- <th>Category</th> --}}
                                     <th>Quantity</th>
-                                    <th>Expected price</th>
                                     <th>Total amount</th>
+                                    <th>Type</th>
+                                    <th>Requested By</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Name of item</th>
-                                    {{-- <th>Category</th> --}}
                                     <th>Quantity</th>
-                                    <th>Expected price</th>
                                     <th>Total amount</th>
+                                    <th>Type</th>
+                                    <th>Requested By</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </tfoot>
                             <tbody>
 
                                 @foreach ($item as $index => $item)
                                     <tr>
-                                        {{-- <td>{{ $index + 1 }}</td> --}}
-                                        <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                        <td class="d-none d-xl-table-cell">{{ $item->quantity }}</td>
-                                        <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
-                                        <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->amount }}</td>
+                                        <td>{{ $item->p_type }}</td>
+                                        <td>{{ $item->user->name }}</td>
                                         <td>
-                                            {{-- <form action="{{ route('visitor.destroy', $visitor->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this visitor?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class="bi bi-trash"></i> Delete
-                                                            </button>
-                                                    </form> --}}
                                             @if ($item->status == 'pending')
-                                                <span class="badge bg-info">{{ $item->status }}</span>
+                                                <span class="badge bg-danger">{{ $item->status }}</span>
                                             @elseif($item->status == 'processing')
                                                 <span class="badge bg-warning">{{ $item->status }}</span>
                                             @elseif($item->status == 'rejected')
-                                                <span class="badge bg-danger">{{ $item->status }}</span>
+                                                <span class="badge bg-secondary">{{ $item->status }}</span>
                                             @else
                                                 <span class="badge bg-success">{{ $item->status }}</span>
                                             @endif
-                                            <a href="{{ route('department.show', $item->id) }}"
-                                                class="badge bg-primary text-white">view</a>
+                                        </td>
+                                        <td>
+
+                                            <a href="{{ route('item-request.show', $item->id) }}"
+                                                class="btn btn-sm btn-secondary text-white"><i
+                                                    class="bi bi-eye"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -103,247 +99,6 @@
 
     </div>
 
-
-
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New Request</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('department.store') }}">
-                        @csrf
-
-                        <input type="text" class="form-control" id="itemName" name="branch"
-                            value="{{ Auth::user()->branch }} " style="display: none">
-
-                        <div class="mb-3">
-                            <label for="itemName" class="form-label">Item name</label>
-                            <input type="text" class="form-control" id="itemName" name="name" required>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" required>
-                            </div>
-                            <div class="col-6">
-                                <label for="price" class="form-label">Expected price at each</label>
-                                <input type="number" step="0.01" class="form-control" id="price" name="price"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="justification" class="form-label">Justification</label>
-                            <div class="input-group">
-                                <!-- Justification Dropdown -->
-                                <select class="form-select" id="justification" name="justification">
-                                    <option value="" selected>Select justification</option>
-                                    @foreach ($justification as $just)
-                                        <option value="{{ $just->id }}">{{ $just->justification }}</option>
-                                    @endforeach
-                                    <option value="Other">Other...</option>
-                                </select>
-
-                                <!-- Button to open the modal, placed next to the select dropdown -->
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                                    data-bs-target="#addJustificationModal">
-                                    New Justification
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Reason</label>
-                            <textarea class="form-control" id="description" name="reason" rows="4" required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </form>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addJustificationModal" tabindex="-1" aria-labelledby="addJustificationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addJustificationModalLabel">Add Justification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ url('/justify') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="newJustification" class="form-label">Justification</label>
-                            <input type="text" class="form-control" id="newJustification" name="justification"
-                                required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add Justification</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        getPagination('#table-id');
-        $('#maxRows').trigger('change');
-
-        function getPagination(table) {
-
-            $('#maxRows').on('change', function() {
-                $('.pagination').html(''); // reset pagination div
-                var trnum = 0; // reset tr counter
-                var maxRows = parseInt($(this).val()); // get Max Rows from select option
-
-                var totalRows = $(table + ' tbody tr').length; // numbers of rows
-                $(table + ' tr:gt(0)').each(function() { // each TR in  table and not the header
-                    trnum++; // Start Counter
-                    if (trnum > maxRows) { // if tr number gt maxRows
-
-                        $(this).hide(); // fade it out
-                    }
-                    if (trnum <= maxRows) {
-                        $(this).show();
-                    } // else fade in Important in case if it ..
-                }); //  was fade out to fade it in
-                if (totalRows > maxRows) { // if tr total rows gt max rows option
-                    var pagenum = Math.ceil(totalRows / maxRows); // ceil total(rows/maxrows) to get ..
-                    //	numbers of pages
-                    for (var i = 1; i <= pagenum;) {
-                        $('.pagination').append('<li data-page="' + i + '">\
-            <div class="card text-center" style="width: 70px; margin: 2px;">\
-              <div class="card-body p-0">\
-                <span class="page-link">' + i++ + '</span>\
-              </div>\
-            </div>\
-          </li>').show();
-                    }
-                    // end for i
-
-
-                } // end if row count > max rows
-                $('.pagination li:first-child').addClass('active'); // add active class to the first li
-
-                //SHOWING ROWS NUMBER OUT OF TOTAL DEFAULT
-                showig_rows_count(maxRows, 1, totalRows);
-                //SHOWING ROWS NUMBER OUT OF TOTAL DEFAULT
-
-                $('.pagination li').on('click', function(e) { // on click each page
-                    e.preventDefault();
-                    var pageNum = $(this).attr('data-page'); // get it's number
-                    var trIndex = 0; // reset tr counter
-                    $('.pagination li').removeClass('active'); // remove active class from all li
-                    $(this).addClass('active'); // add active class to the clicked
-
-                    //SHOWING ROWS NUMBER OUT OF TOTAL
-                    showig_rows_count(maxRows, pageNum, totalRows);
-                    //SHOWING ROWS NUMBER OUT OF TOTAL
-
-                    $(table + ' tr:gt(0)').each(function() { // each tr in table not the header
-                        trIndex++; // tr index counter
-                        // if tr index gt maxRows*pageNum or lt maxRows*pageNum-maxRows fade if out
-                        if (trIndex > (maxRows * pageNum) || trIndex <= ((maxRows * pageNum) -
-                                maxRows)) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        } //else fade in
-                    }); // end of for each tr in table
-                }); // end of on click pagination list
-            });
-        }
-
-        // SI SETTING
-        $(function() {
-            // Just to append id number for each row
-            default_index();
-        });
-
-        //ROWS SHOWING FUNCTION
-        function showig_rows_count(maxRows, pageNum, totalRows) {
-            //Default rows showing
-            var end_index = maxRows * pageNum;
-            var start_index = ((maxRows * pageNum) - maxRows) + parseFloat(1);
-            var string = 'Showing ' + start_index + ' to ' + end_index + ' of ' + totalRows + ' entries';
-            $('.rows_count').html(string);
-        }
-
-        // CREATING INDEX
-        function default_index() {
-            $('table tr:eq(0)').prepend('<th> ID </th>')
-
-            var id = 0;
-
-            $('table tr:gt(0)').each(function() {
-                id++
-                $(this).prepend('<td>' + id + '</td>');
-            });
-        }
-
-        // All Table search script
-        function FilterkeyWord_all_table() {
-
-            // Count td if you want to search on all table instead of specific column
-
-            var count = $('.table').children('tbody').children('tr:first-child').children('td').length;
-
-            // Declare variables
-            var input, filter, table, tr, td, i;
-            input = document.getElementById("search_input_all");
-            var input_value = document.getElementById("search_input_all").value;
-            filter = input.value.toLowerCase();
-            if (input_value != '') {
-                table = document.getElementById("table-id");
-                tr = table.getElementsByTagName("tr");
-
-                // Loop through all table rows, and hide those who don't match the search query
-                for (i = 1; i < tr.length; i++) {
-
-                    var flag = 0;
-
-                    for (j = 0; j < count; j++) {
-                        td = tr[i].getElementsByTagName("td")[j];
-                        if (td) {
-
-                            var td_text = td.innerHTML;
-                            if (td.innerHTML.toLowerCase().indexOf(filter) > -1) {
-                                //var td_text = td.innerHTML;
-                                //td.innerHTML = 'shaban';
-                                flag = 1;
-                            } else {
-                                //DO NOTHING
-                            }
-                        }
-                    }
-                    if (flag == 1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            } else {
-                //RESET TABLE
-                $('#maxRows').trigger('change');
-            }
-        }
-    </script>
-
-
-    <script src="{{ asset('js/app.js') }}"></script>
 
 
 </x-app-layout>

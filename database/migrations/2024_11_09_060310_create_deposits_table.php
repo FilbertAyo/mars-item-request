@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('deposits', function (Blueprint $table) {
             $table->id();
+              $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('department_id')->nullable();
             $table->string('deposit');
+            $table->text('description')->nullable();
             $table->string('remaining');
             $table->timestamps();
         });

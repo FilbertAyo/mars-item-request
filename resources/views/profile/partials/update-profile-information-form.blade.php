@@ -1,10 +1,4 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
-        </h2>
-    </header>
-
 
 
      <div class="col-md-12 mt-3">
@@ -27,23 +21,20 @@
                     <div class="user-profile text-center">
                       <div class="name">{{ $user->name }}</div>
                       <div class="job">{{ $user->email }} | {{ $user->phone }}</div>
-                      <div class="desc">Admin</div>
+                      {{-- <div class="desc">Admin</div> --}}
                     </div>
                   </div>
                   <div class="card-footer">
                     <div class="row user-stats text-center">
                       <div class="col">
-                        <div class="number">125</div>
-                        <div class="title">Post</div>
+                        <div class="number">{{ $user->branch->name }}</div>
+                        <div class="title">Branch</div>
                       </div>
                       <div class="col">
-                        <div class="number">25K</div>
-                        <div class="title">Followers</div>
+                        <div class="number">{{ $user->department->name }}</div>
+                        <div class="title">Department</div>
                       </div>
-                      <div class="col">
-                        <div class="number">134</div>
-                        <div class="title">Following</div>
-                      </div>
+
                     </div>
                   </div>
                 </div>

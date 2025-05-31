@@ -8,17 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 class Petty extends Model
 {
     use HasFactory;
-    use HasFactory;
 
-    protected $fillable = ['user_id', 'request_for', 'comment', 'amount', 'reason', 'request_type', 'attachment', 'status',];
+    protected $fillable = ['user_id', 'department_id','code','request_for', 'comment', 'amount', 'reason', 'request_type', 'attachment', 'status',];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+     public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
     public function lists()
     {
         return $this->hasMany(PettyList::class, 'petty_id');
     }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'petty_id');
+    }
+    public function approvalLogs()
+{
+    return $this->hasMany(ApprovalLog::class);
+}
+
 }

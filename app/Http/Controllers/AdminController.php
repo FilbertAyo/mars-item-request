@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
@@ -23,7 +24,7 @@ class AdminController extends Controller
     public function index()
     {
         $user = User::all();
-    
+
         return view('settings.users.index', compact('user'));
     }
 
@@ -35,7 +36,7 @@ class AdminController extends Controller
         $branches = Branch::all();
         $departments = Department::all();
 
-        return view('settings.users.create',compact('branches','departments'));
+        return view('settings.users.create', compact('branches', 'departments'));
     }
 
     /**
@@ -47,7 +48,8 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'phone' => ['required', 'regex:/^0[76][0-9]{8}$/'],
-            'userType' => ['required', 'string'],
+            'branch_id' => ['required', 'string', 'max:255'],
+            'department_id' => ['required', 'string', 'max:255'],
         ]);
 
         $randomNo = Str::random(6);
@@ -56,7 +58,6 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($randomNo),
-            'userType' => $request->userType,
             'department_id' => $request->department_id,
             'phone' => $request->phone,
             'branch_id' => $request->branch_id,
@@ -81,57 +82,58 @@ class AdminController extends Controller
     public function show(string $id)
     {
         $user = User::findOrFail($id);
+        $permissions = Permission::all();
 
-        return view('settings.users.view', compact('user'));
+        return view('settings.users.view', compact('user', 'permissions'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function assignPermissions(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        // Get submitted permissions or empty array if none checked
+        $submittedPermissions = $request->input('permissions', []);
+
+        // Sync the user's permissions (this will add and remove as needed)
+        $user->syncPermissions($submittedPermissions);
+
+        return redirect()->back()->with('success', 'Permissions updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
     public function destroy(string $id)
-{
-    $user = User::find($id);
+    {
+        $user = User::find($id);
 
-    if ($user) {
-        // Update the user's status to 'inactive'
-        $user->status = 'inactive';
-        $user->save();
+        if ($user) {
+            // Update the user's status to 'inactive'
+            $user->status = 'inactive';
+            $user->save();
 
-        return redirect()->route('admin.index')->with('success', 'User status updated to inactive successfully');
-    } else {
-        // Redirect back with error message if user not found
-        return redirect()->route('admin.index')->with('error', 'User not found');
+            return redirect()->back()->with('success', 'User status updated to inactive successfully');
+        } else {
+            // Redirect back with error message if user not found
+            return redirect()->back()->with('error', 'User not found');
+        }
     }
-}
 
-public function activate(string $id)
-{
-    $user = User::find($id);
+    public function activate(string $id)
+    {
+        $user = User::find($id);
 
-    if ($user) {
-        // Update the user's status to 'inactive'
-        $user->status = 'active';
-        $user->save();
+        if ($user) {
+            // Update the user's status to 'inactive'
+            $user->status = 'active';
+            $user->save();
 
-        return redirect()->route('admin.index')->with('success', 'User status updated to active successfully');
-    } else {
-        // Redirect back with error message if user not found
-        return redirect()->route('admin.index')->with('error', 'User not found');
+            return redirect()->back()->with('success', 'User status updated to active successfully');
+        } else {
+            // Redirect back with error message if user not found
+            return redirect()->back()->with('error', 'User not found');
+        }
     }
-}
-
-
 }

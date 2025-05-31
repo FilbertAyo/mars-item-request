@@ -33,19 +33,6 @@
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
-        <div class="mt-4"  style="display: none;">
-            <x-input-label for="userType" :value="__('userType')" />
-            <x-text-input class="block mt-1 w-full" type="text" name="userType" value="0" />
-        </div>
-
-        <div class="mt-4"  style="display: none;">
-            <x-input-label for="userType" :value="__('userType')" />
-            <x-text-input class="block mt-1 w-full" type="text" name="department" value="System admin" />
-        </div>
-
-
-
-
         <!-- Password -->
         <div class="mt-4">
 

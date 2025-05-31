@@ -1,9 +1,9 @@
 <x-app-layout>
 
-<div class="page-header">
+    <div class="page-header">
         <h3 class="fw-bold mb-3">Users</h3>
         <ul class="breadcrumbs mb-3">
-             <li class="nav-home">
+            <li class="nav-home">
                 <a href="{{ route('dashboard') }}">
                     <i class="bi bi-house-fill"></i>
                 </a>
@@ -25,12 +25,16 @@
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Users List</h4>
+
+                    @can('users management settings')
                     <a href="{{ route('admin.create') }}" class="btn btn-dark">
                         <span class="btn-label">
-                          <i class="bi bi-plus-lg"></i>
+                            <i class="bi bi-plus-lg"></i>
                         </span>
                         New User
                     </a>
+                    @endcan
+                    
                 </div>
 
                 <div class="card-body">
@@ -38,7 +42,7 @@
                         <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
-                                     <th>No</th>
+                                    <th>No</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone number</th>
@@ -65,27 +69,26 @@
                             <tbody>
 
                                 @foreach ($user as $index => $user)
-                                    @if ($user->userType == 0)
-                                        @continue
-                                    @endif
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->phone }}</td>
-                                        <td>{{ $user->department->name }}</td>
-                                        <td>{{ $user->branch->name }}</td>
-                                        <td>{{ $user->userType }}</td>
+                                        <td>{{ $user->branch->name ?? 'N/A' }}</td>
+                                        <td>{{ $user->department->name ?? 'N/A' }}</td>
+                                        <td>Coming</td>
                                         <td> <span
                                                 class="badge {{ $user->status === 'active' ? 'bg-success' : 'bg-danger' }}">
                                                 {{ ucfirst($user->status) }}
                                             </span></td>
                                         <td>
-                                           
-                                            <a href="{{ route('admin.show', $user->id) }}" class="btn-sm btn-black">
-                                                <i class="fa fa-eye"></i>
+
+                                             <a href="{{ route('admin.show', $user->id) }}" class="btn btn-sm btn-secondary">
+                                                <i class="bi bi-eye-fill"></i>
                                             </a>
+
                                         </td>
+
                                     </tr>
                                 @endforeach
 

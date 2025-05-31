@@ -12,11 +12,18 @@ class DepositController extends Controller
      */
     public function index()
     {
-        $deposits = Deposit::all();
+        $deposits = Deposit::orderBy('id', 'desc')->where(
+            'department_id',
+            auth()->user()->department_id
+        )->get();
 
         // Get the latest deposit entry to access the 'remaining' value
-        $latestDeposit = Deposit::latest()->first();
+        $latestDeposit = Deposit::orderBy('id', 'desc')->where(
+            'department_id',
+            auth()->user()->department_id
+        )->first();
         $remaining = $latestDeposit ? $latestDeposit->remaining : 0;
+
 
         return view("pettycash.finance.cashier", compact("deposits", "remaining"));
     }
@@ -33,7 +40,12 @@ class DepositController extends Controller
 
     public function store(Request $request)
     {
-        // Get the last deposit entry to calculate the updated remaining balance
+        $request->validate([
+            'deposit' => ['required', 'numeric', 'min:100'],
+            'user_id' => 'required|string',
+            'department_id' => 'required|string',
+        ]);
+
         $lastDeposit = Deposit::latest()->first();
 
         // Calculate the new remaining balance by adding the new deposit to the previous remaining balance
@@ -42,10 +54,14 @@ class DepositController extends Controller
         // Save the new deposit and remaining balance
         $newRequest = Deposit::create([
             'deposit' => $request->deposit,
+            'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
+            'created_at' => $request->created_at,
+            'description' => $request->description,
             'remaining' => $newRemaining,
         ]);
 
-        return redirect()->back()->with('success', 'Deposit added successfully with updated balance.');
+        return redirect()->back()->with('success', 'Fund deposited successfully with updated balance.');
     }
 
 

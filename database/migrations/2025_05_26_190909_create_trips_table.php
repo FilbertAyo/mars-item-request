@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('petty_id');
-             $table->string('from_place');
+             $table->unsignedBigInteger('from_place');
             $table->timestamps();
         });
     }

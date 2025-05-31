@@ -19,19 +19,6 @@
     </div>
 
 
-    @if (auth()->user()->userType == 6)
-        <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" href="{{ url('/petty_first_approval') }}">Payment</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" href="{{ route('deposit.index') }}">Deposit</a>
-            </li>
-        </ul>
-    @endif
-
-
-
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -70,7 +57,6 @@
                             <tbody>
 
                                 @foreach ($requests as $index => $item)
-                                    @if (auth()->user()->userType != 3 || $item->status != 'pending')
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                                 <td> {{ $item->user->name }}</td>
@@ -86,6 +72,8 @@
                                                     <span class="badge bg-warning">{{ $item->status }}</span>
                                                 @elseif($item->status == 'rejected')
                                                     <span class="badge bg-secondary">{{ $item->status }}</span>
+                                                     @elseif($item->status == 'resubmission')
+                                                    <span class="badge btn-label-danger">{{ $item->status }}</span>
                                                 @else
                                                     <span class="badge bg-success">{{ $item->status }}</span>
                                                 @endif
@@ -96,7 +84,6 @@
                                                         class="bi bi-eye"></i></a>
                                             </td>
                                         </tr>
-                                    @endif
                                 @endforeach
 
                             </tbody>

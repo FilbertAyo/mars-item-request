@@ -15,17 +15,23 @@ class Item extends Model
         'price',
         'amount',
         'reason',
-        'justification',
+        'justification_id',
         'status',
-        'branch',
-        'p_type',
-        'branch_comment',
-        'gm_comment'
+        'branch_id',
+        'p_type'
     ];
 
     public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function justification()
+    {
+        return $this->belongsTo(Justification::class);
+    }
 
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

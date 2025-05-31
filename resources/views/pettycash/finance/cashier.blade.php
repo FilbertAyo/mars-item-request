@@ -1,144 +1,139 @@
 <x-app-layout>
+    <div class="page-header">
+        <h3 class="fw-bold mb-3">Deposits</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-home">
+                <a href="{{ route('dashboard') }}">
+                    <i class="bi bi-house-fill"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="bi bi-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Deposits</a>
+            </li>
 
-                            @if (auth()->user()->userType == 6)
-                                <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" href="{{ url('/petty_first_approval') }}">Payment</a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" href="{{ route('deposit.index') }}">Deposit</a>
-                                    </li>
-                                </ul>
-                            @endif
-                            <div class="mb-1" style="display: flex;justify-content: space-between;">
-                                <h1 class="h3">Deposits </h1>
+        </ul>
+    </div>
 
-                                @if ($remaining < 100000)
-                                    <div class="fs-5 bg-danger badge">Remaining Amount:
-                                        <strong>{{ number_format($remaining, 0, '.', ',') }}/=</strong></div>
-                                @else
-                                    <div class="fs-5 bg-success badge">Remaining Amount:
-                                        <strong>{{ number_format($remaining, 0, '.', ',') }}/=</strong></div>
-                                @endif
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
 
-                                <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
-                                    data-bs-target="#staticBackdrop">
-                                    Deposit
-                                </a>
+                <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
+                    <h4 class="h3 mb-3">
+                        @if ($remaining < 0)
+                            <div class="fs-5 bg-danger badge">Remaining Amount:
+                                <strong>{{ number_format($remaining, 0, '.', ',') }}/=</strong>
                             </div>
-
-
-
-                            <div class="row">
-
-                                <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-                                    <div class="card flex-fill">
-
-                                        <div class="p-1" style="display: flex;justify-content: space-between;">
-                                            <div class="num_rows">
-
-                                                <div class="form-group"> <!--		Show Numbers Of Rows 		-->
-                                                    <select class  ="form-control" name="state" id="maxRows">
-
-                                                        <option value="10">10 rows</option>
-                                                        <option value="15">15 rows</option>
-                                                        <option value="20">20 rows</option>
-                                                        <option value="50">50 rows</option>
-                                                        <option value="70">70 rows</option>
-                                                        <option value="100">100 rows </option>
-                                                        <option value="5000">Show ALL Rows</option>
-                                                    </select>
-
-                                                </div>
-                                            </div>
-                                            <div class="position-relative tb_search" style="width: 30%;">
-                                                <input type="text" id="search_input_all"
-                                                    onkeyup="FilterkeyWord_all_table()" placeholder="Search.."
-                                                    class="form-control  shadow-sm border-0"
-                                                    placeholder="Search any data">
-                                            </div>
-                                        </div>
-
-                                        <table class="table table-hover my-0" id= "table-id">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>No.</th>
-                                                    <th>Deposit Amount</th>
-                                                    <th>Remaing</th>
-                                                    <th>Date deposited</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="myTable">
-                                                @if ($deposits->count() > 0)
-                                                    @foreach ($deposits as $index => $deposit)
-                                                        <tr>
-                                                            <td>{{ $deposit->id }}</td>
-                                                            <td class="d-none d-xl-table-cell">
-                                                                {{ number_format($deposit->deposit, 0, '.', ',') }}/=
-                                                            </td>
-                                                            <td class="d-none d-xl-table-cell">
-                                                                {{ number_format($deposit->remaining, 0, '.', ',') }}/=
-                                                            </td>
-                                                            <td class="d-none d-xl-table-cell">
-                                                                {{ $deposit->created_at }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td colspan="7" class="text-center">You have no request yet
-                                                        </td>
-                                                    </tr>
-                                                @endif
-
-                                            </tbody>
-                                        </table>
-
-                                        <div class="card-header d-sm-flex justify-content-between align-items-center">
-                                            <div class='pagination-container'>
-                                                <nav>
-                                                    <ul class="pagination">
-                                                        <!--	Here the JS Function Will Add the Rows -->
-                                                    </ul>
-                                                </nav>
-                                            </div>
-                                            <div class="rows_count">Showing 11 to 20 of 91 entries</div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
+                        @else
+                            <div class="fs-5 bg-success badge">Remaining Amount:
+                                <strong>{{ number_format($remaining, 0, '.', ',') }}/=</strong>
                             </div>
+                        @endif
+                    </h4>
 
+                    @can('approve petycash payments')
+                    <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
+                        data-bs-target="#staticBackdrop">
+                        <span class="btn-label">
+                            <i class="bi bi-plus-lg"></i>
+                        </span>
+                        Deposit
+                    </a>
+                    @endcan
+                    
+                </div>
 
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="multi-filter-select" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Deposit Amount</th>
+                                    <th>Remaing Balance</th>
+                                    <th>Date deposited</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Deposit Amount</th>
+                                    <th>Remaing Balance</th>
+                                    <th>Date deposited</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
 
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" id="exampleModalToggle"
-                        aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalToggleLabel">New Deposit</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
+                                @foreach ($deposits as $index => $deposit)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            {{ number_format($deposit->deposit, 0, '.', ',') }}/=
+                                        </td>
+                                        <td>
+                                            <span class="{{ $deposit->remaining < 0 ? 'text-danger' : '' }}">
+                                                {{ number_format($deposit->remaining, 0, '.', ',') }}/=
+                                            </span>
 
-                                <form method="POST" action="{{ route('deposit.store') }}"
-                                    enctype="multipart/form-data">
-                                    @csrf
+                                        </td>
+                                        <td>
+                                            {{ $deposit->created_at }}</td>
 
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="name">Amount of Money</label>
-                                            <input type="number" name="deposit" class="form-control" required>
-                                        </div>
+                                    </tr>
+                                @endforeach
 
-                                        <button type="submit" class="btn btn-primary mt-3">Save</button>
-                                    </div>
-
-                                </form>
-
-
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" id="exampleModalToggle" aria-hidden="true"
+        aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel">New Deposit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form method="POST" action="{{ route('deposit.store') }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                    <input type="hidden" name="department_id" value="{{ Auth::user()->department_id }}">
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Amount of Money</label>
+                            <input type="number" name="deposit" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Date Deposited</label>
+                            <input type="date" name="created_at" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="name">Description *optional</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+
+                        <x-primary-button label="Add" />
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
 
 </x-app-layout>

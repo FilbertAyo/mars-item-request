@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->string('file')->nullable();
-            $table->string('userType')->default(0);
             $table->string('phone');
             $table->string('status');
             $table->string('password');

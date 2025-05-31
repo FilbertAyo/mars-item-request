@@ -38,9 +38,19 @@ class DepartmentController extends Controller
         return redirect()->back()->with('success', 'Department created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+   public function getDepartmentsByBranch($branchId)
+{
+    $departments = Department::where('branch_id', $branchId)->get();
+
+    if ($departments->isEmpty()) {
+        return response()->json([
+            'error' => 'No Departments in this Branch'
+        ], 404); // 404 Not Found
+    }
+
+    return response()->json($departments);
+}
+
     public function show(string $id) {}
 
     /**

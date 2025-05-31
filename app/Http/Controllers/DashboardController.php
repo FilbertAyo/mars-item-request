@@ -2,29 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
+use App\Models\Department;
+use App\Models\Petty;
+use App\Models\StartPoint;
+use App\Models\Stop;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-      public function redirect()
+    public function redirect()
+    {
+        $userNo = User::all()->count();
+        $pettyNo = Petty::all()->count();
+        $paidAmount = Petty::where('status','paid')->sum('amount');
+        $myExpense = Petty::where('user_id',auth()->id())->where('status','paid')->sum('amount');
+        $branchNo = Branch::all()->count();
+        $departmentNo = Department::all()->count();
+
+        return view('dashboard',compact('userNo','pettyNo','paidAmount','myExpense','branchNo','departmentNo'));
+
+
+    }
+
+    public function routes()
     {
 
-        return view('dashboard');
+        $pickingPoints = StartPoint::all();
+        $stops = Stop::select('destination')
+            ->groupBy('destination')
+            ->paginate(10);
+        return view('settings.routes', compact('pickingPoints', 'stops'));
+    }
 
-        // $userType = Auth::user()->userType;
+    public function storeStart(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-        // if ($userType == '0') {
-        //     return redirect()->route('admin.index');
-        // } elseif ($userType == '1') {
-        //     return redirect()->route('department.index');
-        // } elseif ($userType == '2') {
-        //     return redirect()->route('branch.index');
-        // } elseif ($userType == '3') {
-        //     return redirect()->route('general.index');
-        // } elseif ($userType == '4' || $userType == '5' || $userType == '6') {
-        //     return redirect()->route('petty.index');
-        // } else {
-        //     redirect()->back()->with('status', "You're not authorized");
-        // }
+        StartPoint::updateOrCreate(
+            ['name' => $request->name],
+        );
+
+        return redirect()->back()->with('success', 'Picking points updated successfully');
+    }
+    public function toggleStatus($id)
+    {
+        $point = StartPoint::findOrFail($id);
+        $point->status = $point->status === 'active' ? 'inactive' : 'active';
+        $point->save();
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
     }
 }

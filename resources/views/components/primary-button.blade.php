@@ -34,14 +34,17 @@
                             'submit': 'Submitting...',
                             'save changes': 'Saving Changes...',
                             'login': 'Logging in...',
+                            'sign in': 'Signing in...',
                             'logout': 'Logging out...',
                             'register': 'Registering...',
                             'update': 'Updating...',
                             'create': 'Creating...',
                             'delete': 'Deleting...',
                             'send': 'Sending...',
+                             'request': 'Requesting...',
                             'verify': 'Verifying...',
                             'activate': 'Activating...',
+                            'Assign':'Assigning...'
                         };
 
                         label.textContent = loadingText[originalText] || 'Processing...';

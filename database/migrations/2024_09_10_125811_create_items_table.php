@@ -14,17 +14,15 @@ return new class extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('justification_id');
+            $table->unsignedBigInteger('branch_id');
             $table->string('name');
             $table->string('quantity');
             $table->string('price');
             $table->string('amount');
-            $table->string('justification');
             $table->string('reason');
             $table->string('status');
-            $table->string('branch');
             $table->string('p_type')->nullable();
-            $table->string('branch_comment')->default('no comment');
-            $table->string('gm_comment')->default('no comment');
             $table->timestamps();
         });
     }

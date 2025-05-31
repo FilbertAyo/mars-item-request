@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div class="page-header">
-        <h3 class="fw-bold mb-3">Requests</h3>
+        <h3 class="fw-bold mb-3">Item Requests</h3>
         <ul class="breadcrumbs mb-3">
             <li class="nav-home">
                 <a href="{{ route('dashboard') }}">
@@ -9,17 +9,12 @@
                 </a>
             </li>
             <li class="separator">
-               <i class="bi bi-arrow-right"></i>
+                <i class="bi bi-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Tables</a>
+                <a href="#">Item Request</a>
             </li>
-            <li class="separator">
-               <i class="bi bi-arrow-right"></i>
-            </li>
-            <li class="nav-item">
-                <a href="#">Datatables</a>
-            </li>
+            
         </ul>
     </div>
 
@@ -38,53 +33,64 @@
                         <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Name of item</th>
-                                    <th>Department</th>
+                                    <th>Branch</th>
                                     <th>Quantity</th>
-                                    <th>Expected price</th>
                                     <th>Total amount</th>
+                                    <th>Type</th>
+                                    <th>Requested By</th>
                                     <th>Status</th>
+                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Name of item</th>
-                                    <th>Department</th>
+                                    <th>Branch</th>
                                     <th>Quantity</th>
-                                    <th>Expected price</th>
                                     <th>Total amount</th>
+                                    <th>Type</th>
+                                    <th>Requested By</th>
                                     <th>Status</th>
+                                     <th>Action</th>
                                 </tr>
                             </tfoot>
                             <tbody>
 
-                               @foreach ($item as $index => $item)
-                                <tr>
+                                @foreach ($item as $index => $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>
+                                            {{ $item->branch->name }}
+                                        </td>
+                                        <td>{{ $item->quantity }}
+                                        </td>
+                                        <td>{{ $item->amount }}</td>
+                                         <td>{{ $item->p_type }}</td>
+                                         <td>{{ $item->user->name }}</td>
+                                        <td>
+                                            @if ($item->status == 'pending')
+                                                <span class="badge bg-danger">{{ $item->status }}</span>
+                                            @elseif($item->status == 'processing')
+                                                <span class="badge bg-warning">{{ $item->status }}</span>
+                                            @elseif($item->status == 'rejected')
+                                                <span class="badge bg-secondary">{{ $item->status }}</span>
+                                            @else
+                                                <span class="badge bg-success">{{ $item->status }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
 
-                                    <td class="d-none d-xl-table-cell">{{ $item->name }}</td>
-                                    <td class="d-none d-xl-table-cell">
-                                        {{ $item->user->department }}
-                                    </td>
-                                    <td class="d-none d-xl-table-cell">{{ $item->quantity }}
-                                    </td>
-                                    <td class="d-none d-xl-table-cell">{{ $item->price }}</td>
-                                    <td class="d-none d-xl-table-cell">{{ $item->amount }}</td>
-                                    <td>
-
-                                        @if ($item->status == 'pending')
-                                            <span class="badge bg-info">{{ $item->status }}</span>
-                                        @elseif($item->status == 'processing')
-                                            <span class="badge bg-warning">{{ $item->status }}</span>
-                                        @elseif($item->status == 'rejected')
-                                            <span class="badge bg-danger">{{ $item->status }}</span>
-                                        @else
-                                            <span class="badge bg-success">{{ $item->status }}</span>
-                                        @endif
-                                        <a href="{{ route('general.show', $item->id) }}"
-                                            class="badge bg-primary text-white">view</a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                           <a href="{{ route('item-request.details', $item->id) }}"
+                                                class="btn btn-sm btn-secondary text-white"><i
+                                                    class="bi bi-eye"></i></a>
+                                           
+                                        </td>
+                                    </tr>
+                                @endforeach
 
                             </tbody>
                         </table>
@@ -125,12 +131,12 @@
                     //	numbers of pages
                     for (var i = 1; i <= pagenum;) {
                         $('.pagination').append('<li data-page="' + i + '">\
-            <div class="card text-center" style="width: 70px; margin: 2px;">\
-              <div class="card-body p-0">\
-                <span class="page-link">' + i++ + '</span>\
-              </div>\
-            </div>\
-          </li>').show();
+                <div class="card text-center" style="width: 70px; margin: 2px;">\
+                  <div class="card-body p-0">\
+                    <span class="page-link">' + i++ + '</span>\
+                  </div>\
+                </div>\
+              </li>').show();
                     }
                     // end for i
 

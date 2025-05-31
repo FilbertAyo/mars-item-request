@@ -17,5 +17,11 @@ class Branch extends Model
     return $this->hasMany(Department::class);
 }
 
+
+ public function items()
+{
+    return $this->hasMany(Item::class);
+}
+
 }
 

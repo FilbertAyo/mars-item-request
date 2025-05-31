@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('petties', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->string('code')->nullable();
             $table->string('request_for')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->text('reason');
-            $table->string('status')->default('pending');
-            $table->text('comment')->nullable();
+            $table->text('reason')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'processing','resubmission','resubmitted','paid'])->default('pending');
             $table->enum('request_type', ['Petty Cash', 'Reimbursement']);
-            $table->string('attachment')->nullable(); 
+            $table->string('attachment')->nullable();
             $table->timestamps();
         });
     }

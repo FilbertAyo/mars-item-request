@@ -6,13 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-      protected $fillable = [
+    protected $fillable = [
         'name',
         'branch_id'
     ];
 
     public function branch()
-{
-    return $this->belongsTo(Branch::class);
-}
+    {
+        return $this->belongsTo(Branch::class);
+    }
+    public function petties()
+    {
+        return $this->hasMany(Petty::class);
+    }
 }
