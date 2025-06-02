@@ -71,7 +71,7 @@ class AdminController extends Controller
         $email = $user->email;
         $password = $randomNo;
 
-        // Mail::to($email)->send(new NotificationMail($name, $email, $password));
+        Mail::to($email)->send(new NotificationMail($name, $email, $password));
 
         return redirect()->back()->with('success', 'New user registered successfully');
     }
@@ -100,10 +100,36 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Permissions updated successfully.');
     }
 
-    public function update(Request $request, string $id)
+    public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $branches = Branch::all();
+        $departments = Department::all();
+        return view('settings.users.edit', compact('user', 'branches', 'departments'));
     }
+   public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        'phone' => ['required', 'regex:/^0[76][0-9]{8}$/'],
+        'branch_id' => ['required', 'string', 'max:255'],
+        'department_id' => ['required', 'string', 'max:255'],
+    ]);
+
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'branch_id' => $request->branch_id,
+        'department_id' => $request->department_id,
+    ]);
+
+    return redirect()->back()->with('success', 'User updated successfully');
+}
+
 
     public function destroy(string $id)
     {

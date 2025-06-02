@@ -1,7 +1,7 @@
 @extends('layouts.report')
 
 @section('content')
-    <h2>Active Users List</h2>
+    <h2>MARS COMMUNICATIONS LTD <br> Active users list</h2>
     <table>
         <thead>
             <tr>

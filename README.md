@@ -19,3 +19,21 @@ Usertype | Role
 
 
 
+# MAIL_MAILER=smtp
+# MAIL_HOST=smtp.gmail.com
+# MAIL_PORT=587
+# MAIL_USERNAME=marscommunication.team@gmail.com
+# MAIL_PASSWORD=pgawnzkgjjrbqsrp
+# MAIL_ENCRYPTION=tls
+# MAIL_FROM_ADDRESS="marscommunication.team@gmail.com"
+# MAIL_FROM_NAME="${APP_NAME}"
+
+
+# MAIL_MAILER=smtp
+# MAIL_HOST=gator4468.hostgator.com
+# MAIL_PORT=465
+# MAIL_USERNAME=noreply@marscommltd.com
+# MAIL_PASSWORD=Marscomm@2025
+# MAIL_ENCRYPTION=ssl
+# MAIL_FROM_ADDRESS=noreply@marscommltd.com
+# MAIL_FROM_NAME="${APP_NAME}"

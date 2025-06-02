@@ -36,14 +36,14 @@
                      <h4 class="text-section">Petty Cash</h4>
                  </li>
 
-                 @can('request pettycash')
+
                      <li class="nav-item {{ Request::routeIs('petty.index') ? 'active' : '' }}">
                          <a href="{{ route('petty.index') }}">
                              <i class="bi bi-wallet-fill"></i>
                              <p>Requests</p>
                          </a>
                      </li>
-                 @endcan
+                 
 
                  @can('view requested pettycash')
                      <li class="nav-item">

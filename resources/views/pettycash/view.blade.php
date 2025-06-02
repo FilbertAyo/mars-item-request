@@ -24,12 +24,12 @@
         </ul>
     </div>
 
-   <div class="modal fade" id="pettyCashModal" tabindex="-1" aria-labelledby="pcvModalLabel" aria-hidden="true">
+    <div class="modal fade" id="pettyCashModal" tabindex="-1" aria-labelledby="pcvModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pcvModalLabel"><button class="btn btn-secondary"
-                            onclick="printPCV()"><i class="bi bi-printer-fill"></i></button></h5>
+                    <h5 class="modal-title" id="pcvModalLabel"><button class="btn btn-secondary" onclick="printPCV()"><i
+                                class="bi bi-printer-fill"></i></button></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -46,8 +46,8 @@
 
         <div class="card shadow-sm col-12 border-0">
             <div class="card-body">
-                 <div class='page-header flex-row justify-content-between'>
-                    <h5 class="text-secondary mb-3 text-muted">Code: {{ $request->code }}</h5>
+                <div class='page-header flex-row justify-content-between'>
+                    <h5 class="text-secondary mb-3 text-muted">Code: <strong>{{ $request->code }}</strong></h5>
 
                     <button type="button" class="btn btn-label-secondary" data-bs-toggle="modal"
                         data-bs-target="#pettyCashModal">
@@ -78,8 +78,9 @@
                                     <span class="btn bg-warning text-white">{{ $request->status }}</span>
                                 @elseif($request->status == 'rejected')
                                     <span class="btn bg-secondary text-white">{{ $request->status }}</span>
-                                      @elseif($request->status == 'resubmission')
-                                    <a href="{{ route('petty.edit',$request->id) }}" class="btn btn-label-danger"><i class="bi bi-pencil-square me-2"></i>{{ $request->status }}</a>
+                                @elseif($request->status == 'resubmission')
+                                    <a href="{{ route('petty.edit', $request->id) }}" class="btn btn-label-danger"><i
+                                            class="bi bi-pencil-square me-2"></i>{{ $request->status }}</a>
                                 @else
                                     <span class="btn bg-success text-white">{{ $request->status }}</span>
                                 @endif
@@ -244,45 +245,45 @@
 
 
                 @foreach ($approval_logs as $approval)
-    @php
-        $statusStyles = [
-            'rejected' => ['class' => 'danger', 'icon' => 'bi-x-circle-fill'],
-            'approved' => ['class' => 'success', 'icon' => 'bi-check-circle-fill'],
-            'paid' => ['class' => 'success', 'icon' => 'bi-cash-coin'],
-            'resubmission' => ['class' => 'warning', 'icon' => 'bi-arrow-90deg-left'],
-            'resubmitted' => ['class' => 'secondary', 'icon' => 'bi-arrow-clockwise'],
-        ];
+                    @php
+                        $statusStyles = [
+                            'rejected' => ['class' => 'danger', 'icon' => 'bi-x-circle-fill'],
+                            'approved' => ['class' => 'success', 'icon' => 'bi-check-circle-fill'],
+                            'paid' => ['class' => 'success', 'icon' => 'bi-cash-coin'],
+                            'resubmission' => ['class' => 'warning', 'icon' => 'bi-arrow-90deg-left'],
+                            'resubmitted' => ['class' => 'secondary', 'icon' => 'bi-arrow-clockwise'],
+                        ];
 
-        $action = strtolower($approval->action);
-        $badgeClass = $statusStyles[$action]['class'] ?? 'secondary';
-        $iconClass = $statusStyles[$action]['icon'] ?? 'bi-info-circle';
-    @endphp
+                        $action = strtolower($approval->action);
+                        $badgeClass = $statusStyles[$action]['class'] ?? 'secondary';
+                        $iconClass = $statusStyles[$action]['icon'] ?? 'bi-info-circle';
+                    @endphp
 
-    <li class="{{ $loop->iteration % 2 == 1 ? 'timeline-inverted' : '' }}">
-        <div class="timeline-badge {{ $badgeClass }}">
-            <i class="bi {{ $iconClass }}"></i>
-        </div>
-        <div class="timeline-panel">
-            <div class="timeline-heading">
-                <h4 class="timeline-title">
-                    {{ ucfirst($approval->action) }}
-                </h4>
-                <p>
-                    <small class="text-muted">
-                        <i class="bi bi-stopwatch"></i>
-                        {{ $approval->created_at->diffForHumans() }} by {{ $approval->user->name }}
-                    </small>
-                </p>
-            </div>
+                    <li class="{{ $loop->iteration % 2 == 1 ? 'timeline-inverted' : '' }}">
+                        <div class="timeline-badge {{ $badgeClass }}">
+                            <i class="bi {{ $iconClass }}"></i>
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4 class="timeline-title">
+                                    {{ ucfirst($approval->action) }}
+                                </h4>
+                                <p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-stopwatch"></i>
+                                        {{ $approval->created_at->diffForHumans() }} by {{ $approval->user->name }}
+                                    </small>
+                                </p>
+                            </div>
 
-            <div class="timeline-body">
-                <p class="text-muted">
-                    {{ $approval->comment }}
-                </p>
-            </div>
-        </div>
-    </li>
-@endforeach
+                            <div class="timeline-body">
+                                <p class="text-muted">
+                                    {{ $approval->comment }}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
 
 
 

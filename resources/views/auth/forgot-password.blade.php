@@ -1,6 +1,6 @@
 <x-guest-layout>
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+
 
     <div class="container-fluid vh-100">
         <div class="row h-100">
@@ -12,6 +12,8 @@
                            Enter your email address, and we'll send you a link to reset your password.
                         </p>
                     </div>
+
+                     <x-auth-session-status class="mb-4" :status="session('status')" />
 
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf
@@ -32,8 +34,7 @@
                             @enderror
                         </div>
 
-                         <button type="submit" class="btn btn-primary mt-3 w-100">SEND EMAIL</button>
-                        <!-- Submit Button -->
+                         <x-primary-button label="Send" class="w-100"/>
 
                     </form>
                 </div>

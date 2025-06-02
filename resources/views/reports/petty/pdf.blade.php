@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="text-center">
-      <h2 >PETTY CASH REPLENISHMENT FOR {{ optional(Auth::user()->department)->name ?? 'N/A' }}
+      <h2 class="text-center">MARS COMMUNICATIONS LTD <br> PETTY CASH REPLENISHMENT FOR {{ optional(Auth::user()->department)->name ?? 'N/A' }}
     @if (request()->filled('from') && request()->filled('to'))
         FROM {{ request('from') }} TO {{ request('to') }}
     @endif</h2>

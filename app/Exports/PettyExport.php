@@ -71,7 +71,7 @@ class PettyExport implements FromCollection, WithHeadings, WithEvents, WithTitle
 
         return [
             AfterSheet::class => function (AfterSheet $event) use ($dateRange) {
-                $title = "PETTY CASH REPLENISHMENT FOR {$this->department}{$dateRange}";
+            $title = "MARS COMMUNICATIONS LTD<br>PETTY CASH REPLENISHMENT FOR {$this->department}{$dateRange}";
 
                 // Merge and write title in row 1
                 $event->sheet->mergeCells('A1:F1');

@@ -34,7 +34,7 @@
                         New User
                     </a>
                     @endcan
-                    
+
                 </div>
 
                 <div class="card-body">
@@ -48,7 +48,6 @@
                                     <th>Phone number</th>
                                     <th>Branch</th>
                                     <th>Department</th>
-                                    <th>Role</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -61,7 +60,6 @@
                                     <th>Phone number</th>
                                     <th>Branch</th>
                                     <th>Department</th>
-                                    <th>Role</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -76,7 +74,6 @@
                                         <td>{{ $user->phone }}</td>
                                         <td>{{ $user->branch->name ?? 'N/A' }}</td>
                                         <td>{{ $user->department->name ?? 'N/A' }}</td>
-                                        <td>Coming</td>
                                         <td> <span
                                                 class="badge {{ $user->status === 'active' ? 'bg-success' : 'bg-danger' }}">
                                                 {{ ucfirst($user->status) }}
@@ -85,6 +82,9 @@
 
                                              <a href="{{ route('admin.show', $user->id) }}" class="btn btn-sm btn-secondary">
                                                 <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                             <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-sm btn-secondary">
+                                                <i class="bi bi-pencil-square"></i>
                                             </a>
 
                                         </td>

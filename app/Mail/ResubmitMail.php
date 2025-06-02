@@ -9,27 +9,26 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EmployeeConfirmation extends Mailable
+class ResubmitMail extends Mailable
 {
     use Queueable, SerializesModels;
-
     public $name;
     public $reason;
     public $id;
-
     public function __construct($name, $reason, $id)
     {
-        $this->name = $name;
+         $this->name = $name;
         $this->reason = $reason;
         $this->id = $id;
     }
+
     /**
      * Get the message envelope.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reimbursement',
+            subject: 'Request feedback',
         );
     }
 
@@ -38,8 +37,8 @@ class EmployeeConfirmation extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.paid',
+         return new Content(
+            view: 'mail.resubmit',
             with: [
                 'name' => $this->name,
                 'reason' => $this->reason,

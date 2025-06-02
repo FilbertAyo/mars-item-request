@@ -1,31 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mars Communications</title>
-   <link rel="stylesheet" href="{{ asset('css/mail.css') }}">
-</head>
-<body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Payment Completed for {{ $name }}</h1>
+@extends('mail.app')
+
+@section('content')
+
+        <div class="email-header">
+             <h2>Payment Completed</h2>
         </div>
-
-        <div class="content">
-            <p>Hello Team,</p>
-            <p>The petty cash request for <strong>{{ $reason }}</strong> has been fully approved, and the payment has been successfully disbursed to <strong>{{ $name }}</strong>.</p>
-
+        <div>
+            <p>Hello,</p>
+           <p>Your petty cash request for <strong>{{ $reason }}</strong> has been approved, and the amount has been disbursed successfully.</p>
             <p>To review the request details for your records, please click the button below:</p>
-            <a href="https://pettycash.marscommltd.com/first_approval/{{ $id }}" class="btn">Review</a>
+            <p>
+                <a href="{{ config('app.url') }}/petty/{{ $id }}"
+                    style="display: inline-block; padding: 10px 20px; background-color: #1d72b8; color: white; text-decoration: none; border-radius: 4px;">
+                    Review
+                </a>
+            </p>
         </div>
 
-        <div class="footer">
-            <p>If you have any issues or need help, feel free to <a href="mailto:marscommunication.team@gmail.com">contact us</a>.</p>
-            <p>Thank you for your dedication and efforts! 🚀</p>
-        </div>
-    </div>
 
-</body>
-</html>
+@endsection

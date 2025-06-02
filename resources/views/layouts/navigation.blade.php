@@ -99,8 +99,8 @@
                         <div class="quick-actions-scroll scrollbar-outer">
                             <div class="quick-actions-items">
                                 <div class="row m-0">
-                                     @can('view requested pettycash')
-                                        <a class="col-6 col-md-4 p-0" href="{{ route('petty.list') }}">
+                                    @can('request pettycash')
+                                        <a class="col-6 col-md-4 p-0" href="{{ route('petty.create') }}">
                                             <div class="quick-actions-item">
                                                 <div class="avatar-item bg-warning rounded-circle">
                                                     <i class="bi bi-card-list"></i>
@@ -151,7 +151,7 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="{{ asset('image/prof.jpeg') }}" alt="..."
+                            <img src="{{ asset(Auth::user()->file ?? 'image/prof.jpeg') }}" alt="..."
                                 class="avatar-img rounded-circle" />
                         </div>
                         <span class="profile-username">
@@ -164,13 +164,14 @@
                             <li>
                                 <div class="user-box">
                                     <div class="avatar-lg">
-                                        <img src="{{ asset('image/prof.jpeg') }}" alt="image profile"
-                                            class="avatar-img rounded" />
+                                        <img src="{{ asset(Auth::user()->file ?? 'image/prof.jpeg') }}"
+                                            alt="image profile" class="avatar-img rounded" />
                                     </div>
                                     <div class="u-text">
                                         <h4>{{ Auth::user()->name }}</h4>
                                         <p class="text-muted">{{ Auth::user()->phone }}</p>
-                                        <a href="{{ url('/profile') }}" class="btn btn-xs btn-secondary btn-sm">View
+                                        <a href="{{ route('profile.edit') }}"
+                                            class="btn btn-xs btn-secondary btn-sm">View
                                             Profile</a>
                                     </div>
                                 </div>
@@ -178,12 +179,9 @@
                             <li>
                                 <div class="dropdown-divider"></div>
 
-                                <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('logout') }}" class="w-100">
                                     @csrf
-                                    <div class="dropdown-item">
-                                        <x-primary-button label="Logout" class="w-100 btn-danger" />
-                                    </div>
-
+                                    <x-primary-button label="Logout" class="w-100 btn-danger" />
                                 </form>
                             </li>
                         </div>
@@ -192,5 +190,4 @@
             </ul>
         </div>
     </nav>
-    <!-- End Navbar -->
 </div>

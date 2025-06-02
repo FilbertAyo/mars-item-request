@@ -9,15 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PettyRequestMail extends Mailable
+class ResubmissionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $name;
     public $reason;
     public $id;
-
-    public function __construct($name,$reason, $id)
+    public function __construct($name, $reason, $id)
     {
         $this->name = $name;
         $this->reason = $reason;
@@ -30,7 +29,7 @@ class PettyRequestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'PettyCash Request',
+            subject: 'Petty cash Resubmission',
         );
     }
 
@@ -39,8 +38,8 @@ class PettyRequestMail extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.pettyrequest',
+          return new Content(
+            view: 'mail.resubmission',
             with: [
                 'name' => $this->name,
                 'reason' => $this->reason,

@@ -67,7 +67,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-4 text-center">
-                            <img src="/image/prof.jpeg" alt="User Image" class="img-fluid rounded-circle "
+                            <img src="{{ asset($user->file ?? 'image/prof.jpeg') }}" alt="User Image" class="img-fluid rounded-circle "
                                 width="300" height="300">
                         </div>
                         <div class="col-md-8">

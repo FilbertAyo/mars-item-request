@@ -109,7 +109,7 @@
         <div class="card shadow-sm col-12 border-0">
             <div class="card-body">
                 <div class='page-header flex-row justify-content-between'>
-                    <h5 class="text-secondary mb-3 text-muted">Code: {{ $request->code }}</h5>
+                    <h5 class="text-secondary mb-3 text-muted">Code: <strong>{{ $request->code }}</strong></h5>
 
                     <button type="button" class="btn btn-label-secondary" data-bs-toggle="modal"
                         data-bs-target="#pettyCashModal">
