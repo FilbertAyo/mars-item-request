@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Vinkla\Hashids\Facades\Hashids;
 
 class BranchController extends Controller
 {
@@ -13,7 +14,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-          $branches = Branch::withCount('departments')->get();
+        $branches = Branch::withCount('departments')->get();
 
         return view('settings.branches.index', compact('branches'));
     }
@@ -31,7 +32,7 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-           // Validate the request data
+        // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255', // Add validation rules for the fields you need
 
@@ -45,12 +46,14 @@ class BranchController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($hashid)
     {
-        $branch = Branch::findOrFail($id);
+        $id = Hashids::decode($hashid);
+
+        $branch = Branch::findOrFail($id[0]);
         $departments = $branch->departments; // Assuming you have a relationship defined in the Branch model
 
-        return view('settings.branches.view', compact('branch','departments'));
+        return view('settings.branches.view', compact('branch', 'departments'));
     }
 
     /**
@@ -72,10 +75,11 @@ class BranchController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($hashid)
     {
-            // Find the branch by ID
-        $branch = Branch::find($id);
+        $id = Hashids::decode($hashid);
+
+        $branch = Branch::find($id[0]);
 
         if ($branch) {
             $branch->delete();
@@ -86,6 +90,4 @@ class BranchController extends Controller
             return redirect()->back()->with('error', 'Branch not found');
         }
     }
-
-    
 }

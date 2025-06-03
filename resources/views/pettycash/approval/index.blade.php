@@ -57,33 +57,33 @@
                             <tbody>
 
                                 @foreach ($requests as $index => $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                                <td> {{ $item->user->name }}</td>
-                                            <td> {{ $item->request_for }}</td>
-                                            <td>{{ $item->request_type }}</td>
-                                            <td>{{ $item->amount }}</td>
-                                            <td>{{ $item->created_at }}</td>
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td> {{ $item->user->name }}</td>
+                                        <td> {{ $item->request_for }}</td>
+                                        <td>{{ $item->request_type }}</td>
+                                        <td>{{ number_format($item->amount) }}</td>
+                                        <td>{{ $item->created_at }}</td>
 
-                                            <td>
-                                                @if ($item->status == 'pending')
-                                                    <span class="badge bg-danger">{{ $item->status }}</span>
-                                                @elseif($item->status == 'processing')
-                                                    <span class="badge bg-warning">{{ $item->status }}</span>
-                                                @elseif($item->status == 'rejected')
-                                                    <span class="badge bg-secondary">{{ $item->status }}</span>
-                                                     @elseif($item->status == 'resubmission')
-                                                    <span class="badge btn-label-danger">{{ $item->status }}</span>
-                                                @else
-                                                    <span class="badge bg-success">{{ $item->status }}</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('petty.details', $item->id) }}"
-                                                    class="btn btn-sm btn-secondary text-white"><i
-                                                        class="bi bi-eye"></i></a>
-                                            </td>
-                                        </tr>
+                                        <td>
+                                            @if ($item->status == 'pending')
+                                                <span class="badge bg-danger">{{ $item->status }}</span>
+                                            @elseif($item->status == 'processing')
+                                                <span class="badge bg-warning">{{ $item->status }}</span>
+                                            @elseif($item->status == 'rejected')
+                                                <span class="badge bg-secondary">{{ $item->status }}</span>
+                                            @elseif($item->status == 'resubmission')
+                                                <span class="badge btn-label-danger">{{ $item->status }}</span>
+                                            @else
+                                                <span class="badge bg-success">{{ $item->status }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('petty.details', Hashids::encode($item->id)) }}"
+                                                class="btn btn-sm btn-secondary text-white"><i
+                                                    class="bi bi-eye"></i></a>
+                                        </td>
+                                    </tr>
                                 @endforeach
 
                             </tbody>

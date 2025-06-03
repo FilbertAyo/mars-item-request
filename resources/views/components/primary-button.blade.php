@@ -44,7 +44,10 @@
                              'request': 'Requesting...',
                             'verify': 'Verifying...',
                             'activate': 'Activating...',
-                            'Assign':'Assigning...'
+                            'Assign':'Assigning...',
+                            'approve':'Approving...',
+                            'pay now':'Paying Now...',
+                            'reject':'Rejecting...'
                         };
 
                         label.textContent = loadingText[originalText] || 'Processing...';

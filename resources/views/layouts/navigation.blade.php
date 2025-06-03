@@ -52,6 +52,8 @@
                     </ul>
                 </li>
 
+               <span>{{ \Carbon\Carbon::now('Africa/Nairobi')->format('d F Y') }}</span>
+
                 {{-- <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -105,7 +107,7 @@
                                                 <div class="avatar-item bg-warning rounded-circle">
                                                     <i class="bi bi-card-list"></i>
                                                 </div>
-                                                <span class="text">Petty Cash</span>
+                                                <span class="text">New Petty Cash</span>
                                             </div>
                                         </a>
                                     @endcan

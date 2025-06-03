@@ -80,10 +80,10 @@
                                             </span></td>
                                         <td>
 
-                                             <a href="{{ route('admin.show', $user->id) }}" class="btn btn-sm btn-secondary">
+                                             <a href="{{ route('admin.show', Hashids::encode($user->id)) }}" class="btn btn-sm btn-secondary">
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
-                                             <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-sm btn-secondary">
+                                             <a href="{{ route('admin.edit', Hashids::encode($user->id)) }}" class="btn btn-sm btn-secondary">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
 

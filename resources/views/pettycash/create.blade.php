@@ -96,9 +96,8 @@
 
                     <div class="col-md-6 col-lg-6 mt-3">
                         <div class="form-group">
-                            <label for="reason">Request Description:</label>
-                            <textarea name="reason" class="form-control" required>{{ old('reason') }}</textarea>
-
+                            <label for="reason">Description:</label>
+                            <textarea name="reason" class="form-control" rows="6" cols="50" required>{{ old('reason') }}</textarea>
                         </div>
                     </div>
 

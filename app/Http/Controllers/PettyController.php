@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Vinkla\Hashids\Facades\Hashids;
 
 class PettyController extends Controller
 {
@@ -32,7 +33,6 @@ class PettyController extends Controller
      */
     public function index()
     {
-
         //This is very important but later should be moved to Console/Command for automatic update
         DB::table('petties')
             ->where('status', 'resubmission')
@@ -40,7 +40,6 @@ class PettyController extends Controller
             ->update(['status' => 'rejected']);
 
         Log::info('Dashboard-triggered auto-reject of stale petty cash requests.');
-
         //End of it
 
         // Fetch requests only for the logged-in user
@@ -68,17 +67,21 @@ class PettyController extends Controller
         $pickingPoints = StartPoint::all()->where('status', 'active');
         return view('pettycash.create', compact('pickingPoints'));
     }
-    public function show($id)
+    public function show($hashid)
     {
-        $request = Petty::findOrFail($id);
-        $approval_logs = ApprovalLog::where('petty_id', $id)->get();
+        $id = Hashids::decode($hashid);
+
+        $request = Petty::findOrFail($id[0]);
+        $approval_logs = ApprovalLog::where('petty_id', $id[0])->get();
 
         $numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('en');
-        $amountInWords = ucfirst($numberTransformer->toWords($request->amount)) . ' Shillings';
+        $amountWords = $numberTransformer->toWords($request->amount);
+        $amountWords = ucwords($amountWords);
+        $amountInWords = 'TZS ' . $amountWords;
 
-        $verifiedBy = ApprovalLog::where('petty_id', $id)->where('action', 'approved')->first();
-        $approvedBy = ApprovalLog::where('petty_id', $id)->where('action', 'approved')->skip(1)->take(1)->first();
+        $verifiedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->first();
+        $approvedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->skip(1)->take(1)->first();
 
         return view('pettycash.view', compact('request', 'amountInWords', 'approval_logs', 'verifiedBy', 'approvedBy'));
     }
@@ -94,19 +97,24 @@ class PettyController extends Controller
         return view('pettycash.approval.index', compact('requests'));
     }
 
-    public function request_show($id)
+    public function request_show($hashid)
     {
-        $request = Petty::findOrFail($id);
-        $latest = ApprovalLog::where('petty_id', $id)->where('user_id', auth()->id())->latest()->first();
-        $approval_logs = ApprovalLog::where('petty_id', $id)->get();
+        $id = Hashids::decode($hashid);
+
+        $request = Petty::findOrFail($id[0]);
+        $latest = ApprovalLog::where('petty_id', $id[0])->where('user_id', auth()->id())->latest()->first();
+        $approval_logs = ApprovalLog::where('petty_id', $id[0])->get();
         $approval = optional($latest)->action;
 
-        $verifiedBy = ApprovalLog::where('petty_id', $id)->where('action', 'approved')->first();
-        $approvedBy = ApprovalLog::where('petty_id', $id)->where('action', 'approved')->skip(1)->take(1)->first();
+        $verifiedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->first();
+        $approvedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->skip(1)->take(1)->first();
+
 
         $numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('en');
-        $amountInWords = ucfirst($numberTransformer->toWords($request->amount)) . ' Shillings';
+        $amountWords = $numberTransformer->toWords($request->amount);
+        $amountWords = ucwords($amountWords);
+        $amountInWords = 'TZS ' . $amountWords;
 
 
         return view('pettycash.approval.details', compact('request', 'amountInWords', 'approval', 'approval_logs', 'verifiedBy', 'approvedBy'));
@@ -353,18 +361,13 @@ class PettyController extends Controller
         return redirect()->back()->with('error', 'Request not found.');
     }
 
-    /**
-     * Display the specified resource.
-     */
 
-
-
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $hashid)
     {
-
+        $id = Hashids::decode($hashid);
         $pickingPoints = StartPoint::all()->where('status', 'active');
 
-        $petty = Petty::findOrFail($id);
+        $petty = Petty::findOrFail($id[0]);
         $items = PettyList::where('petty_id', $petty->id)->get();
 
         return view('pettycash.resubmission', compact('petty', 'pickingPoints', 'items'));
@@ -388,6 +391,7 @@ class PettyController extends Controller
             return redirect()->back()->with('error', 'You must be a member of a department to update Petty cash. Please contact Admin.');
         }
 
+        // Office Supplies specific validation
         if ($request->request_for === 'Office Supplies') {
             $request->validate([
                 'items' => 'required|array|min:1',
@@ -407,7 +411,30 @@ class PettyController extends Controller
             ]);
         }
 
-        // Update core fields
+        $petty->lists()->delete();
+        $petty->trips()->delete();
+
+
+        if ($petty->status === 'resubmission') {
+            $requester = User::find($request->user_id);
+
+            // Get all users with the specific permission and same department
+            $users = User::permission('first pettycash approval')
+                ->where('department_id', $requester->department_id)
+                ->get();
+
+            // Prepare email data
+            $name = $requester->name;
+            $reason = $request->request_for;
+            $id = $request->id;
+
+            $emails = $users->pluck('email')->toArray();
+            if (empty($emails)) {
+                return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
+            }
+            Mail::to($emails)->send(new ResubmissionMail($name,  $reason, $id));
+        }
+
         $petty->update([
             'user_id' => $request->user_id,
             'department_id' => $request->department_id,
@@ -418,7 +445,7 @@ class PettyController extends Controller
             'status' => 'pending',
         ]);
 
-        // Handle new attachment
+        // 4. Handle Attachment
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
             $attachmentName = time() . '_' . $attachment->getClientOriginalName();
@@ -427,11 +454,8 @@ class PettyController extends Controller
             $petty->save();
         }
 
-        // Update Office Supplies
+        // 5. Rebuild Office Supplies if applicable
         if ($request->request_for === 'Office Supplies' && $request->has('items')) {
-            // Clear old petty list
-            $petty->pettyLists()->delete();
-
             foreach ($request->items as $index => $item) {
                 PettyList::create([
                     'petty_id' => $petty->id,
@@ -442,15 +466,8 @@ class PettyController extends Controller
             }
         }
 
-        // Update Transport/Sales Delivery
-        elseif (in_array($request->request_for, ['Sales Delivery', 'Transport'])) {
-            // Delete old trip and stops
-            $trip = $petty->trip;
-            if ($trip) {
-                $trip->stops()->delete();
-                $trip->delete();
-            }
-
+        // 6. Rebuild Trip and Stops if applicable
+        if (in_array($request->request_for, ['Sales Delivery', 'Transport'])) {
             $newTrip = Trip::create([
                 'petty_id' => $petty->id,
                 'from_place' => $request->from_place,
@@ -469,24 +486,10 @@ class PettyController extends Controller
             'action' => 'resubmitted',
         ]);
 
-         $requester = User::find($request->user_id);
 
-        $user = ApprovalLog::where('petty_id',$petty->id)->where('action','resubmission')->latest()->first();
-        // Prepare email data
-        $name = $requester->name;
-        $reason = $request->request_for;
-        $id = $request->id;
-        $email = $user->email;
-
-        if (empty($email)) {
-            return redirect()->back()->with('error', 'There is something wrong.');
-        }
-        // Send the mail
-        Mail::to($email)->send(new ResubmissionMail($name,  $reason, $id));
-
-
-        return redirect()->back()->with('success', 'Petty Cash request resubmitted successfully.');
+        return redirect()->route('petty.index')->with('success', 'Petty Cash request resubmitted successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

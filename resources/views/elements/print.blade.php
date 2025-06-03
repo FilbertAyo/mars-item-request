@@ -1,5 +1,13 @@
  <div class="pcv-container">
 
+     @if ($request->status == 'paid' || $request->status == 'approved')
+         <div class="status-stamp paid">{{ strtoupper($request->status) }}
+         </div>
+     @else
+         <div class="status-stamp not-paid">{{ strtoupper($request->status) }}</div>
+     @endif
+
+
      <div class="pcv-header text-center">
          <img src="{{ asset('image/longl.png') }}" alt="" class="mb-2" style="height: 60px;"><br>
          P.O. BOX 20226, DSM, TANZANIA
@@ -47,7 +55,7 @@
                  style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
                  {{ $request->user->name }}
              </div>
-             <div>Name</div>
+             <div>NAME</div>
          </div>
 
          <!-- Verified By -->
@@ -55,9 +63,9 @@
              <div>Verified by:</div>
              <div
                  style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                 {{ $verifiedBy->user->name ?? ''}}
+                 {{ $verifiedBy->user->name ?? '' }}
              </div>
-             <div>HOD</div>
+             <div>VERIFIER</div>
          </div>
 
          <!-- Approved By -->
@@ -73,13 +81,15 @@
          </div>
      </div>
 
-
  </div>
+
+
 
 
 
  <style>
      .pcv-container {
+         position: relative;
          font-family: Arial, sans-serif;
          padding: 20px;
          border: 1px solid #ccc;
@@ -129,6 +139,28 @@
      .pcv-table td {
          padding: 8px;
          text-align: left;
+     }
+
+     .status-stamp {
+         position: absolute;
+         top: 40%;
+         left: 50%;
+         transform: translate(-50%, -50%) rotate(-25deg);
+         font-size: 80px;
+         font-weight: bold;
+         opacity: 0.15;
+         z-index: 0;
+         white-space: nowrap;
+         pointer-events: none;
+         user-select: none;
+     }
+
+     .status-stamp.paid {
+         color: green;
+     }
+
+     .status-stamp.not-paid {
+         color: red;
      }
  </style>
 

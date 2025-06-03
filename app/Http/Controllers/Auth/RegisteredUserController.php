@@ -23,9 +23,9 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('auth.register');
+        return redirect(route('login', absolute: false));
     }
 
     /**
@@ -35,40 +35,30 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        // ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'department'=>$request->department,
-            'phone'=>$request->phone,
-            'branch'=>'Samora Branch - Main',
-            'status'=>'active',
-            'file'=> null, //Default value if no file is uploaded
-        ]);
+        // $user = User::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        //     'department'=>$request->department,
+        //     'phone'=>$request->phone,
+        //     'branch'=>'Samora Branch - Main',
+        //     'status'=>'active',
+        //     'file'=> null, //Default value if no file is uploaded
+        // ]);
 
 
-        // $otp = Otp::identifier($request->email)->send(
-        //     Notification::route('mail', $request->email)->notify(
-        //         new UserRegistrationOtp(
-        //             name: $request->name,
-        //             email: $request->email,
-        //             password: $request->password
-        //         )
-        //     )
-        // );
-        // return redirect(__($otp['status']));
 
-        event(new Registered($user));
+        // event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // return redirect(route('dashboard', absolute: false));
     }
 
 

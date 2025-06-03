@@ -23,13 +23,13 @@
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Requests List</h4>
-                     @can('request pettycash')
-                    <a href="{{ route('petty.create') }}" class="btn btn-primary">
-                        <span class="btn-label">
-                            <i class="bi bi-plus-lg"></i>
-                        </span>
-                        New Request
-                    </a>
+                    @can('request pettycash')
+                        <a href="{{ route('petty.create') }}" class="btn btn-primary">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New Request
+                        </a>
                     @endcan
                 </div>
 
@@ -65,25 +65,37 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->request_for }}</td>
                                         <td>{{ $item->request_type }}</td>
-                                        <td>{{ $item->amount }} </td>
+                                        <td>{{ number_format($item->amount) }} </td>
                                         <td>{{ $item->created_at }} </td>
                                         <td>
-                                               @if ($item->status == 'pending')
-                                                    <span class="badge bg-danger">{{ $item->status }}</span>
-                                                @elseif($item->status == 'processing')
-                                                    <span class="badge bg-warning">{{ $item->status }}</span>
-                                                @elseif($item->status == 'rejected')
-                                                    <span class="badge bg-secondary">{{ $item->status }}</span>
-                                                     @elseif($item->status == 'resubmission')
-                                                    <span class="badge btn-label-danger">{{ $item->status }}</span>
-                                                @else
-                                                    <span class="badge bg-success">{{ $item->status }}</span>
-                                                @endif
+                                            @if ($item->status == 'pending')
+                                                <span class="badge bg-danger">{{ $item->status }}</span>
+                                            @elseif($item->status == 'processing')
+                                                <span class="badge bg-warning">{{ $item->status }}</span>
+                                            @elseif($item->status == 'rejected')
+                                                <span class="badge bg-secondary">{{ $item->status }}</span>
+                                            @elseif($item->status == 'resubmission')
+                                                <span class="badge btn-label-danger">{{ $item->status }}</span>
+                                            @else
+                                                <span class="badge bg-success">{{ $item->status }}</span>
+                                            @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('petty.show', $item->id) }}"
+                                            <a href="{{ route('petty.show', Hashids::encode($item->id)) }}"
                                                 class="btn btn-sm btn-secondary text-white"><i
                                                     class="bi bi-eye"></i></a>
+                                            @if ($item->status == 'pending' || $item->status == 'resubmission')
+                                                <a href="{{ route('petty.edit', Hashids::encode($item->id)) }}"
+                                                    class="btn btn-sm btn-secondary">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            @else
+                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                    onclick="showEditBlockedNotice()">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            @endif
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -97,6 +109,24 @@
 
     </div>
 
+
+
+    <script>
+    function showEditBlockedNotice() {
+        $.notify({
+            icon: 'bi-exclamation-circle-fill',
+            title: 'Error!',
+            message: "You can't edit this because it's already in process.",
+        }, {
+            type: 'danger',
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
+            time: 2000,
+        });
+    }
+</script>
 
 
 

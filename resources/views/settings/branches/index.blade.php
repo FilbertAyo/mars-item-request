@@ -65,7 +65,7 @@
                                         <td>
                                             <div class="d-flex" style="gap: 3px;">
 
-                                                <form action="{{ route('branch.destroy',$branch->id )  }}"
+                                                <form action="{{ route('branch.destroy',Hashids::encode($branch->id) )  }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this branch?');">
                                                     @csrf
@@ -75,7 +75,7 @@
                                                     </button>
                                                 </form>
 
-                                                <a href="{{ route('branch.show',$branch->id ) }}" class="btn btn-sm btn-dark"><i
+                                                <a href="{{ route('branch.show',Hashids::encode($branch->id)  ) }}" class="btn btn-sm btn-dark"><i
                                                         class="bi bi-eye"></i></a>
                                             </div>
 

@@ -34,16 +34,16 @@
             <div class="card">
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
-                    <h4>Picking Points</h4>
+                    <h4>Collection Points</h4>
 
                     @can('update other settings')
-                    <button type="button" class="btn btn-sm btn-dark" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">
-                        <span class="btn-label">
-                            <i class="bi bi-plus-lg"></i>
-                        </span>
-                        New Pick Point
-                    </button>
+                        <button type="button" class="btn btn-sm btn-dark" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New Point
+                        </button>
                     @endcan
                 </div>
 
@@ -79,6 +79,7 @@
                                             </span>
                                         </td>
                                         <td>
+
                                             <form action="{{ route('picking-point.toggle', $pickingPoint->id) }}"
                                                 method="POST">
                                                 @csrf
@@ -151,7 +152,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New Picking Point</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">New Collection Point</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

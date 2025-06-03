@@ -21,13 +21,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/settings', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/settings', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-     Route::post('/profile/picture/update', [ProfileController::class, 'updateProfile'])->name('profile.image');
+    Route::post('/profile/picture/update', [ProfileController::class, 'updateProfile'])->name('profile.image');
 
     //branches
     Route::get('/branches/list', [BranchController::class, 'index'])->name('branches');
     Route::post('/add/branch', [BranchController::class, 'store'])->name('branches.store');
-    Route::delete('/destroy/branch/{id}', [BranchController::class, 'destroy'])->name('branch.destroy');
-    Route::get('/branch/{id}', [BranchController::class, 'show'])->name('branch.show');
+    Route::delete('/destroy/branch/{hashid}', [BranchController::class, 'destroy'])->name('branch.destroy');
+    Route::get('/branch/{hashid}', [BranchController::class, 'show'])->name('branch.show');
     Route::get('/departments/by/branch/{branchId}', [DepartmentController::class, 'getDepartmentsByBranch'])->name('departments.byBranch');
 
     Route::resource('department', DepartmentController::class);
@@ -35,8 +35,11 @@ Route::middleware('auth')->group(function () {
     // admin
     Route::resource('admin', AdminController::class);
     Route::post('/activate/{id}', [AdminController::class, 'activate'])->name('admin.activate');
-    //  Route::post('/user/{id}/role/assignment', [AdminController::class, 'assignRole'])->name('assign.role');
     Route::post('/users/{id}/assign-permissions', [AdminController::class, 'assignPermissions'])->name('assign.permissions');
+
+    Route::get('warranty', function () {
+        return view('welcome');
+    })->name('warranty');
 });
 
 
@@ -47,9 +50,9 @@ Route::middleware(['auth', 'permission:request pettycash'])->group(function () {
 
 Route::middleware(['auth', 'permission:view requested pettycash'])->group(function () {
     Route::get('pettycash/requests/list', [PettyController::class, 'requests_list'])->name('petty.list');
-    Route::get('/pettycash/request/{id}/details', [PettyController::class, 'request_show'])->name('petty.details');
-    Route::get('f_approve/{id}', [PettyController::class, 'f_approve'])->name('f_approve.approve');
-    Route::get('l_approve/{id}', [PettyController::class, 'l_approve'])->name('l_approve.approve');
+    Route::get('/pettycash/request/{hashid}/details', [PettyController::class, 'request_show'])->name('petty.details');
+    Route::post('f_approve/{id}', [PettyController::class, 'f_approve'])->name('f_approve.approve');
+    Route::post('l_approve/{id}', [PettyController::class, 'l_approve'])->name('l_approve.approve');
     Route::get('c_approve/{id}', [PettyController::class, 'c_approve'])->name('c_approve.approve');
     Route::post('/petty/reject/{id}', [PettyController::class, 'reject'])->name('petty.reject');
 });

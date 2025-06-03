@@ -57,7 +57,7 @@ class DashboardController extends Controller
             ['name' => $request->name],
         );
 
-        return redirect()->back()->with('success', 'Picking points updated successfully');
+        return redirect()->back()->with('success', 'Collection Point updated successfully');
     }
     public function toggleStatus($id)
     {

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Vinkla\Hashids\Facades\Hashids;
 
 class AdminController extends Controller
 {
@@ -79,9 +80,10 @@ class AdminController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($hashid)
     {
-        $user = User::findOrFail($id);
+        $id = Hashids::decode($hashid);
+        $user = User::findOrFail($id[0]);
         $permissions = Permission::all();
 
         return view('settings.users.view', compact('user', 'permissions'));
@@ -100,35 +102,37 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Permissions updated successfully.');
     }
 
-    public function edit(string $id)
+    public function edit($hashid)
     {
-        $user = User::findOrFail($id);
+        $id = Hashids::decode($hashid);
+
+        $user = User::findOrFail($id[0]);
         $branches = Branch::all();
         $departments = Department::all();
         return view('settings.users.edit', compact('user', 'branches', 'departments'));
     }
-   public function update(Request $request, $id)
-{
-    $user = User::findOrFail($id);
+    public function update(Request $request, $id)
+    {
 
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
-        'phone' => ['required', 'regex:/^0[76][0-9]{8}$/'],
-        'branch_id' => ['required', 'string', 'max:255'],
-        'department_id' => ['required', 'string', 'max:255'],
-    ]);
+        $user = User::findOrFail($id);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'phone' => ['required', 'regex:/^0[76][0-9]{8}$/'],
+            'branch_id' => ['required', 'string', 'max:255'],
+            'department_id' => ['required', 'string', 'max:255'],
+        ]);
 
-    $user->update([
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'branch_id' => $request->branch_id,
-        'department_id' => $request->department_id,
-    ]);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'branch_id' => $request->branch_id,
+            'department_id' => $request->department_id,
+        ]);
 
-    return redirect()->back()->with('success', 'User updated successfully');
-}
+        return redirect()->back()->with('success', 'User updated successfully');
+    }
 
 
     public function destroy(string $id)

@@ -93,7 +93,7 @@
                             {{-- The 'required' attribute will be managed by JavaScript --}}
                             <input type="text" id="other_option" class="form-control mt-3"
                                 placeholder="Enter Other reason" style="display: none;"
-                                value="{{ old('other_option',$petty->request_for) }}">
+                                value="{{ old('other_option', $petty->request_for) }}">
                             <input type="hidden" name="request_for" id="final_request_for"
                                 value="{{ old('request_for', $petty->request_for) }}">
 
@@ -111,8 +111,8 @@
 
                     <div class="col-md-6 col-lg-6 mt-3">
                         <div class="form-group">
-                            <label for="reason">Request Description:</label>
-                            <textarea name="reason" class="form-control" required>{{ old('amount', $petty->reason) }}</textarea>
+                            <label for="reason">Description:</label>
+                            <textarea name="reason" class="form-control" rows="6" cols="50" required>{{ old('amount', $petty->reason) }}</textarea>
                         </div>
                     </div>
 
@@ -213,7 +213,12 @@
             </div>
 
             <div class="card-action">
-                <x-primary-button label="Resubmit" />
+                @if ($petty->status == 'pending')
+                    <x-primary-button label="Update" />
+                @elseif($petty->status == 'resubmission')
+                    <x-primary-button label="Resubmit" />
+                @endif
+
             </div>
         </div>
     </form>

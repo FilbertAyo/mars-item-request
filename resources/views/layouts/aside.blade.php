@@ -37,13 +37,13 @@
                  </li>
 
 
-                     <li class="nav-item {{ Request::routeIs('petty.index') ? 'active' : '' }}">
-                         <a href="{{ route('petty.index') }}">
-                             <i class="bi bi-wallet-fill"></i>
-                             <p>Requests</p>
-                         </a>
-                     </li>
-                 
+                 <li class="nav-item {{ Request::routeIs('petty.index') ? 'active' : '' }}">
+                     <a href="{{ route('petty.index') }}">
+                         <i class="bi bi-wallet-fill"></i>
+                         <p>Requests</p>
+                     </a>
+                 </li>
+
 
                  @can('view requested pettycash')
                      <li class="nav-item">
@@ -54,17 +54,21 @@
                          </a>
                          <div class="collapse" id="base">
                              <ul class="nav nav-collapse">
-                                 <li>
-                                     <a href="{{ route('petty.list') }}">
-                                         <span class="sub-item">Initial Approval</span>
-                                     </a>
-                                 </li>
+                                 @can('first pettycash approval')
+                                     <li>
+                                         <a href="{{ route('petty.list') }}">
+                                             <span class="sub-item">Initial Approval</span>
+                                         </a>
+                                     </li>
+                                 @endcan
 
-                                 <li>
-                                     <a href="{{ route('petty.list') }}">
-                                         <span class="sub-item">Last Approval</span>
-                                     </a>
-                                 </li>
+                                 @can('last pettycash approval')
+                                     <li>
+                                         <a href="{{ route('petty.list') }}">
+                                             <span class="sub-item">Last Approval</span>
+                                         </a>
+                                     </li>
+                                 @endcan
 
                              </ul>
                          </div>
@@ -145,6 +149,23 @@
 
                  @endcan
 
+
+                 <li class="nav-section">
+                     <span class="sidebar-mini-icon">
+                         <i class="fa fa-ellipsis-h"></i>
+                     </span>
+                     <h4 class="text-section">Warranty</h4>
+                 </li>
+
+
+                 <li class="nav-item {{ Request::routeIs('warranty') ? 'active' : '' }}">
+                     <a href="{{ route('warranty') }}">
+                         <i class="bi bi-journal-text"></i>
+                         <p>Collections</p>
+                     </a>
+                 </li>
+
+
                  @can('view reports')
                      <li class="nav-section">
                          <span class="sidebar-mini-icon">
@@ -162,35 +183,33 @@
                  @endcan
 
                  @can('view settings')
+                     <li class="nav-section">
+                         <span class="sidebar-mini-icon">
+                             <i class="fa fa-ellipsis-h"></i>
+                         </span>
+                         <h4 class="text-section">Settings</h4>
+                     </li>
 
-                 <li class="nav-section">
-                     <span class="sidebar-mini-icon">
-                         <i class="fa fa-ellipsis-h"></i>
-                     </span>
-                     <h4 class="text-section">Settings</h4>
-                 </li>
+                     <li class="nav-item {{ Request::routeIs('admin.index') ? 'active' : '' }}">
+                         <a href="{{ route('admin.index') }}">
+                             <i class="bi bi-people"></i>
+                             <p>Users</p>
+                         </a>
+                     </li>
 
-                 <li class="nav-item {{ Request::routeIs('admin.index') ? 'active' : '' }}">
-                     <a href="{{ route('admin.index') }}">
-                         <i class="bi bi-people"></i>
-                         <p>Users</p>
-                     </a>
-                 </li>
+                     <li class="nav-item {{ Request::routeIs('branches') ? 'active' : '' }}">
+                         <a href="{{ route('branches') }}">
+                             <i class="bi bi-microsoft"></i>
+                             <p>Branches</p>
+                         </a>
+                     </li>
 
-                 <li class="nav-item {{ Request::routeIs('branches') ? 'active' : '' }}">
-                     <a href="{{ route('branches') }}">
-                         <i class="bi bi-microsoft"></i>
-                         <p>Branches</p>
-                     </a>
-                 </li>
-
-                 <li class="nav-item {{ Request::routeIs('settings.routes') ? 'active' : '' }}">
-                     <a href="{{ route('settings.routes') }}">
-                         <i class="bi bi-geo-alt-fill"></i>
-                         <p>Routes</p>
-                     </a>
-                 </li>
-
+                     <li class="nav-item {{ Request::routeIs('settings.routes') ? 'active' : '' }}">
+                         <a href="{{ route('settings.routes') }}">
+                             <i class="bi bi-geo-alt-fill"></i>
+                             <p>Routes</p>
+                         </a>
+                     </li>
                  @endcan
 
              </ul>
