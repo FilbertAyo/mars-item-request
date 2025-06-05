@@ -34,7 +34,7 @@
     </script>
 @endif
 
-@if ($errors->any())
+@if (isset($errors) && $errors->any())
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             @foreach ($errors->all() as $error)

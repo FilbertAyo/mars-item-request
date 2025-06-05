@@ -112,4 +112,14 @@ Route::get('/run-optimize', function () {
 });
 
 
+Route::get('/run-storage-link', function () {
+    if (request()->get('key') !== 'secret2580') {
+        abort(403);
+    }
+
+    Artisan::call('storage:link');
+
+    return 'Storage link created.';
+});
+
 require __DIR__ . '/auth.php';

@@ -31,38 +31,102 @@
             class="btn btn-danger"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF</a>
         <a href="{{ route('reports.petties.download', ['type' => 'excel'] + request()->all()) }}"
             class="btn btn-success"><i class="bi bi-file-earmark-excel-fill"></i> Download Excel</a>
-        <a href="{{ route('reports.petties.download', ['type' => 'csv'] + request()->all()) }}"
-            class="btn btn-info">Download CSV</a>
+    
     </div>
 
+    
     <table class="table table-bordered">
-        <thead>
+    <thead class="table-light">
+        <tr>
+            <th>Date</th>
+            <th>Particulars</th>
+            <th>Amount (TZS)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($petties as $petty)
+            <!-- Summary Row -->
             <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Request For</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Status</th>
+                <td>{{ $petty->created_at->format('d/m/Y') }}</td>
+                <td><strong>{{ $petty->request_for }}</strong></td>
+                <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
+                <td>{{ ucfirst($petty->status) }}</td>
             </tr>
-        </thead>
-        <tbody>
-            @forelse ($petties as $petty)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $petty->user->name  }}</td>
-                    <td>{{ $petty->request_for }}</td>
-                    <td>{{ $petty->amount }}</td>
-                    <td>{{ $petty->created_at->format('d M Y') }}</td>
-                    <td>{{ $petty->status }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6">No petties found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+
+            <tr>
+                <td></td>
+                <td>
+                    <div class="mb-1">
+                        <strong>Name:</strong> {{ $petty->user->name }}
+                    </div>
+                    <div class="mb-1">
+                         {{ $petty->reason }}
+                    </div>
+
+                    @if ($petty->request_for == 'Sales Delivery')
+                        <div class="mb-1">
+                            <strong><em>Delivery Details:</em></strong>
+                            <ul class="mb-1">
+                                @foreach ($petty->attachments as $attachment)
+                                    <li>{{ $attachment->name }}: {{ $attachment->product_name }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <div>
+                            <strong><em>Routes:</em></strong>
+                            <ul>
+                                @foreach ($petty->trips as $trip)
+                                    <li>
+                                        {{ $trip->startPoint->name }}
+                                        @foreach ($trip->stops as $stop)
+                                            → {{ $stop->destination }}
+                                        @endforeach
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                    @elseif ($petty->request_for == 'Transport')
+                        <div>
+                            <strong><em>Routes:</em></strong>
+                            <ul>
+                                @foreach ($petty->trips as $trip)
+                                    <li>
+                                        {{ $trip->startPoint->name }}
+                                        @foreach ($trip->stops as $stop)
+                                            → {{ $stop->destination }}
+                                        @endforeach
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                    @elseif ($petty->request_for == 'Office Supplies')
+                        <div>
+                            <strong><em>Items:</em></strong>
+                            <ul>
+                                @foreach ($petty->lists as $item)
+                                    <li>
+                                        {{ $item->item_name }} ({{ $item->quantity }}) – 
+                                        TZS {{ number_format($item->price) }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4" class="text-center">No petties found.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
 
 
 </x-app-layout>

@@ -65,37 +65,33 @@ class ReportController extends Controller
         return view('reports.petty.list', compact('petties'));
     }
 
-  public function downloadPetty(Request $request, $type)
-{
-    $query = Petty::query();
+    public function downloadPetty(Request $request, $type)
+    {
+        $query = Petty::query();
 
-    // Filter by date range
-    if ($request->filled('from') && $request->filled('to')) {
-        $query->whereBetween('created_at', [$request->from, $request->to]);
+        // Filter by date range
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereBetween('created_at', [$request->from, $request->to]);
+        }
+
+        // Filter by status (e.g. paid, approved)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $petties = $query->get();
+
+        // Export to PDF
+        if ($type === 'pdf') {
+            $pdf = Pdf::loadView('reports.petty.pdf', compact('petties'));
+            return $pdf->download('PETTY CASH.pdf');
+        }
+
+        // Export to Excel or CSV
+        if ($type === 'excel') {
+            return Excel::download(new PettyExport($request->from, $request->from, $request->status), 'petty_cash.xlsx');
+        }
+
+        return back();
     }
-
-    // Filter by status (e.g. paid, approved)
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    $petties = $query->get();
-
-    // Export to PDF
-    if ($type === 'pdf') {
-        $pdf = Pdf::loadView('reports.petty.pdf', compact('petties'));
-        return $pdf->download('PETTY CASH.pdf');
-    }
-
-    // Export to Excel or CSV
-    if (in_array($type, ['excel', 'csv'])) {
-        return Excel::download(
-            new PettyExport($request->from, $request->to, $request->status),
-            'PETTY CASH.' . ($type === 'csv' ? 'csv' : 'xlsx')
-        );
-    }
-
-    return back();
-}
-
 }

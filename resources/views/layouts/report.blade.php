@@ -2,11 +2,10 @@
 <html>
 
 <head>
-    <title>User Report</title>
-    <style>
+    <title>Report</title>
+     <style>
         body {
             font-family: sans-serif;
-            font-size: 12px;
         }
 
         table {
@@ -18,8 +17,14 @@
         th,
         td {
             border: 1px solid #000;
-            padding: 6px;
+            padding: 5px;
             text-align: left;
+        }
+
+        h2,
+        h4 {
+            text-align: center;
+            margin: 0;
         }
     </style>
 </head>

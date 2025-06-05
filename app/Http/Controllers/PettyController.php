@@ -161,9 +161,10 @@ class PettyController extends Controller
 
         if ($request->request_for === 'Sales Delivery') {
             $request->validate([
-                'attachments.*.customer_name' => 'required|string',
-                'attachments.*.product' => 'required|string',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048'
+                'attachments' => 'required|array|min:1',
+                'attachments.*.customer_name' => 'required|string|max:255',
+                'attachments.*.product' => 'required|string|max:255',
+                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:1024', // max 1MB
             ]);
         }
 
@@ -249,14 +250,15 @@ class PettyController extends Controller
         // Prepare email data
         $name = $requester->name;
         $reason = $newRequest->request_for;
-        $id = $newRequest->id;
+        $new_id = $newRequest->id;
+        $encodedId = Hashids::encode($new_id);
 
         // Get only their email addresses
         $emails = $users->pluck('email')->toArray();
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
         }
-        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $id));
+        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
 
         return redirect()->back()->with('success', 'Request submitted successfully.');
     }
@@ -284,11 +286,11 @@ class PettyController extends Controller
         $name = $requester->name;
         $emails = $users->pluck('email')->toArray();
         $reason = $request->request_for;
-        $id = $request->id;
+        $encodedId = Hashids::encode($id);
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no approver appointed in your department');
         }
-        Mail::to($emails)->send(new FirstApprovalMail($name, $reason, $id));
+        Mail::to($emails)->send(new FirstApprovalMail($name, $reason,  $encodedId));
 
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Request approved and status updated');
@@ -315,12 +317,12 @@ class PettyController extends Controller
         $name = $requester->name;
         $emails = $users->pluck('email')->toArray();
         $reason = $request->request_for;
-        $id = $request->id;
+        $encodedId = Hashids::encode($id);
 
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no cashier appointed in the requester department');
         }
-        Mail::to($emails)->send(new LastApprovalMail($name, $reason, $id));
+        Mail::to($emails)->send(new LastApprovalMail($name, $reason,  $encodedId));
 
         return redirect()->back()->with('success', 'Request approved and status updated');
     }
@@ -351,8 +353,9 @@ class PettyController extends Controller
         $name = $requester->name;
         $requester_email = $requester->email;
         $reason = $request->request_for;
-        $id = $request->id;
-        Mail::to($requester_email)->send(new SuccessPayment($name, $reason, $id));
+        $encodedId = Hashids::encode($id);
+
+        Mail::to($requester_email)->send(new SuccessPayment($name, $reason,  $encodedId));
 
         return redirect()->back()->with('success', 'Payment done successfully, and the amount has been deducted from your deposit.');
     }
@@ -379,13 +382,14 @@ class PettyController extends Controller
             $name = $requester->name;
             $requester_email = $requester->email;
             $reason = $petty->request_for;
-            $id = $petty->id;
+            $encodedId = Hashids::encode($id);
+
 
             if ($request->action === 'rejected') {
-                Mail::to($requester_email)->send(new RejectMail($name, $reason, $id));
+                Mail::to($requester_email)->send(new RejectMail($name, $reason, $encodedId));
                 return redirect()->back()->with('success', 'This request was rejected and feedback sent successfully.');
             } else {
-                Mail::to($requester_email)->send(new ResubmitMail($name, $reason, $id));
+                Mail::to($requester_email)->send(new ResubmitMail($name, $reason, $encodedId));
                 return redirect()->back()->with('success', 'You recommended resubmission for this petty cash request and feedback was sent successfully.');
             }
         }
@@ -438,9 +442,10 @@ class PettyController extends Controller
 
         if ($request->request_for === 'Sales Delivery') {
             $request->validate([
-                'attachments.*.customer_name' => 'required|string',
-                'attachments.*.product' => 'required|string',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048'
+                'attachments' => 'required|array|min:1',
+                'attachments.*.customer_name' => 'required|string|max:255',
+                'attachments.*.product' => 'required|string|max:255',
+                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:1024', // max 1MB
             ]);
         }
 
@@ -469,12 +474,14 @@ class PettyController extends Controller
             $name = $requester->name;
             $reason = $request->request_for;
             $id = $request->id;
+            $encodedId = Hashids::encode($id);
+
 
             $emails = $users->pluck('email')->toArray();
             if (empty($emails)) {
                 return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
             }
-            Mail::to($emails)->send(new ResubmissionMail($name,  $reason, $id));
+            Mail::to($emails)->send(new ResubmissionMail($name,  $reason, $encodedId));
         }
 
         $petty->update([
