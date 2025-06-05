@@ -1,90 +1,106 @@
- <div class="pcv-container">
-
-     @if ($request->status == 'paid' || $request->status == 'approved')
-         <div class="status-stamp paid">{{ strtoupper($request->status) }}
-         </div>
-     @else
-         <div class="status-stamp not-paid">{{ strtoupper($request->status) }}</div>
-     @endif
-
-
-     <div class="pcv-header text-center">
-         <img src="{{ asset('image/longl.png') }}" alt="" class="mb-2" style="height: 60px;"><br>
-         P.O. BOX 20226, DSM, TANZANIA
-         TEL.: 022 2124760 | FAX: 2124759
-         Email: info@marstanzania.com
-     </div>
-
-     <div class="pcv-title">PETTY CASH VOUCHER</div>
-
-     <div class="pcv-section pcv-flex pcv-space">
-         <div><span class="pcv-label">PCV No:</span> #{{ str_pad($request->id, 3, '0', STR_PAD_LEFT) }}
-         </div>
-         <div><span class="pcv-label">Date:</span>
-             {{ \Carbon\Carbon::parse($request->created_at)->format('d/m/Y') }}</div>
-         <div class="pcv-label">
-             <span class="pcv-label">Department:</span> {{ $request->department->name ?? 'N/A' }}
-         </div>
-     </div>
-
-     <table class="pcv-table">
-         <thead>
-             <tr>
-                 <th>DESCRIPTION</th>
-                 <th>AMOUNT</th>
-             </tr>
-         </thead>
-         <tbody>
-             <tr>
-                 <td>{{ $request->reason }}</td>
-                 <td>{{ number_format($request->amount, 2) }}</td>
-             </tr>
-             <tr>
-                 <td><strong>TOTAL: {{ $amountInWords }}</strong></td>
-                 <td><strong>{{ number_format($request->amount, 2) }}</strong></td>
-             </tr>
-         </tbody>
-     </table>
-
-     <div class="signature-row"
-         style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px;">
-         <!-- Raised By -->
-         <div class="signature-block" style="flex: 1;">
-             <div>Raised by:</div>
-             <div
-                 style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                 {{ $request->user->name }}
+ <div class="modal fade" id="pettyCashModal" tabindex="-1" aria-labelledby="pcvModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-lg modal-dialog-scrollable">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title" id="pcvModalLabel"><button class="btn btn-secondary" onclick="printPCV()"><i
+                             class="bi bi-printer-fill"></i></button></h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
              </div>
-             <div>NAME</div>
-         </div>
+             <div class="modal-body">
+                 <div id="printable-pcv">
 
-         <!-- Verified By -->
-         <div class="signature-block" style="flex: 1;">
-             <div>Verified by:</div>
-             <div
-                 style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                 {{ $verifiedBy->user->name ?? '' }}
-             </div>
-             <div>VERIFIER</div>
-         </div>
+                     <div class="pcv-container">
 
-         <!-- Approved By -->
-         <div class="signature-block" style="flex: 1;">
-             <div>Approved by:</div>
-             <div
-                 style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                 @if ($approvedBy)
-                     General Manager
-                 @endif
+                         @if ($request->status == 'paid' || $request->status == 'approved')
+                             <div class="status-stamp paid">{{ strtoupper($request->status) }}
+                             </div>
+                         @else
+                             <div class="status-stamp not-paid">{{ strtoupper($request->status) }}</div>
+                         @endif
+
+
+                         <div class="pcv-header text-center">
+                             <img src="{{ asset('image/longl.png') }}" alt="" class="mb-2"
+                                 style="height: 60px;"><br>
+                             P.O. BOX 20226, DSM, TANZANIA
+                             TEL.: 022 2124760 | FAX: 2124759
+                             Email: info@marstanzania.com
+                         </div>
+
+                         <div class="pcv-title">PETTY CASH VOUCHER</div>
+
+                         <div class="pcv-section pcv-flex pcv-space">
+                             <div><span class="pcv-label">PCV No:</span>
+                                 #{{ str_pad($request->id, 3, '0', STR_PAD_LEFT) }}
+                             </div>
+                             <div><span class="pcv-label">Date:</span>
+                                 {{ \Carbon\Carbon::parse($request->created_at)->format('d/m/Y') }}</div>
+                             <div class="pcv-label">
+                                 <span class="pcv-label">Department:</span> {{ $request->department->name ?? 'N/A' }}
+                             </div>
+                         </div>
+
+                         <table class="pcv-table">
+                             <thead>
+                                 <tr>
+                                     <th>DESCRIPTION</th>
+                                     <th>AMOUNT</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <tr>
+                                     <td>{{ $request->reason }}</td>
+                                     <td>{{ number_format($request->amount, 2) }}</td>
+                                 </tr>
+                                 <tr>
+                                     <td><strong>TOTAL: {{ $amountInWords }}</strong></td>
+                                     <td><strong>{{ number_format($request->amount, 2) }}</strong></td>
+                                 </tr>
+                             </tbody>
+                         </table>
+
+                         <div class="signature-row"
+                             style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px;">
+                             <!-- Raised By -->
+                             <div class="signature-block" style="flex: 1;">
+                                 <div>Raised by:</div>
+                                 <div
+                                     style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
+                                     {{ $request->user->name }}
+                                 </div>
+                                 <div>NAME</div>
+                             </div>
+
+                             <!-- Verified By -->
+                             <div class="signature-block" style="flex: 1;">
+                                 <div>Verified by:</div>
+                                 <div
+                                     style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
+                                     {{ $verifiedBy->user->name ?? '' }}
+                                 </div>
+                                 <div>VERIFIER</div>
+                             </div>
+
+                             <!-- Approved By -->
+                             <div class="signature-block" style="flex: 1;">
+                                 <div>Approved by:</div>
+                                 <div
+                                     style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
+                                     @if ($approvedBy)
+                                         General Manager
+                                     @endif
+                                 </div>
+                                 <div>GM</div>
+                             </div>
+                         </div>
+
+                     </div>
+
+                 </div>
              </div>
-             <div>GM</div>
          </div>
      </div>
-
  </div>
-
-
-
 
 
  <style>

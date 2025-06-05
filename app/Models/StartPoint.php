@@ -12,4 +12,5 @@ class StartPoint extends Model
 {
     return $this->hasMany(Trip::class, 'from_place');
 }
+
 }

@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
@@ -85,8 +85,9 @@
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit"
-                                                    class="btn btn-sm {{ $pickingPoint->status === 'active' ? 'btn-danger' : 'btn-success ' }}">
-                                                    {{ $pickingPoint->status === 'active' ? 'Deactivate' : 'Activate' }}
+                                                    class="btn btn-sm">
+                                                      <i class="bi fs-2 {{ $pickingPoint->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+
                                                 </button>
                                             </form>
                                         </td>
@@ -101,45 +102,71 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card">
 
-                <div class="card-header" style="display: flex;justify-content: space-between;">
-                    <h4>Destination Points</h4>
+                <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
+                    <h4>Transport Mode</h4>
 
+                    @can('update other settings')
+                        <button type="button" class="btn btn-sm btn-dark" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal2">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New
+                        </button>
+                    @endcan
                 </div>
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="multi-filter-select2" class="display table table-bordered table-hover">
+                        <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Destination</th>
+                                    <th>Vehicle</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
                                     <th>No</th>
-                                    <th>Destination</th>
+                                    <th>Pick Point</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </tfoot>
                             <tbody>
 
-                                @foreach ($stops as $index => $stop)
+                                @foreach ($trans_mode as $index => $mode)
                                     <tr>
-                                        <td>{{ $stops->firstItem() + $index }}</td>
-                                        <td>{{ $stop->destination }}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $mode->name }}</td>
+                                        <td>
+                                            <span
+                                                class="badge {{ $mode->status === 'active' ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $mode->status }}
+                                            </span>
+                                        </td>
+                                        <td>
+
+                                            <form action="{{ route('trans.toggle', $mode->id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm">
+                                                    <i class="bi fs-2 {{ $mode->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
 
-
                             </tbody>
                         </table>
-                        <div class="d-flex justify-content-center mt-3">
-                            {{ $stops->links('pagination::bootstrap-5') }}
-
-                        </div>
                     </div>
                 </div>
             </div>
@@ -160,6 +187,28 @@
                         @csrf
                         <div class="mb-3">
                             <label for="topic" class="form-label">Pick Point</label>
+                            <input type="text" class="form-control" id="topic" name="name" required>
+                        </div>
+                        <x-primary-button label="Save" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Transport Mode</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('transport.store') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="topic" class="form-label">Name</label>
                             <input type="text" class="form-control" id="topic" name="name" required>
                         </div>
                         <x-primary-button label="Save" />

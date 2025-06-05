@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deposit;
+use App\Models\Petty;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CashflowExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DepositController extends Controller
 {
@@ -29,9 +33,141 @@ class DepositController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    private function getCashflowTransactions($filterType)
+    {
+        $departmentId = auth()->user()->department_id;
+
+        $allDeposits = Deposit::where('department_id', $departmentId)->get();
+        $allPetty = Petty::with('user')
+            ->where('department_id', $departmentId)
+            ->where('status', 'paid')
+            ->get();
+
+        $allTransactions = collect();
+
+        foreach ($allDeposits as $deposit) {
+            $allTransactions->push([
+                'date' => $deposit->created_at,
+                'type' => 'Deposit',
+                'requested_by' => optional($deposit->department)->name,
+                'deposit' => $deposit->deposit ?? 0, // Ensure it's never null
+                'deduction' => 0,
+            ]);
+        }
+
+
+        foreach ($allPetty as $petty) {
+            $allTransactions->push([
+                'date' => $petty->created_at,
+                'type' => 'Petty',
+                'requested_by' => optional($petty->user)->name ?? 'Unknown',
+                'deposit' => 0,
+                'deduction' => $petty->amount ?? 0,
+            ]);
+        }
+
+
+        $allTransactions = $allTransactions->sortBy('date')->values();
+        $initialBalance = 0;
+        $runningBalance = $initialBalance;
+
+        if (in_array($filterType, ['daily', 'monthly'])) {
+            $grouped = $allTransactions->groupBy(function ($tx) use ($filterType) {
+                return $filterType === 'daily'
+                    ? \Carbon\Carbon::parse($tx['date'])->toDateString()
+                    : \Carbon\Carbon::parse($tx['date'])->format('F Y');
+            });
+
+            $groupedData = [];
+
+            foreach ($grouped as $key => $group) {
+                $dayTotal = 0;
+                foreach ($group as $tx) {
+                    if ($tx['type'] === 'Deposit') {
+                        $runningBalance += $tx['deposit'] ?? 0;
+                    } elseif ($tx['type'] === 'Petty') {
+                        $runningBalance -= $tx['deduction'] ?? 0;
+                        $dayTotal += $tx['deduction'] ?? 0;
+                    }
+                }
+
+                $groupedData[] = [
+                    'label' => $key,
+                    'deduction' => $dayTotal,
+                    'remaining' => $runningBalance,
+                    'department' => optional(auth()->user()->department)->name,
+                ];
+            }
+
+            return [
+                'transactions' => $groupedData,
+                'isFiltered' => true,
+                'filterType' => $filterType,
+            ];
+        }
+
+        // Default (no filter)
+        $transactions = $allTransactions->map(function ($tx) use (&$runningBalance) {
+            if ($tx['type'] === 'Deposit') {
+                $runningBalance += $tx['deposit'];
+            } elseif ($tx['type'] === 'Petty') {
+                $runningBalance -= $tx['deduction'];
+            }
+            $tx['remaining'] = $runningBalance;
+            return $tx;
+        });
+
+        return [
+            'transactions' => $transactions,
+            'isFiltered' => false,
+            'filterType' => null,
+        ];
+    }
+
+
+    public function cashflow(Request $request)
+    {
+        $filterType = $request->input('filter_type');
+        $data = $this->getCashflowTransactions($filterType);
+
+        return view('pettycash.finance.cashflow', $data);
+    }
+
+
+    public function download(Request $request)
+    {
+        $format = $request->get('format');
+        $filterType = $request->get('filter_type');
+
+        $data = $this->getCashflowTransactions($filterType);
+        $transactions = $data['transactions'];
+        $department = strtoupper(auth()->user()->department->name);
+
+        if ($filterType === 'daily' || $filterType === 'monthly') {
+            $isFiltered = true;
+        } else {
+            $isFiltered = false;
+        }
+
+        if ($format === 'pdf') {
+            $pdf = Pdf::loadView('pettycash.finance.cashflow_pdf', [
+                'transactions' => $transactions,
+                'department' => $department,
+                'filterType' => $filterType,
+                'isFiltered' => $isFiltered, // ✅ Add this line
+            ]);
+
+            return $pdf->download('daily_running_balance_report.pdf');
+        }
+
+        if ($format === 'excel') {
+            return Excel::download(new CashflowExport($transactions, $department, $isFiltered), 'running_balance_report.xlsx');
+        }
+
+        return back()->with('error', 'Invalid format requested.');
+    }
+
+
     public function create()
     {
         //

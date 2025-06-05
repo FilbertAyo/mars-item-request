@@ -8,7 +8,7 @@
             }, {
                 type: 'success',
                 placement: {
-                    from: "bottom",
+                    from: "top",
                     align: "right"
                 },
                 time: 1000,
@@ -25,7 +25,7 @@
             }, {
                 type: 'danger',
                 placement: {
-                    from: "bottom",
+                    from: "top",
                     align: "right"
                 },
                 time: 2000,
@@ -45,7 +45,7 @@
                 }, {
                     type: 'danger',
                     placement: {
-                        from: "bottom",
+                        from: "top",
                         align: "right"
                     },
                     time: 2000,
@@ -71,40 +71,5 @@
 </script>
 
 
-{{-- delete --}}
-<script>
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: "btn btn-success ml-2", // Added 'ml-2' for spacing
-            cancelButton: "btn btn-danger"
-        },
-        buttonsStyling: false
-    });
 
-    function showSweetAlert(event, itemId) {
-        event.preventDefault(); // Prevent the form from submitting immediately
-
-        swalWithBootstrapButtons.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "No, cancel!",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Submit the form programmatically
-                document.getElementById(`deleteForm-${itemId}`).submit();
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
-                    title: "Cancelled",
-                    text: "Your application is safe :)",
-                    icon: "error"
-                });
-            }
-        });
-
-        return false; // Prevent default form submission behavior
-    }
 </script>

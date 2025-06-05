@@ -1,0 +1,177 @@
+<div class="mb-4">  
+
+    @if ($request->request_for == 'Sales Delivery')
+        <h5 class="text-secondary mb-3"><strong>Attachments Details</strong></h5>
+
+        <ul class="list-group mb-3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Customer Name</th>
+                        <th>Products</th>
+                        <th>Attachment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($request->attachments as $attachment)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $attachment->name }}</td>
+                            <td>{{ $attachment->product_name }}</td>
+                            <td>
+                                <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#attachmentModal{{ $loop->index }}" class="btn btn-secondary btn-sm">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                
+                                <div class="modal fade" id="attachmentModal{{ $loop->index }}" tabindex="-1"
+                                    aria-labelledby="attachmentModalLabel{{ $loop->index }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="attachmentModalLabel{{ $loop->index }}">
+                                                    Attachment Preview</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="{{ asset('storage/' . $attachment->attachment) }}"
+                                                    alt="Attachment" class="img-fluid rounded">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+        </ul>
+    @endif
+
+    @if ($request->request_for == 'Office Supplies')
+
+        <h5 class="text-secondary mb-3"><strong>List of Items</strong></h5>
+
+        @if ($request->lists->count() > 0)
+            <ul class="list-group">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th scope="col">Item Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price (TZS)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($request->lists as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->item_name }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>{{ number_format($item->price) }}/=</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </ul>
+        @endif
+    @elseif($request->request_for == 'Sales Delivery' || $request->request_for == 'Transport')
+        <h5 class="text-secondary mb-3 text-primary"><strong>Transport Route</strong></h5>
+
+        <div class="row">
+
+            @foreach ($request->trips as $trip)
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card shadow-sm p-3">
+                        <div class="d-flex align-items-center">
+                            <span class="stamp stamp-md bg-danger me-3">
+                                <i class="bi bi-geo-fill"></i>
+                            </span>
+                            <div>
+                                <small class="text-muted">Collection Point</small>
+                                <h5 class="mb-1">
+                                    <b>{{ $trip->startPoint->name }}</b>
+                                </h5>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @foreach ($trip->stops as $stop)
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card shadow-sm p-3">
+                            <div class="d-flex align-items-center">
+                                <span class="stamp stamp-md {{ $loop->last ? 'bg-success' : 'bg-warning' }} me-3">
+                                    <i
+                                        class="bi {{ $loop->last ? 'bi-pin-map-fill' : 'bi-arrow-right-square-fill' }}"></i>
+                                </span>
+                                <div>
+                                    <small class="text-muted">{{ $loop->last ? 'END' : 'TO' }}</small>
+                                    <h5 class="mb-1">
+                                        <b> {{ $stop->destination }}</b>
+                                    </h5>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endforeach
+
+            <div class="form-group col-md-12 mb-3">
+                <h5 class="text-secondary mb-3 text-primary"><strong>Transport Mode</strong></h5>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card shadow-sm p-3">
+                        <div class="d-flex align-items-center">
+                            <span class="stamp stamp-md me-3">
+                                <i class="bi bi-bus-front"></i>
+                            </span>
+                            <div>
+                                <small class="text-muted">{{ $request->transMode->name ?? 'N/A' }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    @endif
+
+    @if ($request->request_type == 'Reimbursement')
+        <h5 class="text-secondary mb-3 text-primary"><strong>Receipt Attachment</strong></h5>
+
+        <h5 class="text-secondary mb-3 text-primary">
+            <a href="{{ asset($request->attachment) }}" download class="badge bg-primary text-decoration-none ms-2">
+                download
+            </a>
+        </h5>
+
+        <!-- Thumbnail Image -->
+        <img src="{{ asset($request->attachment) }}" alt="Loading ..."
+            style="max-height: 200px; max-width: 100%; cursor: pointer;" data-bs-toggle="modal"
+            data-bs-target="#imageModal">
+
+        <!-- Full-Screen Image Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">Receipt</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="{{ asset($request->attachment) }}" alt="Loading ..." class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>

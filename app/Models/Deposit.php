@@ -16,4 +16,9 @@ class Deposit extends Model
         'created_at',
         'remaining'
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

@@ -13,9 +13,11 @@ use App\Mail\SuccessPayment;
 use App\Models\ApprovalLog;
 use App\Models\Deposit;
 use App\Models\Petty;
+use App\Models\PettyAttachment;
 use App\Models\PettyList;
 use App\Models\StartPoint;
 use App\Models\Stop;
+use App\Models\TransMode;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -63,9 +65,10 @@ class PettyController extends Controller
 
     public function create()
     {
-        // $pickingPoints = Trip::pluck('from_place', 'id');
         $pickingPoints = StartPoint::all()->where('status', 'active');
-        return view('pettycash.create', compact('pickingPoints'));
+        $trans = TransMode::all()->where('status', 'active');
+
+        return view('pettycash.create', compact('pickingPoints', 'trans'));
     }
     public function show($hashid)
     {
@@ -91,7 +94,7 @@ class PettyController extends Controller
     {
         $requests = Petty::orderBy('created_at', 'desc')->where(
             'department_id',
-            auth()->user()->department_id
+            operator: auth()->user()->department_id
         )->get();
 
         return view('pettycash.approval.index', compact('requests'));
@@ -134,6 +137,7 @@ class PettyController extends Controller
         $request->validate([
             'user_id' => 'required|string',
             'request_for' => 'required|string|max:255',
+            'trans_mode_id' => 'nullable',
             'amount' => 'required|numeric|min:0',
             'reason' => 'nullable|string|max:1000',
             'request_type' => 'required|String',
@@ -155,6 +159,14 @@ class PettyController extends Controller
             ]);
         }
 
+        if ($request->request_for === 'Sales Delivery') {
+            $request->validate([
+                'attachments.*.customer_name' => 'required|string',
+                'attachments.*.product' => 'required|string',
+                'attachments.*.file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048'
+            ]);
+        }
+
         if ($request->request_for === 'Sales Delivery' || $request->request_for === 'Transport') {
             $request->validate([
                 'from_place' => 'required|string',
@@ -168,6 +180,7 @@ class PettyController extends Controller
         $newRequest = Petty::create([
             'user_id' => $request->user_id,
             'department_id' => $request->department_id,
+            'trans_mode_id' => $request->trans_mode_id,
             'request_for' => $request->request_for,
             'amount' => $request->amount,
             'reason' => $request->reason,
@@ -192,7 +205,29 @@ class PettyController extends Controller
                     'price' => $request->price[$index] ?? null,
                 ]);
             }
-        } elseif ($request->request_for === 'Sales Delivery' || $request->request_for === 'Transport') {
+        } elseif ($request->request_for === 'Transport') {
+
+            $transportRequest = Trip::create([
+                'petty_id' => $newRequest->id,
+                'from_place' => $request->from_place,
+            ]);
+            foreach ($request->destinations as $destination) {
+                $transportRequest->stops()->create([
+                    'destination' => $destination,
+                ]);
+            }
+        } elseif ($request->request_for === 'Sales Delivery') {
+
+            foreach ($request->attachments as $attachment) {
+                $filePath = $attachment['file']->store('attachments', 'public');
+
+                PettyAttachment::create([
+                    'petty_id' => $newRequest->id,
+                    'name' => $attachment['customer_name'],
+                    'product_name' => $attachment['product'],
+                    'attachment' => $filePath
+                ]);
+            }
             $transportRequest = Trip::create([
                 'petty_id' => $newRequest->id,
                 'from_place' => $request->from_place,
@@ -207,8 +242,6 @@ class PettyController extends Controller
 
         // Get the requester
         $requester = User::find($request->user_id);
-
-        // Get all users with the specific permission and same department
         $users = User::permission('first pettycash approval')
             ->where('department_id', $requester->department_id)
             ->get();
@@ -223,7 +256,6 @@ class PettyController extends Controller
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
         }
-        // Send the mail
         Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $id));
 
         return redirect()->back()->with('success', 'Request submitted successfully.');
@@ -366,11 +398,12 @@ class PettyController extends Controller
     {
         $id = Hashids::decode($hashid);
         $pickingPoints = StartPoint::all()->where('status', 'active');
+        $trans = TransMode::all()->where('status', 'active');
 
         $petty = Petty::findOrFail($id[0]);
         $items = PettyList::where('petty_id', $petty->id)->get();
 
-        return view('pettycash.resubmission', compact('petty', 'pickingPoints', 'items'));
+        return view('pettycash.resubmission', compact('petty', 'pickingPoints', 'items', 'trans'));
     }
 
     /**
@@ -403,6 +436,14 @@ class PettyController extends Controller
             ]);
         }
 
+        if ($request->request_for === 'Sales Delivery') {
+            $request->validate([
+                'attachments.*.customer_name' => 'required|string',
+                'attachments.*.product' => 'required|string',
+                'attachments.*.file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048'
+            ]);
+        }
+
         if (in_array($request->request_for, ['Sales Delivery', 'Transport'])) {
             $request->validate([
                 'from_place' => 'required|string',
@@ -413,6 +454,7 @@ class PettyController extends Controller
 
         $petty->lists()->delete();
         $petty->trips()->delete();
+        $petty->attachments()->delete();
 
 
         if ($petty->status === 'resubmission') {
@@ -438,6 +480,7 @@ class PettyController extends Controller
         $petty->update([
             'user_id' => $request->user_id,
             'department_id' => $request->department_id,
+            'trans_mode_id' => $request->trans_mode_id,
             'request_for' => $request->request_for,
             'amount' => $request->amount,
             'reason' => $request->reason,
@@ -467,7 +510,30 @@ class PettyController extends Controller
         }
 
         // 6. Rebuild Trip and Stops if applicable
-        if (in_array($request->request_for, ['Sales Delivery', 'Transport'])) {
+        if ($request->request_for === 'Transport') {
+            $newTrip = Trip::create([
+                'petty_id' => $petty->id,
+                'from_place' => $request->from_place,
+            ]);
+
+            foreach ($request->destinations as $destination) {
+                $newTrip->stops()->create([
+                    'destination' => $destination,
+                ]);
+            }
+        } elseif ($request->request_for === 'Sales Delivery') {
+
+            foreach ($request->attachments as $attachment) {
+                $filePath = $attachment['file']->store('attachments', 'public');
+
+                PettyAttachment::create([
+                    'petty_id' => $petty->id,
+                    'name' => $attachment['customer_name'],
+                    'product_name' => $attachment['product'],
+                    'attachment' => $filePath
+                ]);
+            }
+
             $newTrip = Trip::create([
                 'petty_id' => $petty->id,
                 'from_place' => $request->from_place,

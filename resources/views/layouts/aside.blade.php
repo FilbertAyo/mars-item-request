@@ -58,6 +58,9 @@
                                      <li>
                                          <a href="{{ route('petty.list') }}">
                                              <span class="sub-item">Initial Approval</span>
+                                             @if ($pendingPettiesCount > 0)
+                                                 <span class="badge badge-danger">{{ $pendingPettiesCount }}</span>
+                                             @endif
                                          </a>
                                      </li>
                                  @endcan
@@ -66,6 +69,9 @@
                                      <li>
                                          <a href="{{ route('petty.list') }}">
                                              <span class="sub-item">Last Approval</span>
+                                             @if ($processingPettiesCount > 0)
+                                                 <span class="badge badge-warning">{{ $processingPettiesCount }}</span>
+                                             @endif
                                          </a>
                                      </li>
                                  @endcan
@@ -76,28 +82,50 @@
                  @endcan
 
                  @can('view cashflow movements')
-                     <li class="nav-item {{ Request::routeIs('deposit.index') ? 'active' : '' }}">
-                         <a data-bs-toggle="collapse" href="#base2">
-                             <i class="bi bi-cash-coin"></i>
-                             <p>Finance</p>
-                             <span class="caret"></span>
-                         </a>
-                         <div class="collapse" id="base2">
-                             <ul class="nav nav-collapse">
-                                 <li>
-                                     <a href="{{ route('petty.list') }}">
-                                         <span class="sub-item">Payments</span>
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="{{ route('deposit.index') }}">
-                                         <span class="sub-item">Cash Management</span>
-                                     </a>
-                                 </li>
-                             </ul>
-                         </div>
-                     </li>
-                 @endcan
+
+                 <li class="nav-item {{ Request::routeIs('deposit.index') ? 'active' : '' }}">
+                     <a data-bs-toggle="collapse" href="#submenu">
+                         <i class="bi bi-cash-coin"></i>
+                         <p>Finance</p>
+                         <span class="caret"></span>
+                     </a>
+                     <div class="collapse" id="submenu">
+                         <ul class="nav nav-collapse">
+                             <li>
+                                 <a href="{{ route('petty.list') }}">
+                                     <span class="sub-item">Payments</span>
+                                     @if ($approvedPettiesCount > 0)
+                                         <span class="badge badge-success">{{ $approvedPettiesCount }}</span>
+                                     @endif
+                                 </a>
+                             </li>
+                             <li>
+                                 <a data-bs-toggle="collapse" href="#subnav1">
+                                     <span class="sub-item">Transactions</span>
+                                     <span class="caret"></span>
+                                 </a>
+                                 <div class="collapse" id="subnav1">
+                                     <ul class="nav nav-collapse subnav">
+                                         <li>
+                                             <a href="{{ route('deposit.index') }}">
+                                                 <span class="sub-item">Cash Management</span>
+                                             </a>
+                                         </li>
+                                         <li>
+                                             <a href="{{ route('cashflow.index') }}">
+                                                 <span class="sub-item">Cash Flow</span>
+                                             </a>
+                                         </li>
+                                     </ul>
+                                 </div>
+                             </li>
+
+
+                         </ul>
+                     </div>
+                 </li>
+
+                  @endcan
 
 
                  @can('request item purchase')
@@ -143,7 +171,6 @@
                          <a href="{{ route('justify.index') }}">
                              <i class="bi bi-circle-square"></i>
                              <p>Justifications</p>
-                             {{-- <span class="badge badge-success">4</span> --}}
                          </a>
                      </li>
 
@@ -205,10 +232,28 @@
                      </li>
 
                      <li class="nav-item {{ Request::routeIs('settings.routes') ? 'active' : '' }}">
-                         <a href="{{ route('settings.routes') }}">
+                         <a data-bs-toggle="collapse" href="#base4">
                              <i class="bi bi-geo-alt-fill"></i>
-                             <p>Routes</p>
+                             <p>Transport</p>
+                             <span class="caret"></span>
                          </a>
+                         <div class="collapse" id="base4">
+                             <ul class="nav nav-collapse">
+
+                                 <li>
+                                     <a href="{{ route('settings.routes') }}">
+                                         <span class="sub-item">Routes</span>
+                                     </a>
+                                 </li>
+
+                                 <li>
+                                     <a href="{{ route('settings.destination') }}">
+                                         <span class="sub-item">Destinations</span>
+                                     </a>
+                                 </li>
+
+                             </ul>
+                         </div>
                      </li>
                  @endcan
 

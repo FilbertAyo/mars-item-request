@@ -14,11 +14,7 @@
                                     {{ $request->created_at->diffForHumans() }} </small>
                             </p>
                         </div>
-                        <div class="timeline-body">
-                            <p class="text-muted">
-                                {{ $request->reason }}
-                            </p>
-                        </div>
+                        
                     </div>
                 </li>
 

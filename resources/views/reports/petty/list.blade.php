@@ -50,7 +50,7 @@
             @forelse ($petties as $petty)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $petty->user->name }}</td>
+                    <td>{{ $petty->user->name  }}</td>
                     <td>{{ $petty->request_for }}</td>
                     <td>{{ $petty->amount }}</td>
                     <td>{{ $petty->created_at->format('d M Y') }}</td>

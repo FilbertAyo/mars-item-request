@@ -9,8 +9,10 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\PettyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TransportController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', [DashboardController::class, 'redirect'])->middleware(['auth', 'verified']);
 
@@ -59,6 +61,9 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
 
 Route::middleware(['auth', 'permission:view cashflow movements'])->group(function () {
     Route::resource('deposit', DepositController::class);
+     Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');
+     Route::get('/cashflow/download', [DepositController::class, 'download'])->name('cashflow.download');
+
 });
 
 Route::middleware(['auth', 'permission:request item purchase'])->group(function () {
@@ -85,11 +90,26 @@ Route::middleware(['auth', 'permission:view reports'])->group(function () {
 
 
 Route::middleware(['auth', 'permission:view settings'])->group(function () {
-    Route::get('/settings/routes', [DashboardController::class, 'routes'])->name('settings.routes');
-    Route::post('/settings/picking/points', [DashboardController::class, 'storeStart'])->name('start.store');
-    Route::patch('/picking-point/{id}/toggle', [DashboardController::class, 'toggleStatus'])->name('picking-point.toggle');
+    Route::get('/settings/routes', [TransportController::class, 'routes'])->name('settings.routes');
+    Route::get('/settings/destination/stops', [TransportController::class, 'destination'])->name('settings.destination');
+    Route::post('/settings/picking/points', [TransportController::class, 'storeStart'])->name('start.store');
+     Route::post('/settings/transport/mode', [TransportController::class, 'storeTransport'])->name('transport.store');
+    Route::patch('/picking-point/{id}/toggle', [TransportController::class, 'toggleStatus'])->name('picking-point.toggle');
+    Route::patch('/transport/mode/{id}/toggle', [TransportController::class, 'transStatus'])->name('trans.toggle');
 });
 
+
+Route::get('/run-optimize', function () {
+    if (request()->get('key') !== 'secret2580') {
+        abort(403);
+    }
+    Artisan::call('optimize');
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+
+    return 'Optimization complete.';
+});
 
 
 require __DIR__ . '/auth.php';

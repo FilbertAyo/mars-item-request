@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Petty;
-use App\Models\StartPoint;
-use App\Models\Stop;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,34 +35,5 @@ class DashboardController extends Controller
         return view('dashboard', compact('userNo', 'pettyNo', 'paidAmount', 'myExpense', 'branchNo', 'departmentNo'));
     }
 
-    public function routes()
-    {
 
-        $pickingPoints = StartPoint::all();
-        $stops = Stop::select('destination')
-            ->groupBy('destination')
-            ->paginate(10);
-        return view('settings.routes', compact('pickingPoints', 'stops'));
-    }
-
-    public function storeStart(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        StartPoint::updateOrCreate(
-            ['name' => $request->name],
-        );
-
-        return redirect()->back()->with('success', 'Collection Point updated successfully');
-    }
-    public function toggleStatus($id)
-    {
-        $point = StartPoint::findOrFail($id);
-        $point->status = $point->status === 'active' ? 'inactive' : 'active';
-        $point->save();
-
-        return redirect()->back()->with('success', 'Status updated successfully.');
-    }
 }
