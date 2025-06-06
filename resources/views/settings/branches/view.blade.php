@@ -13,8 +13,8 @@
             </li>
             <li class="nav-item">
                 <a href="{{ route('branches') }}">
-                         Branches
-                     </a>
+                    Branches
+                </a>
             </li>
             <li class="separator">
                 <i class="bi bi-arrow-right"></i>
@@ -33,13 +33,13 @@
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Departments List</h4>
-                        @can('update other settings')
-                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="btn-label">
-                          <i class="bi bi-plus-lg"></i>
-                        </span>
-                        New Department
-                    </button>
+                    @can('update other settings')
+                        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New Department
+                        </button>
                     @endcan
                 </div>
 
@@ -67,19 +67,27 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $department->name }}</td>
                                         <td>
-                                            <div class="d-flex" style="gap: 3px;">
-
-                                                <form action="{{ route('department.destroy',$department->id )  }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this Department?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                            @can('update other settings')
+                                                <div class="d-flex" style="gap: 3px;">
+                                                    <form action="{{ route('department.destroy', $department->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this Department?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <div class="d-flex" style="gap: 3px;">
+                                                    <button type="button" class="btn btn-sm btn-danger permission-alert">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                                </form>
+                                                </div>
+                                            @endcan
 
-                                            </div>
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -92,7 +100,6 @@
         </div>
 
     </div>
-
 
 
     <!-- Modal -->
@@ -113,7 +120,7 @@
                             <input type="text" class="form-control" id="topic" name="name" required>
                         </div>
 
-                         <x-primary-button label="Add" />
+                        <x-primary-button label="Add" />
                     </form>
                 </div>
 

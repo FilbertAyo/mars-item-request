@@ -20,7 +20,11 @@ class CashflowExport implements FromArray, WithHeadings
 
     public function array(): array
     {
-        return array_map(function ($tx) {
+        if ($this->transactions->isEmpty()) {
+            return [['No data available']];
+        }
+
+        return $this->transactions->map(function ($tx) {
             $row = [
                 'Date' => $tx['label'] ?? \Carbon\Carbon::parse($tx['date'])->format('Y-m-d'),
                 'Deduction' => $tx['deduction'] ?? 0,
@@ -35,7 +39,7 @@ class CashflowExport implements FromArray, WithHeadings
             }
 
             return $row;
-        }, $this->transactions->toArray()); // <-- convert to array here
+        })->toArray();
     }
 
     public function headings(): array

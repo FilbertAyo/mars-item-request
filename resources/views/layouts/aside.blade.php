@@ -185,8 +185,8 @@
                  </li>
 
 
-                 <li class="nav-item {{ Request::routeIs('warranty') ? 'active' : '' }}">
-                     <a href="{{ route('warranty') }}">
+                 <li class="nav-item {{ Request::routeIs('warranty.index') ? 'active' : '' }}">
+                     <a href="{{ route('warranty.index') }}">
                          <i class="bi bi-journal-text"></i>
                          <p>Collections</p>
                      </a>

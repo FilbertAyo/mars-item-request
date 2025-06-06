@@ -17,6 +17,8 @@
                 <option value="">-- All Petty Cash --</option>
                 <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                 <!-- Add more status options if needed -->
             </select>
         </div>
@@ -31,10 +33,10 @@
             class="btn btn-danger"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF</a>
         <a href="{{ route('reports.petties.download', ['type' => 'excel'] + request()->all()) }}"
             class="btn btn-success"><i class="bi bi-file-earmark-excel-fill"></i> Download Excel</a>
-    
+
     </div>
 
-    
+
     <table class="table table-bordered">
     <thead class="table-light">
         <tr>
@@ -108,7 +110,7 @@
                             <ul>
                                 @foreach ($petty->lists as $item)
                                     <li>
-                                        {{ $item->item_name }} ({{ $item->quantity }}) – 
+                                        {{ $item->item_name }} ({{ $item->quantity }}) –
                                         TZS {{ number_format($item->price) }}
                                     </li>
                                 @endforeach

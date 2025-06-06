@@ -10,6 +10,14 @@
                     @if ($from && $to)
                         FROM {{ $from }} TO {{ $to }}
                     @endif
+                    <h4 class="text-center">
+                        @if ($status)
+                            @if ($status != 'paid')
+                                <br>
+                                {{ ucfirst($status) }}
+                            @endif
+                        @endif
+                    </h4>
                 </th>
             </tr>
             <tr>

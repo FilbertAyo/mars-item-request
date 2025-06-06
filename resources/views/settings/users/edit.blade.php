@@ -103,15 +103,22 @@
                     </div>
 
                     <div class="card-action mt-3">
-                        <x-primary-button label="Update" />
+                        <a href="{{ route('admin.index') }}" class="btn btn-secondary">
+                            Discard Changes
+                        </a>
+                        @can('users management settings')
+                            <x-primary-button label="Update" />
+                        @else
+                            <button type="button" class="btn btn-primary permission-alert">
+                                Update
+                            </button>
+                        @endcan
+
                     </div>
                 </div>
             </form>
-
-
         </div>
     </div>
-
 
 
     <script>

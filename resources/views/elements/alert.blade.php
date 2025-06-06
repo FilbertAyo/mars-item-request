@@ -59,7 +59,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.body.addEventListener("click", function(event) {
-            if (event.target.matches(".permission-alert")) {
+            if (event.target.closest(".permission-alert")) {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
@@ -70,6 +70,7 @@
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </script>

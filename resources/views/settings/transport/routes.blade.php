@@ -44,6 +44,13 @@
                             </span>
                             New Point
                         </button>
+                    @else
+                        <button type="button" class="btn btn-sm btn-dark permission-alert">
+                           <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New Point
+                        </button>
                     @endcan
                 </div>
 
@@ -79,17 +86,25 @@
                                             </span>
                                         </td>
                                         <td>
+                                            @can('update other settings')
+                                                <form action="{{ route('picking-point.toggle', $pickingPoint->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-sm">
+                                                        <i
+                                                            class="bi fs-2 {{ $pickingPoint->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <div class="d-flex" style="gap: 3px;">
+                                                    <button type="button" class="btn btn-sm  permission-alert">
+                                                        <i
+                                                            class="bi fs-2 {{ $pickingPoint->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+                                                    </button>
+                                                </div>
+                                            @endcan
 
-                                            <form action="{{ route('picking-point.toggle', $pickingPoint->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit"
-                                                    class="btn btn-sm">
-                                                      <i class="bi fs-2 {{ $pickingPoint->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
-
-                                                </button>
-                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -115,6 +130,13 @@
                                 <i class="bi bi-plus-lg"></i>
                             </span>
                             New
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-sm btn-dark permission-alert">
+                           <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New 
                         </button>
                     @endcan
                 </div>
@@ -152,15 +174,25 @@
                                         </td>
                                         <td>
 
-                                            <form action="{{ route('trans.toggle', $mode->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="btn btn-sm">
-                                                    <i class="bi fs-2 {{ $mode->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+                                            @can('update other settings')
+                                                <form action="{{ route('trans.toggle', $mode->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-sm">
+                                                        <i
+                                                            class="bi fs-2 {{ $mode->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
 
-                                                </button>
-                                            </form>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <div class="d-flex" style="gap: 3px;">
+                                                    <button type="button" class="btn btn-sm  permission-alert">
+                                                        <i
+                                                            class="bi fs-2 {{ $mode->status === 'active' ? 'bi-toggle-on text-success' : 'bi-toggle-off text-danger' }}"></i>
+
+                                                    </button>
+                                                </div>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
@@ -197,7 +229,8 @@
     </div>
 
 
-    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

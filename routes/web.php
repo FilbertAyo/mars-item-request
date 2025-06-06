@@ -10,6 +10,7 @@ use App\Http\Controllers\PettyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransportController;
+use App\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Illuminate\Support\Facades\Artisan;
@@ -39,9 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/activate/{id}', [AdminController::class, 'activate'])->name('admin.activate');
     Route::post('/users/{id}/assign-permissions', [AdminController::class, 'assignPermissions'])->name('assign.permissions');
 
-    Route::get('warranty', function () {
-        return view('welcome');
-    })->name('warranty');
+    Route::resource('warranty',WarrantyController::class);
+
 });
 
 
@@ -112,14 +112,14 @@ Route::get('/run-optimize', function () {
 });
 
 
-Route::get('/run-storage-link', function () {
-    if (request()->get('key') !== 'secret2580') {
-        abort(403);
-    }
+// Route::get('/run-storage-link', function () {
+//     if (request()->get('key') !== 'secret2580') {
+//         abort(403);
+//     }
 
-    Artisan::call('storage:link');
+//     Artisan::call('storage:link');
 
-    return 'Storage link created.';
-});
+//     return 'Storage link created.';
+// });
 
 require __DIR__ . '/auth.php';

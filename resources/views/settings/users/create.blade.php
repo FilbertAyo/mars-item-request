@@ -30,75 +30,87 @@
     <div class="row">
         <div class="col-md-12">
 
-           <form method="POST" action="{{ route('admin.store') }}">
-    @csrf
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">Fill the Details</div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <!-- Full Name -->
-                <div class="col-md-6 col-lg-6 mt-3">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" class="form-control" name="name" id="name"
-                            placeholder="Enter full name" value="{{ old('name') }}" required>
+            <form method="POST" action="{{ route('admin.store') }}">
+                @csrf
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Fill the Details</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="col-md-6 col-lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" class="form-control" name="name" id="name"
+                                        placeholder="Enter full name" value="{{ old('name') }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 col-lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" class="form-control" name="email" id="email"
+                                        placeholder="Enter email address" value="{{ old('email') }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6 col-lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" id="phone"
+                                        placeholder="Enter phone number" value="{{ old('phone') }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Branch -->
+                            <div class="col-md-6 col-lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="branch_id">Branch</label>
+                                    <select class="form-control" name="branch_id" id="branch_id" required>
+                                        <option value="" disabled {{ old('branch_id') ? '' : 'selected' }}>--
+                                            Select Branch --</option>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}"
+                                                {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                                {{ $branch->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Department -->
+                            <div class="col-md-6 col-lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="department_id">Role | Department</label>
+                                    <select class="form-control" name="department_id" id="department_id">
+                                        <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>--
+                                            Select Department --</option>
+                                        {{-- Departments will be loaded here via AJAX --}}
+                                        {{-- If you want to prefill this from `old()` values, you’d have to load options dynamically via JS --}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-action mt-3">
+                        <a href="{{ route('admin.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                        @can('users management settings')
+                            <x-primary-button label="Register" />
+                        @else
+                            <button type="button" class="btn btn-primary permission-alert">
+                                Register
+                            </button>
+                        @endcan
                     </div>
                 </div>
-
-                <!-- Email -->
-                <div class="col-md-6 col-lg-6 mt-3">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" name="email" id="email"
-                            placeholder="Enter email address" value="{{ old('email') }}" required>
-                    </div>
-                </div>
-
-                <!-- Phone -->
-                <div class="col-md-6 col-lg-6 mt-3">
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="text" class="form-control" name="phone" id="phone"
-                            placeholder="Enter phone number" value="{{ old('phone') }}" required>
-                    </div>
-                </div>
-
-                <!-- Branch -->
-                <div class="col-md-6 col-lg-6 mt-3">
-                    <div class="form-group">
-                        <label for="branch_id">Branch</label>
-                        <select class="form-control" name="branch_id" id="branch_id" required>
-                            <option value="" disabled {{ old('branch_id') ? '' : 'selected' }}>-- Select Branch --</option>
-                            @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}" {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
-                                    {{ $branch->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Department -->
-                <div class="col-md-6 col-lg-6 mt-3">
-                    <div class="form-group">
-                        <label for="department_id">Role | Department</label>
-                        <select class="form-control" name="department_id" id="department_id">
-                            <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>-- Select Department --</option>
-                            {{-- Departments will be loaded here via AJAX --}}
-                            {{-- If you want to prefill this from `old()` values, you’d have to load options dynamically via JS --}}
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card-action mt-3">
-            <x-primary-button label="Register" />
-        </div>
-    </div>
-</form>
+            </form>
 
 
         </div>

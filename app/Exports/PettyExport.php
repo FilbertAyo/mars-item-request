@@ -44,6 +44,7 @@ class PettyExport implements FromView, WithTitle
             'department' => $this->department,
             'from' => $this->from,
             'to' => $this->to,
+            'status' => $this->status,
         ]);
     }
 

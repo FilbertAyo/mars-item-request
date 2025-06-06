@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('warranties', function (Blueprint $table) {
             $table->id();
+            $table->string('customer_name');
+            $table->string('model')->nullable();
+            $table->string('serial_number')->nullable()->unique();
+            $table->string('amount')->nullable()->unique();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

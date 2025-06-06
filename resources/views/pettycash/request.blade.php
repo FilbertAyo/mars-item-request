@@ -112,21 +112,21 @@
 
 
     <script>
-    function showEditBlockedNotice() {
-        $.notify({
-            icon: 'bi-exclamation-circle-fill',
-            title: 'Error!',
-            message: "You can't edit this because it's already in process.",
-        }, {
-            type: 'danger',
-            placement: {
-                from: "bottom",
-                align: "right"
-            },
-            time: 2000,
-        });
-    }
-</script>
+        function showEditBlockedNotice() {
+            $.notify({
+                icon: 'bi-exclamation-circle-fill',
+                title: 'Error!',
+                message: "You can't edit this because it's already in process.",
+            }, {
+                type: 'danger',
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+                time: 2000,
+            });
+        }
+    </script>
 
 
 

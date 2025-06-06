@@ -26,14 +26,12 @@
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Users List</h4>
 
-                    @can('users management settings')
                     <a href="{{ route('admin.create') }}" class="btn btn-dark">
                         <span class="btn-label">
                             <i class="bi bi-plus-lg"></i>
                         </span>
                         New User
                     </a>
-                    @endcan
 
                 </div>
 

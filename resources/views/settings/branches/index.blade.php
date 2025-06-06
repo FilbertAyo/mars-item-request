@@ -3,7 +3,7 @@
     <div class="page-header">
         <h3 class="fw-bold mb-3">Branches</h3>
         <ul class="breadcrumbs mb-3">
-             <li class="nav-home">
+            <li class="nav-home">
                 <a href="{{ route('dashboard') }}">
                     <i class="bi bi-house-fill"></i>
                 </a>
@@ -27,12 +27,12 @@
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Branches List</h4>
                     @can('update other settings')
-                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="btn-label">
-                          <i class="bi bi-plus-lg"></i>
-                        </span>
-                        New Branch
-                    </button>
+                        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            New Branch
+                        </button>
                     @endcan
                 </div>
 
@@ -64,19 +64,28 @@
                                         <td>{{ $branch->departments_count }}</td>
                                         <td>
                                             <div class="d-flex" style="gap: 3px;">
+                                                @can('update other settings')
+                                                    <form
+                                                        action="{{ route('branch.destroy', Hashids::encode($branch->id)) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this branch?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <div class="d-flex" style="gap: 3px;">
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger permission-alert">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                @endcan
 
-                                                <form action="{{ route('branch.destroy',Hashids::encode($branch->id) )  }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this branch?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-
-                                                <a href="{{ route('branch.show',Hashids::encode($branch->id)  ) }}" class="btn btn-sm btn-dark"><i
-                                                        class="bi bi-eye"></i></a>
+                                                <a href="{{ route('branch.show', Hashids::encode($branch->id)) }}"
+                                                    class="btn btn-sm btn-dark"><i class="bi bi-eye"></i></a>
                                             </div>
 
                                         </td>
@@ -108,7 +117,7 @@
                             <label for="topic" class="form-label">Branch name</label>
                             <input type="text" class="form-control" id="topic" name="name" required>
                         </div>
-                         <x-primary-button label="Add" />
+                        <x-primary-button label="Add" />
                     </form>
                 </div>
             </div>

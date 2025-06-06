@@ -59,7 +59,9 @@ class ReportController extends Controller
         if ($request->filled('from') && $request->filled('to')) {
             $query->whereBetween('created_at', [$request->from, $request->to]);
         }
-
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
         $petties = $query->get();
 
         return view('reports.petty.list', compact('petties'));
