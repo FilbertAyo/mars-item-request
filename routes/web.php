@@ -99,17 +99,17 @@ Route::middleware(['auth', 'permission:view settings'])->group(function () {
 });
 
 
-Route::get('/run-optimize', function () {
-    if (request()->get('key') !== 'secret2580') {
-        abort(403);
-    }
-    Artisan::call('optimize');
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-    Artisan::call('view:cache');
+// Route::get('/run-optimize', function () {
+//     if (request()->get('key') !== 'secret2580') {
+//         abort(403);
+//     }
+//     Artisan::call('optimize');
+//     Artisan::call('config:cache');
+//     Artisan::call('route:cache');
+//     Artisan::call('view:cache');
 
-    return 'Optimization complete.';
-});
+//     return 'Optimization complete.';
+// });
 
 
 // Route::get('/run-storage-link', function () {
