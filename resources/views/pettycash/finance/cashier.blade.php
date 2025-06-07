@@ -35,15 +35,15 @@
                     </h4>
 
                     @can('approve petycash payments')
-                    <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
-                        data-bs-target="#staticBackdrop">
-                        <span class="btn-label">
-                            <i class="bi bi-plus-lg"></i>
-                        </span>
-                        Deposit
-                    </a>
+                        <a class="btn btn-dark" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
+                            data-bs-target="#staticBackdrop">
+                            <span class="btn-label">
+                                <i class="bi bi-plus-lg"></i>
+                            </span>
+                            Deposit
+                        </a>
                     @endcan
-                    
+
                 </div>
 
                 <div class="card-body">
@@ -55,6 +55,8 @@
                                     <th>Deposit Amount</th>
                                     <th>Remaing Balance</th>
                                     <th>Date deposited</th>
+                                    <th>Deposited By</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -63,6 +65,8 @@
                                     <th>Deposit Amount</th>
                                     <th>Remaing Balance</th>
                                     <th>Date deposited</th>
+                                     <th>Deposited By</th>
+                                    <th>Action</th>
                                 </tr>
                             </tfoot>
                             <tbody>
@@ -70,20 +74,28 @@
                                 @foreach ($deposits as $index => $deposit)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>
-                                            {{ number_format($deposit->deposit, 0, '.', ',') }}/=
-                                        </td>
+                                        <td>{{ number_format($deposit->deposit, 0, '.', ',') }}/=</td>
                                         <td>
                                             <span class="{{ $deposit->remaining < 0 ? 'text-danger' : '' }}">
                                                 {{ number_format($deposit->remaining, 0, '.', ',') }}/=
                                             </span>
-
                                         </td>
+                                        <td>{{ $deposit->created_at }}</td>
+                                        <td>{{ $deposit->user->name }}</td>
                                         <td>
-                                            {{ $deposit->created_at }}</td>
-
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#depositDetailModal"
+                                                data-deposit="{{ number_format($deposit->deposit, 0, '.', ',') }}/="
+                                                data-remaining="{{ number_format($deposit->remaining, 0, '.', ',') }}/="
+                                                data-date="{{ $deposit->created_at }}"
+                                                date-by="{{ $deposit->user->name }}"
+                                                data-description="{{ $deposit->description ?? 'No description provided' }}">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
+
 
                             </tbody>
                         </table>
@@ -93,6 +105,9 @@
         </div>
 
     </div>
+
+
+
 
 
 
@@ -135,5 +150,57 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="modal fade" id="depositDetailModal" tabindex="-1" aria-labelledby="depositDetailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Deposit Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-sm">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Amount Deposited</th>
+                                <td class="text-secondary" id="modalDeposit"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Remaining Amount</th>
+                                <td class="text-secondary" id="modalRemaining"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Date Deposited</th>
+                                <td class="text-secondary" id="modalDate"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Description</th>
+                                <td class="text-muted" id="modalDescription"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><span class="text-muted">Deposited By:</span> <strong id="modalBy"></strong></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const depositModal = document.getElementById('depositDetailModal');
+
+        depositModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+
+            document.getElementById('modalDeposit').textContent = button.getAttribute('data-deposit');
+            document.getElementById('modalRemaining').textContent = button.getAttribute('data-remaining');
+            document.getElementById('modalDate').textContent = button.getAttribute('data-date');
+            document.getElementById('modalBy').textContent = button.getAttribute('date-by');
+            document.getElementById('modalDescription').textContent = button.getAttribute('data-description');
+        });
+    </script>
 
 </x-app-layout>

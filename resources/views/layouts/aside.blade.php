@@ -67,7 +67,7 @@
 
                                  @can('last pettycash approval')
                                      <li>
-                                         <a href="{{ route('petty.list') }}">
+                                         <a href="{{ route('all.pettycash') }}">
                                              <span class="sub-item">Last Approval</span>
                                              @if ($processingPettiesCount > 0)
                                                  <span class="badge badge-warning">{{ $processingPettiesCount }}</span>

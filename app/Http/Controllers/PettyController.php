@@ -100,6 +100,13 @@ class PettyController extends Controller
         return view('pettycash.approval.index', compact('requests'));
     }
 
+    public function all_requests()
+    {
+        $requests = Petty::orderBy('created_at', 'desc')->get();
+
+        return view('pettycash.approval.index', compact('requests'));
+    }
+
     public function request_show($hashid)
     {
         $id = Hashids::decode($hashid);
@@ -287,12 +294,10 @@ class PettyController extends Controller
         $emails = $users->pluck('email')->toArray();
         $reason = $request->request_for;
         $encodedId = Hashids::encode($id);
-        if (empty($emails)) {
-            return redirect()->back()->with('error', 'The request was not successfully because there is no approver appointed in your department');
+        if ($emails) {
+            Mail::to($emails)->send(new FirstApprovalMail($name, $reason,  $encodedId));
         }
-        Mail::to($emails)->send(new FirstApprovalMail($name, $reason,  $encodedId));
 
-        // Redirect back with a success message
         return redirect()->back()->with('success', 'Request approved and status updated');
     }
 
@@ -319,10 +324,9 @@ class PettyController extends Controller
         $reason = $request->request_for;
         $encodedId = Hashids::encode($id);
 
-        if (empty($emails)) {
-            return redirect()->back()->with('error', 'The request was not successfully because there is no cashier appointed in the requester department');
+        if ($emails) {
+            Mail::to($emails)->send(new LastApprovalMail($name, $reason,  $encodedId));
         }
-        Mail::to($emails)->send(new LastApprovalMail($name, $reason,  $encodedId));
 
         return redirect()->back()->with('success', 'Request approved and status updated');
     }

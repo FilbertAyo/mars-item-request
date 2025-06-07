@@ -59,6 +59,10 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
     Route::post('/petty/reject/{id}', [PettyController::class, 'reject'])->name('petty.reject');
 });
 
+Route::middleware(['auth', 'permission:last pettycash approval'])->group(function () {
+    Route::get('pettycash/all/requests/list', [PettyController::class, 'all_requests'])->name('all.pettycash');
+});
+
 Route::middleware(['auth', 'permission:view cashflow movements'])->group(function () {
     Route::resource('deposit', DepositController::class);
      Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');

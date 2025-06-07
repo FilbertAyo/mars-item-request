@@ -7,6 +7,7 @@ use App\Models\Petty;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashflowExport;
+use App\Models\ApprovalLog;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
@@ -36,7 +37,9 @@ class DepositController extends Controller
 
     private function getCashflowTransactions($filterType)
     {
-        $departmentId = auth()->user()->department_id;
+        $user = auth()->user();
+        $departmentId = $user->department_id;
+        $userId = $user->id;
 
         $allDeposits = Deposit::where('department_id', $departmentId)->get();
         $allPetty = Petty::with('user')
@@ -56,7 +59,6 @@ class DepositController extends Controller
             ]);
         }
 
-
         foreach ($allPetty as $petty) {
             $allTransactions->push([
                 'date' => $petty->created_at,
@@ -66,7 +68,6 @@ class DepositController extends Controller
                 'deduction' => $petty->amount ?? 0,
             ]);
         }
-
 
         $allTransactions = $allTransactions->sortBy('date')->values();
         $initialBalance = 0;
@@ -91,7 +92,6 @@ class DepositController extends Controller
                         $dayTotal += $tx['deduction'] ?? 0;
                     }
                 }
-
                 $groupedData[] = [
                     'label' => $key,
                     'deduction' => $dayTotal,

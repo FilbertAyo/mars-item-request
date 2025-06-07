@@ -35,19 +35,17 @@
 
         @if ($request->status == 'pending')
             @can('first pettycash approval')
-                <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
-                    data-bs-target="#staticBackdrop">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal">
                     Check
-                </a>
+                </button>
             @endcan
         @endif
 
         @if ($request->status == 'processing')
             @can('last pettycash approval')
-                <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button"
-                    data-bs-target="#staticBackdrop">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal">
                     Check
-                </a>
+                </button>
             @endcan
         @endif
 
@@ -156,75 +154,81 @@
 
 
 
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-backdrop="static"
-        id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal fade" id="approvalModal" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Request approval</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Request Approval</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
-                    After carefully reviewing the provided details of {{ $request->user->name }} , please choose
-                    whether to
-                    approve or reject. Your decision will help us proceed with the appropriate action.
-                    <br>
-                    Do you approve or reject this request?
+                    <!-- Step 1: Ask -->
+                    <div id="step-approval">
+                        <p>After reviewing {{ $request->user->name }}'s request, please choose to approve or reject.
+                        </p>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button class="btn btn-danger" onclick="goToRejectStep()">Reject</button>
+                            <form
+                                action="{{ $request->status == 'processing'
+                                    ? route('l_approve.approve', ['id' => $request->id])
+                                    : route('f_approve.approve', ['id' => $request->id]) }}"
+                                method="POST">
+                                @csrf
+                                <x-primary-button label="Approve" />
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Reject Details -->
+                    <div id="step-reject" class="d-none">
+                        <form method="POST" action="{{ route('petty.reject', ['id' => $request->id]) }}">
+                            @csrf
+                            <div class="form-group">
+                                <label>Select Action</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="action" value="rejected"
+                                        id="rejectRadio" required>
+                                    <label class="form-check-label" for="rejectRadio">Reject</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="action"
+                                        value="resubmission" id="resubmitRadio" required>
+                                    <label class="form-check-label" for="resubmitRadio">Resubmit</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label for="comment">Reason:</label>
+                                <textarea class="form-control" name="comment" rows="4" required></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="backToApprovalStep()">Back</button>
+                                <x-primary-button label='Submit' />
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
-                        data-bs-dismiss="modal">Reject</button>
 
-                    <form
-                        action="{{ $request->status == 'processing'
-                            ? route('l_approve.approve', ['id' => $request->id])
-                            : route('f_approve.approve', ['id' => $request->id]) }}"
-                        method="POST" style="display: inline;">
-
-                        @csrf
-                        <x-primary-button label="Approve" />
-                    </form>
-
-                </div>
             </div>
         </div>
     </div>
 
 
-    <div class="modal fade" id="exampleModalToggle2" data-bs-backdrop="static" aria-hidden="true"
-        aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"> Reason </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('petty.reject', ['id' => $request->id]) }}">
-                        @csrf
-                        <div class="form-group">
-                            <label for="request_type">Select Action</label>
-                            <select name="action" class="form-control" required>
-                                <option value="rejected">
-                                    Reject</option>
-                                <option value="resubmission">Resubmit
-                                </option>
-                            </select>
+    <script>
+        function goToRejectStep() {
+            document.getElementById('step-approval').classList.add('d-none');
+            document.getElementById('step-reject').classList.remove('d-none');
+        }
 
-                        </div>
-                        <div class="form-group">
-                            <label for="request_type">Reason:</label>
-                            <textarea class="form-control" id="description" name="comment" rows="4" required></textarea>
-                        </div>
-
-                        <x-primary-button label='Submit' />
-
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
+        function backToApprovalStep() {
+            document.getElementById('step-reject').classList.add('d-none');
+            document.getElementById('step-approval').classList.remove('d-none');
+        }
+    </script>
 
 
 
