@@ -41,4 +41,6 @@ class Petty extends Model
     {
         return $this->belongsTo(TransMode::class, 'trans_mode_id');
     }
+
+
 }

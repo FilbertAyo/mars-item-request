@@ -1,6 +1,6 @@
 <x-app-layout>
 
-        <div class="page-header">
+    <div class="page-header">
         <h3 class="fw-bold mb-3">Reports</h3>
         <ul class="breadcrumbs mb-3">
             <li class="nav-home">
@@ -18,22 +18,73 @@
         </ul>
     </div>
 
-  <div class="max-w-4xl mx-auto py-8">
+   <div class="row">
 
-        <ul class="space-y-2">
-            <li>
-                <a href="{{ route('reports.users') }}" class="block px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
-                    Users List
-                </a>
-            </li>
+    @can('view cashflow movements')
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('reports.petties') }}" class="text-decoration-none">
+                <div class="card card-stats card-light card-round">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="icon-big text-center">
+                                   <i class="bi bi-wallet-fill"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 col-stats">
+                                <div class="numbers">
+                                    <div class="h5">Petty Cash Report</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    @endcan
 
-            @can('view cashflow movements')
-            <li>
-                <a href="{{ route('reports.petties') }}" class="block px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
-                    Petty Cash Report
-                </a>
-            </li>
-            @endcan
-        </ul>
+    <div class="col-sm-6 col-md-3">
+        <a href="{{ route('reports.users') }}" class="text-decoration-none">
+            <div class="card card-stats card-light card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="icon-big text-center">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-stats">
+                            <div class="numbers">
+                                <div class="h5">Users List</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
     </div>
+
+    <div class="col-sm-6 col-md-3">
+        <a href="{{ route('reports.transaction') }}" class="text-decoration-none">
+            <div class="card card-stats card-light card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="icon-big text-center">
+                             <i class="bi bi-coin"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-stats">
+                            <div class="numbers">
+                                <div class="h5">Transactions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+
 </x-app-layout>

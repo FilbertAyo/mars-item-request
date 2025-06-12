@@ -59,26 +59,33 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         $validated = $request->validate([
-            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
-        $profile = User::where('id', $user->id)->first();
 
-        if (!$profile) {
-            return redirect()->back()->with('Something is wrong you cant upload your profile, try later');
+        if (!$user) {
+            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later.']);
         }
 
         if ($request->hasFile('profile_image')) {
             $image = $request->file('profile_image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('profile'), $imageName);
-
-            // Save the image path in the database
-            $profile->file = 'profile/' . $imageName;
+            $imagePath = $image->store('profile', 'public'); // saved in storage/app/public/profile
+            $user->file = 'storage/' . $imagePath; // accessible via public/storage/profile/...
         }
 
-        $profile->save();
+        if ($request->hasFile('signature')) {
+            $signature = $request->file('signature');
+            $signaturePath = $signature->store('signatures', 'public'); // saved in storage/app/public/signatures
+            $user->signature = 'storage/' . $signaturePath; // accessible via public/storage/signatures/...
+        }
+
+        $user->save();
+
+        if ($request->hasFile('signature')) {
+            return redirect()->back()->with('status', 'signature-updated');
+        }
 
         return redirect()->back()->with('success', 'Your profile updated successfully.');
     }

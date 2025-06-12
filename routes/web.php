@@ -8,12 +8,14 @@ use App\Http\Controllers\ItemRequestController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\PettyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReplenishmentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Illuminate\Support\Facades\Artisan;
+use PhpOffice\PhpSpreadsheet\Calculation\TextData\Replace;
 
 Route::get('/', [DashboardController::class, 'redirect'])->middleware(['auth', 'verified']);
 
@@ -40,8 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/activate/{id}', [AdminController::class, 'activate'])->name('admin.activate');
     Route::post('/users/{id}/assign-permissions', [AdminController::class, 'assignPermissions'])->name('assign.permissions');
 
-    Route::resource('warranty',WarrantyController::class);
-
+    Route::resource('warranty', WarrantyController::class);
 });
 
 
@@ -57,6 +58,14 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
     Route::post('l_approve/{id}', [PettyController::class, 'l_approve'])->name('l_approve.approve');
     Route::get('c_approve/{id}', [PettyController::class, 'c_approve'])->name('c_approve.approve');
     Route::post('/petty/reject/{id}', [PettyController::class, 'reject'])->name('petty.reject');
+
+    Route::resource('replenishment', ReplenishmentController::class);
+    Route::post('/replenishment/initial/approve/{id}', [ReplenishmentController::class, 'firstApprove'])->name('initial.approve');
+    Route::post('/replenishment/last/approve/{id}', [ReplenishmentController::class, 'lastApprove'])->name('last.approve');
+
+    Route::get('/replenishment/{id}/download', [ReplenishmentController::class, 'downloadPDF'])->name('replenishment.download');
+
+
 });
 
 Route::middleware(['auth', 'permission:last pettycash approval'])->group(function () {
@@ -65,9 +74,8 @@ Route::middleware(['auth', 'permission:last pettycash approval'])->group(functio
 
 Route::middleware(['auth', 'permission:view cashflow movements'])->group(function () {
     Route::resource('deposit', DepositController::class);
-     Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');
-     Route::get('/cashflow/download', [DepositController::class, 'download'])->name('cashflow.download');
-
+    Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');
+    Route::get('/cashflow/download', [DepositController::class, 'download'])->name('cashflow.download');
 });
 
 Route::middleware(['auth', 'permission:request item purchase'])->group(function () {
@@ -90,6 +98,8 @@ Route::middleware(['auth', 'permission:view reports'])->group(function () {
     Route::get('/reports/users/download/{type}', [ReportController::class, 'downloadUsers'])->name('reports.users.download');
     Route::get('reports/petty/cash', [ReportController::class, 'pettyReport'])->name('reports.petties');
     Route::get('/reports/petty/cash/download/{type}', [ReportController::class, 'downloadPetty'])->name('reports.petties.download');
+    Route::get('reports/petty/cash/transactions', [ReportController::class, 'transactionReport'])->name('reports.transaction');
+    Route::get('/reports/petty/cash/transaction/download/{type}', [ReportController::class, 'downloadTransaction'])->name('reports.transaction.download');
 });
 
 
@@ -97,33 +107,12 @@ Route::middleware(['auth', 'permission:view settings'])->group(function () {
     Route::get('/settings/routes', [TransportController::class, 'routes'])->name('settings.routes');
     Route::get('/settings/destination/stops', [TransportController::class, 'destination'])->name('settings.destination');
     Route::post('/settings/picking/points', [TransportController::class, 'storeStart'])->name('start.store');
-     Route::post('/settings/transport/mode', [TransportController::class, 'storeTransport'])->name('transport.store');
+    Route::post('/settings/transport/mode', [TransportController::class, 'storeTransport'])->name('transport.store');
     Route::patch('/picking-point/{id}/toggle', [TransportController::class, 'toggleStatus'])->name('picking-point.toggle');
     Route::patch('/transport/mode/{id}/toggle', [TransportController::class, 'transStatus'])->name('trans.toggle');
 });
 
 
-// Route::get('/run-optimize', function () {
-//     if (request()->get('key') !== 'secret2580') {
-//         abort(403);
-//     }
-//     Artisan::call('optimize');
-//     Artisan::call('config:cache');
-//     Artisan::call('route:cache');
-//     Artisan::call('view:cache');
 
-//     return 'Optimization complete.';
-// });
-
-
-// Route::get('/run-storage-link', function () {
-//     if (request()->get('key') !== 'secret2580') {
-//         abort(403);
-//     }
-
-//     Artisan::call('storage:link');
-
-//     return 'Storage link created.';
-// });
 
 require __DIR__ . '/auth.php';

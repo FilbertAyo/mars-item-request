@@ -27,6 +27,8 @@ use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Facades\Auth;
+
 
 class PettyController extends Controller
 {
@@ -45,7 +47,7 @@ class PettyController extends Controller
         //End of it
 
         // Fetch requests only for the logged-in user
-        $requests = Petty::Where('user_id', auth()->id())->orderBy('created_at', 'desc')
+        $requests = Petty::Where('user_id',  Auth::user())->orderBy('created_at', 'desc')
             ->get();
 
         return view('pettycash.request', compact('requests'));
@@ -94,7 +96,7 @@ class PettyController extends Controller
     {
         $requests = Petty::orderBy('created_at', 'desc')->where(
             'department_id',
-            operator: auth()->user()->department_id
+            operator: Auth::user()->department_id
         )->get();
 
         return view('pettycash.approval.index', compact('requests'));
@@ -112,7 +114,7 @@ class PettyController extends Controller
         $id = Hashids::decode($hashid);
 
         $request = Petty::findOrFail($id[0]);
-        $latest = ApprovalLog::where('petty_id', $id[0])->where('user_id', auth()->id())->latest()->first();
+        $latest = ApprovalLog::where('petty_id', $id[0])->where('user_id', Auth::user()->id)->latest()->first();
         $approval_logs = ApprovalLog::where('petty_id', $id[0])->get();
         $approval = optional($latest)->action;
 
@@ -171,7 +173,7 @@ class PettyController extends Controller
                 'attachments' => 'required|array|min:1',
                 'attachments.*.customer_name' => 'required|string|max:255',
                 'attachments.*.product' => 'required|string|max:255',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:1024', // max 1MB
+                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048', // max 1MB
             ]);
         }
 
@@ -275,7 +277,7 @@ class PettyController extends Controller
     {
         ApprovalLog::Create([
             'petty_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'action' => 'approved',
         ]);
 
@@ -305,7 +307,7 @@ class PettyController extends Controller
     {
         ApprovalLog::Create([
             'petty_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'action' => 'approved',
         ]);
 
@@ -349,7 +351,7 @@ class PettyController extends Controller
 
         ApprovalLog::Create([
             'petty_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'action' => 'paid',
         ]);
 
@@ -371,7 +373,7 @@ class PettyController extends Controller
 
         ApprovalLog::create([
             'petty_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'action' => $request->action,
             'comment' => $request->comment,
         ]);
@@ -559,7 +561,7 @@ class PettyController extends Controller
 
         ApprovalLog::Create([
             'petty_id' =>  $petty->id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'action' => 'resubmitted',
         ]);
 

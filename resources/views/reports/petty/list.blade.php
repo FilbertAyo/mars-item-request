@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <h2>User Reports</h2>
+    <h2>Petty Cash Reports</h2>
 
     <form action="{{ route('reports.petties') }}" method="GET" class="row g-3 mb-3">
         <div class="col-md-4">
@@ -28,106 +28,122 @@
     </form>
 
 
-    <div class="mb-3">
-        <a href="{{ route('reports.petties.download', ['type' => 'pdf'] + request()->all()) }}"
-            class="btn btn-danger"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF</a>
-        <a href="{{ route('reports.petties.download', ['type' => 'excel'] + request()->all()) }}"
-            class="btn btn-success"><i class="bi bi-file-earmark-excel-fill"></i> Download Excel</a>
-
+    <div class="mb-3 row">
+        <div class="col-8">
+            <a href="{{ route('reports.petties.download', ['type' => 'pdf'] + request()->all()) }}"
+                class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF
+            </a>
+            <a href="{{ route('reports.petties.download', ['type' => 'excel'] + request()->all()) }}"
+                class="btn btn-success">
+                <i class="bi bi-file-earmark-excel-fill"></i> Download Excel
+            </a>
+        </div>
+       <div class="col-4">
+         @can('approve petycash payments')
+         @if (request('status') == 'paid' && request('from') && request('to'))
+            <form action="{{ route('replenishment.create') }}" method="GET" class="flex justify-content-end">
+                <input type="hidden" name="from" value="{{ request('from') }}">
+                <input type="hidden" name="to" value="{{ request('to') }}">
+                <button class="btn btn-primary w-100">New Replenishment</button>
+            </form>
+        @endif
+        @endcan
+       </div>
     </div>
 
 
+
+
     <table class="table table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>Date</th>
-            <th>Particulars</th>
-            <th>Amount (TZS)</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse ($petties as $petty)
-            <!-- Summary Row -->
+        <thead class="table-light">
             <tr>
-                <td>{{ $petty->created_at->format('d/m/Y') }}</td>
-                <td><strong>{{ $petty->request_for }}</strong></td>
-                <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
-                <td>{{ ucfirst($petty->status) }}</td>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Amount (TZS)</th>
+                <th>Status</th>
             </tr>
+        </thead>
+        <tbody>
+            @forelse ($petties as $petty)
+                <!-- Summary Row -->
+                <tr>
+                    <td>{{ $petty->created_at->format('d/m/Y') }}</td>
+                    <td><strong>{{ $petty->request_for }}</strong></td>
+                    <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
+                    <td>{{ ucfirst($petty->status) }}</td>
+                </tr>
 
-            <tr>
-                <td></td>
-                <td>
-                    <div class="mb-1">
-                        <strong>Name:</strong> {{ $petty->user->name }}
-                    </div>
-                    <div class="mb-1">
-                         {{ $petty->reason }}
-                    </div>
-
-                    @if ($petty->request_for == 'Sales Delivery')
+                <tr>
+                    <td></td>
+                    <td>
                         <div class="mb-1">
-                            <strong><em>Delivery Details:</em></strong>
-                            <ul class="mb-1">
-                                @foreach ($petty->attachments as $attachment)
-                                    <li>{{ $attachment->name }}: {{ $attachment->product_name }}</li>
-                                @endforeach
-                            </ul>
+                            <strong>Name:</strong> {{ $petty->user->name }}
                         </div>
-                        <div>
-                            <strong><em>Routes:</em></strong>
-                            <ul>
-                                @foreach ($petty->trips as $trip)
-                                    <li>
-                                        {{ $trip->startPoint->name }}
-                                        @foreach ($trip->stops as $stop)
-                                            → {{ $stop->destination }}
-                                        @endforeach
-                                    </li>
-                                @endforeach
-                            </ul>
+                        <div class="mb-1">
+                            {{ $petty->reason }}
                         </div>
 
-                    @elseif ($petty->request_for == 'Transport')
-                        <div>
-                            <strong><em>Routes:</em></strong>
-                            <ul>
-                                @foreach ($petty->trips as $trip)
-                                    <li>
-                                        {{ $trip->startPoint->name }}
-                                        @foreach ($trip->stops as $stop)
-                                            → {{ $stop->destination }}
-                                        @endforeach
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-
-                    @elseif ($petty->request_for == 'Office Supplies')
-                        <div>
-                            <strong><em>Items:</em></strong>
-                            <ul>
-                                @foreach ($petty->lists as $item)
-                                    <li>
-                                        {{ $item->item_name }} ({{ $item->quantity }}) –
-                                        TZS {{ number_format($item->price) }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="4" class="text-center">No petties found.</td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+                        @if ($petty->request_for == 'Sales Delivery')
+                            <div class="mb-1">
+                                <strong><em>Delivery Details:</em></strong>
+                                <ul class="mb-1">
+                                    @foreach ($petty->attachments as $attachment)
+                                        <li>{{ $attachment->name }}: {{ $attachment->product_name }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <div>
+                                <strong><em>Routes:</em></strong>
+                                <ul>
+                                    @foreach ($petty->trips as $trip)
+                                        <li>
+                                            {{ $trip->startPoint->name }}
+                                            @foreach ($trip->stops as $stop)
+                                                → {{ $stop->destination }}
+                                            @endforeach
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @elseif ($petty->request_for == 'Transport')
+                            <div>
+                                <strong><em>Routes:</em></strong>
+                                <ul>
+                                    @foreach ($petty->trips as $trip)
+                                        <li>
+                                            {{ $trip->startPoint->name }}
+                                            @foreach ($trip->stops as $stop)
+                                                → {{ $stop->destination }}
+                                            @endforeach
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @elseif ($petty->request_for == 'Office Supplies')
+                            <div>
+                                <strong><em>Items:</em></strong>
+                                <ul>
+                                    @foreach ($petty->lists as $item)
+                                        <li>
+                                            {{ $item->item_name }} ({{ $item->quantity }}) –
+                                            TZS {{ number_format($item->price) }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center">No petties found.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
 
 

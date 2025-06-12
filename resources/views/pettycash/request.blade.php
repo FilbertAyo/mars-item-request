@@ -44,7 +44,8 @@
                                     <th>Amount</th>
                                     <th>Date Requested</th>
                                     <th>Status</th>
-                                    <th>Status</th>
+                                    <th>Action</th>
+
                                 </tr>
                             </thead>
                             <tfoot>
@@ -55,7 +56,8 @@
                                     <th>Amount</th>
                                     <th>Date Requested</th>
                                     <th>Status</th>
-                                    <th>Status</th>
+                                    <th>Action</th>
+
                                 </tr>
                             </tfoot>
                             <tbody>

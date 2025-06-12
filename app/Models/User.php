@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'file',
+        'signature',
         'department_id',
         'branch_id',
         'phone',

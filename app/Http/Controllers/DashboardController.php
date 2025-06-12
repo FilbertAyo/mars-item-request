@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -28,7 +29,7 @@ class DashboardController extends Controller
         $userNo = User::all()->count();
         $pettyNo = Petty::all()->count();
         $paidAmount = Petty::where('status', 'paid')->sum('amount');
-        $myExpense = Petty::where('user_id', auth()->id())->where('status', 'paid')->sum('amount');
+        $myExpense = Petty::where('user_id', Auth::user()->id)->where('status', 'paid')->sum('amount');
         $branchNo = Branch::all()->count();
         $departmentNo = Department::all()->count();
 

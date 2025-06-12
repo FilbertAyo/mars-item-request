@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Petty;
+use Illuminate\Support\Facades\Auth;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,8 +28,8 @@ class AppServiceProvider extends ServiceProvider
         $approvedCount = 0;
         $processingCount = 0;
 
-        if (auth()->check()) {
-            $departmentId = auth()->user()->department_id;
+        if (Auth::check()) {
+            $departmentId = Auth::user()->department_id;
 
             $pendingCount = Petty::where('department_id', $departmentId)
                                  ->where('status', 'pending')

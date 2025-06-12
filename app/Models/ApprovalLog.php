@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApprovalLog extends Model
 {
-       protected $fillable = ['petty_id','item_id', 'user_id', 'action', 'comment'];
+       protected $fillable = ['petty_id','replenishment_id','item_id', 'user_id', 'action', 'comment'];
 
     public function petty()
     {

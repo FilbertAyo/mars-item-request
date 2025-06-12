@@ -6,10 +6,10 @@ use App\Models\Deposit;
 use App\Models\Petty;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CashflowExport;
+use App\Exports\RunningBalanceExport;
 use App\Models\ApprovalLog;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\Auth;
 
 class DepositController extends Controller
 {
@@ -20,13 +20,13 @@ class DepositController extends Controller
     {
         $deposits = Deposit::orderBy('id', 'desc')->where(
             'department_id',
-            auth()->user()->department_id
+            Auth::user()->department_id
         )->get();
 
         // Get the latest deposit entry to access the 'remaining' value
         $latestDeposit = Deposit::orderBy('id', 'desc')->where(
             'department_id',
-            auth()->user()->department_id
+            Auth::user()->department_id
         )->first();
         $remaining = $latestDeposit ? $latestDeposit->remaining : 0;
 
@@ -37,7 +37,7 @@ class DepositController extends Controller
 
     private function getCashflowTransactions($filterType)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $departmentId = $user->department_id;
         $userId = $user->id;
 
@@ -96,7 +96,7 @@ class DepositController extends Controller
                     'label' => $key,
                     'deduction' => $dayTotal,
                     'remaining' => $runningBalance,
-                    'department' => optional(auth()->user()->department)->name,
+                    'department' => optional(Auth::user()->department)->name,
                 ];
             }
 
@@ -142,7 +142,7 @@ class DepositController extends Controller
 
         $data = $this->getCashflowTransactions($filterType);
         $transactions = $data['transactions'];
-        $department = strtoupper(auth()->user()->department->name);
+        $department = strtoupper(Auth::user()->department->name);
 
         if ($filterType === 'daily' || $filterType === 'monthly') {
             $isFiltered = true;
@@ -162,7 +162,10 @@ class DepositController extends Controller
         }
 
         if ($format === 'excel') {
-            return Excel::download(new CashflowExport($transactions, $department, $isFiltered), 'running_balance_report.xlsx');
+            return Excel::download(
+                new RunningBalanceExport(collect($transactions), $department, $isFiltered),
+                'running_balance_report.xlsx'
+            );
         }
 
         return back()->with('error', 'Invalid format requested.');

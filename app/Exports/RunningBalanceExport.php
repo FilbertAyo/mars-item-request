@@ -5,7 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class CashflowExport implements FromArray, WithHeadings
+class RunningBalanceExport implements FromArray, WithHeadings
 {
     protected $transactions;
     protected $department;
@@ -20,11 +20,11 @@ class CashflowExport implements FromArray, WithHeadings
 
     public function array(): array
     {
-        if ($this->transactions->isEmpty()) {
+        if (empty($this->transactions)) {
             return [['No data available']];
         }
 
-        return $this->transactions->map(function ($tx) {
+        return collect($this->transactions)->map(function ($tx) {
             $row = [
                 'Date' => $tx['label'] ?? \Carbon\Carbon::parse($tx['date'])->format('Y-m-d'),
                 'Deduction' => $tx['deduction'] ?? 0,
@@ -47,7 +47,6 @@ class CashflowExport implements FromArray, WithHeadings
         $headings = ['Date', 'Deduction', 'Running Balance'];
 
         if (!$this->isFiltered) {
-            // Add these at the beginning
             array_unshift($headings, 'Deposit');
             array_unshift($headings, 'Name');
         }

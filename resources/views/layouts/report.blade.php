@@ -3,9 +3,10 @@
 
 <head>
     <title>Report</title>
-     <style>
+    <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
         }
 
         table {
@@ -19,15 +20,18 @@
             border: 1px solid #000;
             padding: 5px;
             text-align: left;
+            font-size: 9pt;
         }
 
         h2,
         h4 {
             text-align: center;
             margin: 0;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
+
 
 <body>
 

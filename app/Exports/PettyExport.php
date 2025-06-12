@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\FromView;
+use Illuminate\Support\Facades\Auth;
+
 
 class PettyExport implements FromView, WithTitle
 {
@@ -24,7 +26,7 @@ class PettyExport implements FromView, WithTitle
         $this->from = $from;
         $this->to = $to;
         $this->status = $status;
-        $this->department = optional(auth()->user()->department)->name ?? 'N/A';
+        $this->department = optional(Auth::user()->department)->name ?? 'N/A';
     }
 
     public function view(): View

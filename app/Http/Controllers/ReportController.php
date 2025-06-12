@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UserExport;
 use App\Models\Petty;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -22,9 +23,11 @@ class ReportController extends Controller
         $query = User::where('status', 'active');
 
         if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [$request->from, $request->to]);
-        }
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
 
+            $query->whereBetween('created_at', [$from, $to]);
+        }
         $users = $query->get();
 
         return view('reports.users.list', compact('users'));
@@ -35,7 +38,10 @@ class ReportController extends Controller
         $query = User::where('status', 'active');
 
         if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [$request->from, $request->to]);
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
+
+            $query->whereBetween('created_at', [$from, $to]);
         }
 
         $users = $query->get();
@@ -57,7 +63,10 @@ class ReportController extends Controller
         $query = Petty::query();
 
         if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [$request->from, $request->to]);
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
+
+            $query->whereBetween('created_at', [$from, $to]);
         }
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -67,13 +76,18 @@ class ReportController extends Controller
         return view('reports.petty.list', compact('petties'));
     }
 
+
+
     public function downloadPetty(Request $request, $type)
     {
         $query = Petty::query();
 
         // Filter by date range
         if ($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [$request->from, $request->to]);
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
+
+            $query->whereBetween('created_at', [$from, $to]);
         }
 
         // Filter by status (e.g. paid, approved)
@@ -93,6 +107,48 @@ class ReportController extends Controller
         if ($type === 'excel') {
             return Excel::download(new PettyExport($request->from, $request->from, $request->status), 'petty_cash.xlsx');
         }
+
+        return back();
+    }
+
+    public function transactionReport(Request $request)
+    {
+        $query = Petty::query();
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
+
+            $query->whereBetween('created_at', [$from, $to]);
+        }
+        $query->where('status', 'paid');
+
+        $transactions = $query->get();
+
+        return view('reports.transactions.list', compact('transactions'));
+    }
+
+    public function downloadTransaction(Request $request, $type)
+    {
+
+        $query = Petty::query();
+
+        // Filter by date range
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
+
+            $query->whereBetween('created_at', [$from, $to]);
+        }
+        
+        $transactions = $query->get();
+
+        // Export to PDF
+        if ($type === 'pdf') {
+            $pdf = Pdf::loadView('reports.transactions.pdf', compact('transactions'));
+            return $pdf->download('TRANSACTIONS.pdf');
+        }
+
 
         return back();
     }

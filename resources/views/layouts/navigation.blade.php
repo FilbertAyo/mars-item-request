@@ -193,3 +193,35 @@
         </div>
     </nav>
 </div>
+
+
+
+@if(Auth::check() && is_null(Auth::user()->signature))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var modalHtml = `
+                    <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="signatureModalLabel">Signature Required</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    You have not set your signature. Please update your profile to add your signature.
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ route('profile.edit') }}" class="btn btn-primary">Update Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                var signatureModal = new bootstrap.Modal(document.getElementById('signatureModal'));
+                signatureModal.show();
+            }, 10000);
+        });
+    </script>
+@endif
