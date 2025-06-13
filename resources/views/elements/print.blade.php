@@ -60,7 +60,7 @@
                          </table>
 
                          <div class="signature-row"
-                             style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px;">
+                             style="display: flex; justify-content: space-between; text-align: center; margin-top: 10px;">
                              <!-- Raised By -->
                              <div class="signature-block" style="flex: 1;">
                                  <div>Raised by:</div>
@@ -103,8 +103,8 @@
                                      @endif
                                  </div>
                                  <div>GM</div>
-                                  @if ($approvedBy)
-                                 <div>{{ $approvedBy->created_at->format('d/m/Y') }}</div>
+                                 @if ($approvedBy)
+                                     <div>{{ $approvedBy->created_at->format('d/m/Y') }}</div>
                                  @endif
                              </div>
                          </div>
@@ -197,51 +197,98 @@
 
 
  <script>
+     const styles = `
+<style>
+    .pcv-container {
+        position: relative;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background: #fff;
+        font-size: 14px;
+    }
+    .pcv-header {
+        text-align: right;
+        font-size: 13px;
+    }
+    .pcv-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+    .pcv-flex {
+        display: flex;
+    }
+    .pcv-space {
+        justify-content: space-between;
+    }
+    .pcv-label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .pcv-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    .pcv-table,
+    .pcv-table th,
+    .pcv-table td {
+        border: 1px solid #000;
+    }
+    .pcv-table th,
+    .pcv-table td {
+        padding: 8px;
+        text-align: left;
+    }
+    .status-stamp {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 80px;
+        font-weight: bold;
+        opacity: 0.15;
+        z-index: 0;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+    }
+    .status-stamp.paid {
+        color: green;
+    }
+    .status-stamp.not-paid {
+        color: red;
+    }
+</style>
+`;
+
      function printPCV() {
          const content = document.getElementById('printable-pcv').innerHTML;
          const printWindow = window.open('', '', 'width=800,height=600');
 
          printWindow.document.write(`
-        <html>
-            <head>
-                <title>Print PCV</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
-                    }
-                    .pcv-container, .pcv-signature-row, .pcv-signature-block {
-                        font-family: Arial, sans-serif;
-                    }
-                    .pcv-signature-block {
-                        display: inline-block;
-                        width: 30%;
-                        text-align: center;
-                        margin-top: 40px;
-                        border-top: 1px solid #000;
-                        padding-top: 10px;
-                    }
-                    @media print {
-                        button {
-                            display: none;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                ${content}
-                <script>
-                    window.onload = function() {
-                        window.focus();
-                        window.print();
-                        window.onafterprint = function () {
-                            window.close();
-                        };
-                    };
-                <\/script>
-            </body>
-        </html>
-    `);
+<html>
+    <head>
+        <title>Print PCV</title>
+        ${styles}
+    </head>
+    <body>
+        ${content}
+        <script>
+            window.onload = function() {
+                window.focus();
+                window.print();
+                window.onafterprint = function () {
+                    window.close();
+                };
+            };
+        <\/script>
+    </body>
+</html>
+`);
+
 
          printWindow.document.close();
      }
