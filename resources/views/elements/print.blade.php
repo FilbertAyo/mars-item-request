@@ -66,9 +66,13 @@
                                  <div>Raised by:</div>
                                  <div
                                      style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                                     {{ $request->user->name }}
+                                     @if (!empty($request->user->signature))
+                                         <img src="{{ asset($request->user->signature) }}" alt="Signature"
+                                             style="max-height: 60px;">
+                                     @endif
                                  </div>
-                                 <div>NAME</div>
+                                 <div> {{ $request->user->name }}</div>
+                                 <div>{{ $request->created_at->format('d/m/Y') }}</div>
                              </div>
 
                              <!-- Verified By -->
@@ -76,9 +80,16 @@
                                  <div>Verified by:</div>
                                  <div
                                      style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                                     {{ $verifiedBy->user->name ?? '' }}
+                                     @if (!empty($verifiedBy->user->signature))
+                                         <img src="{{ asset($verifiedBy->user->signature) }}" alt="Signature"
+                                             style="max-height: 60px;">
+                                     @endif
                                  </div>
-                                 <div>VERIFIER</div>
+                                 <div>{{ $verifiedBy->user->name ?? '' }}</div>
+                                 @if (!empty($verifiedBy))
+                                     <div>{{ $verifiedBy->created_at->format('d/m/Y') }}</div>
+                                 @endif
+
                              </div>
 
                              <!-- Approved By -->
@@ -86,11 +97,15 @@
                                  <div>Approved by:</div>
                                  <div
                                      style="margin: 10px 0 5px; border-bottom: 1px solid #000; width: 80%; margin-left: auto; margin-right: auto;">
-                                     @if ($approvedBy)
-                                         General Manager
+                                     @if ($approvedBy && !empty($gm->signature))
+                                         <img src="{{ asset($gm->signature) }}" alt="Signature"
+                                             style="max-height: 60px;">
                                      @endif
                                  </div>
                                  <div>GM</div>
+                                  @if ($approvedBy)
+                                 <div>{{ $approvedBy->created_at->format('d/m/Y') }}</div>
+                                 @endif
                              </div>
                          </div>
 

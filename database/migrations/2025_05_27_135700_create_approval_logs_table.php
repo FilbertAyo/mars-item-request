@@ -14,11 +14,15 @@ return new class extends Migration
         Schema::create('approval_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('petty_id')->nullable()->constrained()->onDelete('cascade');
+              $table->unsignedBigInteger('replenishment_id')->nullable();
              $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('action', ['approved', 'rejected','resubmission','resubmitted','paid']);
             $table->text('comment')->nullable();
             $table->timestamps();
+
+            $table->foreign('replenishment_id')->references('id')->on('replenishments')->nullOnDelete();
+
         });
     }
 

@@ -47,7 +47,7 @@ class PettyController extends Controller
         //End of it
 
         // Fetch requests only for the logged-in user
-        $requests = Petty::Where('user_id',  Auth::user())->orderBy('created_at', 'desc')
+        $requests = Petty::Where('user_id',  Auth::id())->orderBy('created_at', 'desc')
             ->get();
 
         return view('pettycash.request', compact('requests'));
@@ -87,8 +87,9 @@ class PettyController extends Controller
 
         $verifiedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->first();
         $approvedBy = ApprovalLog::where('petty_id', $id[0])->where('action', 'approved')->skip(1)->take(1)->first();
+        $gm = User::where('email', 'gm@marstanzania.com')->first();
 
-        return view('pettycash.view', compact('request', 'amountInWords', 'approval_logs', 'verifiedBy', 'approvedBy'));
+        return view('pettycash.view', compact('request', 'amountInWords', 'approval_logs', 'verifiedBy', 'approvedBy', 'gm'));
     }
 
 
@@ -345,15 +346,18 @@ class PettyController extends Controller
         $latestDeposit->remaining -= $request->amount;
         $latestDeposit->save();
 
-        // Change the status to "paid" for the request
-        $request->status = 'paid';
-        $request->save();
 
-        ApprovalLog::Create([
+        $log = ApprovalLog::Create([
             'petty_id' => $id,
             'user_id' => Auth::user()->id,
             'action' => 'paid',
         ]);
+
+        // Change the status to "paid" for the request
+        $request->status = 'paid';
+        $request->paid_date = $log->created_at; 
+        $request->save();
+
 
         $requester = User::find($request->user_id);
         $name = $requester->name;

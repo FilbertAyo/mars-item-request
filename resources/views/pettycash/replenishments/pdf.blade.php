@@ -182,6 +182,7 @@
                             @endif
                         </div>
                         <div>{{ $initiator->user->name ?? '' }}</div>
+                        <div>{{ $initiator->created_at->format('d/m/Y') }}</div>
                     </div>
 
                     <!-- Verified By -->
@@ -194,7 +195,10 @@
                                     style="max-height: 60px;">
                             @endif
                         </div>
-                        <div>{{ $verifier->user->name ?? '' }}</div>
+                        @if ($verifier)
+                            <div>{{ $verifier->user->name ?? '' }}</div>
+                            <div>{{ $verifier->created_at->format('d/m/Y') }}</div>
+                        @endif
                     </div>
 
                     <!-- Approved By -->
@@ -207,11 +211,13 @@
                                     style="max-height: 60px;">
                             @endif
                         </div>
-                        <div>{{ $approver->user->name ?? '' }}</div>
+                        @if ($approver)
+                            <div>{{ $approver->user->name ?? '' }}</div>
+                            <div>{{ $approver->created_at->format('d/m/Y') }}</div>
+                        @endif
                     </div>
 
                 </div>
-
 
             </div>
         </div>
@@ -318,6 +324,7 @@
                 @endif
             </div>
             <div>{{ $initiator->user->name ?? '' }}</div>
+            <div>{{ $initiator->created_at->format('d/m/Y') }}</div>
         </div>
 
         <!-- Verified By -->
@@ -329,7 +336,10 @@
                     <img src="{{ asset($verifier->user->signature) }}" alt="Signature" style="max-height: 60px;">
                 @endif
             </div>
-            <div>{{ $verifier->user->name ?? '' }}</div>
+            @if ($verifier)
+                <div>{{ $verifier->user->name ?? '' }}</div>
+                <div>{{ $verifier->created_at->format('d/m/Y') }}</div>
+            @endif
         </div>
 
         <!-- Approved By -->
@@ -341,7 +351,10 @@
                     <img src="{{ asset($approver->user->signature) }}" alt="Signature" style="max-height: 60px;">
                 @endif
             </div>
-            <div>{{ $approver->user->name ?? '' }}</div>
+            @if ($approver)
+                <div>{{ $approver->user->name ?? '' }}</div>
+                <div>{{ $approver->created_at->format('d/m/Y') }}</div>
+            @endif
         </div>
 
     </div>

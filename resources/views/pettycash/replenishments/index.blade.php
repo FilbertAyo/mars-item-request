@@ -74,7 +74,7 @@
                                             @elseif($replenishment->status == 'rejected')
                                                 <span class="badge bg-secondary">Rejected</span>
                                             @else
-                                                <span class="badge bg-info">Processing</span>
+                                                <span class="badge bg-warning">Processing</span>
                                             @endif
                                         </td>
                                         <td>

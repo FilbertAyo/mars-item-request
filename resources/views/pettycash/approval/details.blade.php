@@ -117,8 +117,14 @@
                             <label>Description</label>
                             <h6 class="text-muted bg-light p-3">{!! nl2br(e($request->reason)) !!}</h6>
                         </div>
+                        @if ($request->paid_date)
+                            <div class="form-group col-md-4 mb-3">
+                                <label for="">Date Paid:</label>
+                                <input type="text" class="form-control" value="{{ $request->paid_date }}" disabled>
+                            </div>
+                        @endif
 
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-2">
                             <label>Status</label>
                             <p>
                                 @if ($request->status == 'pending')

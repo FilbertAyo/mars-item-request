@@ -12,10 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('petties', function (Blueprint $table) {
-            $table->unsignedBigInteger('replenishment_id')->nullable()->after('status');
-
-            // Optional: add foreign key if you want relational integrity
-            $table->foreign('replenishment_id')->references('id')->on('replenishments')->nullOnDelete();
+               $table->date('paid_date')->nullable()->after('created_at');
         });
     }
 
@@ -25,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('petties', function (Blueprint $table) {
-            $table->dropForeign(['replenishment_id']);
-            $table->dropColumn('replenishment_id');
+             $table->dropColumn('paid_date');
         });
     }
 };
