@@ -101,7 +101,11 @@
                             </div>
                         @endif
                     </td>
-                    <td></td>
+                    <td>
+                         @if (request('status') != 'paid')
+                         {{ $petty->status }}
+                         @endif
+                    </td>
                 </tr>
             @empty
                 <tr>

@@ -16,8 +16,8 @@
     </form>
 
     <div class="mb-3">
-        <a href="{{ route('reports.transaction.download', ['type' => 'pdf'] + request()->all()) }}" class="btn btn-danger"><i
-                class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF</a>
+        <a href="{{ route('reports.transaction.download', ['type' => 'pdf'] + request()->all()) }}"
+            class="btn btn-danger"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF</a>
     </div>
 
     <div class="row">
@@ -55,7 +55,14 @@
                             </thead>
                             <tbody>
 
+                                @php
+                                    $totalAmount = 0;
+                                @endphp
+
                                 @foreach ($transactions as $transaction)
+                                    @php
+                                        $totalAmount += $transaction->amount;
+                                    @endphp
                                     <tr>
                                         <th scope="row">
                                             <button class="btn btn-icon btn-round btn-success btn-sm me-2">
@@ -70,13 +77,22 @@
                                             {{ \Carbon\Carbon::parse($transaction->paid_date)->format('d/m/Y') }}
                                         </td>
                                         <td class="text-end">
-                                         {{ number_format($transaction->amount, 2) }}
+                                            {{ number_format($transaction->amount, 2) }}
                                         </td>
                                         <td class="text-end">
                                             <span class="badge badge-success">Completed</span>
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                @if (count($transactions) > 0)
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                        <td class="text-end"><strong>{{ number_format($totalAmount, 2) }}</strong></td>
+                                        <td></td>
+                                    </tr>
+                                @endif
+
 
                             </tbody>
                         </table>
