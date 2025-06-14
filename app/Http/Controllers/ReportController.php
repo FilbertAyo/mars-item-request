@@ -153,6 +153,7 @@ class ReportController extends Controller
 
             $query->whereBetween('paid_date', [$from, $to]);
         }
+        $query->where('status', 'paid');
 
         $transactions = $query->get();
 

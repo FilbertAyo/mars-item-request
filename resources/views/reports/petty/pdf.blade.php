@@ -53,7 +53,6 @@
 
                         @if ($petty->request_for == 'Sales Delivery')
                             <div class="mb-1">
-                                <strong><em>Delivery Details:</em></strong>
                                 <ul class="mb-1">
                                     @foreach ($petty->attachments as $attachment)
                                         <li>{{ $attachment->name }}: {{ $attachment->product_name }}</li>
@@ -67,7 +66,7 @@
                                         <li>
                                             {{ $trip->startPoint->name }}
                                             @foreach ($trip->stops as $stop)
-                                                → {{ $stop->destination }}
+                                                TO {{ $stop->destination }}
                                             @endforeach
                                         </li>
                                     @endforeach
@@ -81,7 +80,7 @@
                                         <li>
                                             {{ $trip->startPoint->name }}
                                             @foreach ($trip->stops as $stop)
-                                                → {{ $stop->destination }}
+                                                TO {{ $stop->destination }}
                                             @endforeach
                                         </li>
                                     @endforeach
