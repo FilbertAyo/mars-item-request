@@ -165,16 +165,29 @@
                     <th>Date</th>
                     <th>Particulars</th>
                     <th>Amount (TZS)</th>
+                    <th>Running Balance</th>
                 </tr>
             </thead>
             <tbody>
+
+                @php
+                    $runningTotal = 0;
+                @endphp
+
                 @forelse ($petties as $petty)
-                    <!-- Summary Row -->
+                    @php
+                        $runningTotal += $petty->amount;
+                    @endphp
+
+                    {{-- Petty Row --}}
                     <tr>
-                        <td>{{ $petty->created_at->format('d/m/Y') }}</td>
+                        <td>{{ $petty->paid_date ? \Carbon\Carbon::parse($petty->paid_date)->format('d/m/Y') : '-' }}
+                        </td>
                         <td><strong>{{ $petty->request_for }}</strong></td>
                         <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
+                        <td><strong>{{ number_format($runningTotal, 2) }}</strong></td>
                     </tr>
+
                     <tr>
                         <td></td>
                         <td>
@@ -236,17 +249,20 @@
                             @endif
                         </td>
                         <td></td>
-                    </tr>
-                    <tr>
                         <td></td>
-                        <td><strong>TOTAL:</strong></td>
-                        <td><strong>{{ number_format($replenishment->total_amount, 2) }}</strong></td>
                     </tr>
+
                 @empty
                     <tr>
                         <td colspan="4" class="text-center">No petties found.</td>
                     </tr>
                 @endforelse
+                <tr>
+                    <td></td>
+                    <td><strong>TOTAL:</strong></td>
+                    <td><strong>{{ number_format($replenishment->total_amount, 2) }}</strong></td>
+                    <td><strong>{{ number_format($runningTotal, 2) }}</strong></td>
+                </tr>
             </tbody>
         </table>
 

@@ -30,7 +30,6 @@ class DepositController extends Controller
         )->first();
         $remaining = $latestDeposit ? $latestDeposit->remaining : 0;
 
-
         return view("pettycash.finance.cashier", compact("deposits", "remaining"));
     }
 
@@ -61,7 +60,7 @@ class DepositController extends Controller
 
         foreach ($allPetty as $petty) {
             $allTransactions->push([
-                'date' => $petty->created_at,
+                'date' => $petty->paid_date,
                 'type' => 'Petty',
                 'requested_by' => optional($petty->user)->name ?? 'Unknown',
                 'deposit' => 0,

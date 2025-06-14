@@ -23,7 +23,7 @@
             @forelse ($transactions as $transaction)
                 <tr>
                     <td>#{{ str_pad($transaction->id, 3, '0', STR_PAD_LEFT) }}</td>
-                    <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('M d, Y h:ia') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->paid_Date)->format('d/m/Y') }}</td>
                     <td>{{ $transaction->user->name }}</td>
                     <td>${{ number_format($transaction->amount, 2) }}</td>
                 </tr>

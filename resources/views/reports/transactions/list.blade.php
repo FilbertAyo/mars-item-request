@@ -67,7 +67,7 @@
                                             {{ $transaction->user->name }}
                                         </td>
                                         <td class="text-end">
-                                            {{ \Carbon\Carbon::parse($transaction->created_at)->format('M d, Y, h:ia') }}
+                                            {{ \Carbon\Carbon::parse($transaction->paid_date)->format('d/m/Y') }}
                                         </td>
                                         <td class="text-end">
                                          {{ number_format($transaction->amount, 2) }}

@@ -30,7 +30,13 @@
         <tbody>
             @forelse ($petties as $petty)
                 <tr>
-                    <td>{{ $petty->created_at->format('d/m/Y') }}</td>
+                    <td>
+                        @if (request('status') != 'paid')
+                            {{ $petty->created_at->format('d/m/Y') }}
+                        @else
+                            {{ $petty->paid_date ? \Carbon\Carbon::parse($petty->paid_date)->format('d/m/Y') : '-' }}
+                        @endif
+                    </td>
                     <td><strong>{{ $petty->request_for }}</strong></td>
                     <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
                 </tr>

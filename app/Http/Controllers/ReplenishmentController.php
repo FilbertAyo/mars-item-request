@@ -106,7 +106,7 @@ class ReplenishmentController extends Controller
             $toInclusive = Carbon::parse($request->to)->endOfDay();
 
             Petty::where('status', 'paid')
-                ->whereBetween('created_at', [$fromInclusive, $toInclusive])
+                ->whereBetween('paid_date', [$fromInclusive, $toInclusive])
                 ->whereNull('replenishment_id')
                 ->update(['replenishment_id' => $replenishment->id]);
         });
@@ -124,8 +124,8 @@ class ReplenishmentController extends Controller
         $replenishment = Replenishment::findOrFail($id);
 
         if ($replenishment->status === 'rejected') {
-            $petties = Petty::whereDate('created_at', '>=', $replenishment->from)
-                ->whereDate('created_at', '<=', $replenishment->to)
+            $petties = Petty::whereDate('paid_date', '>=', $replenishment->from)
+                ->whereDate('paid_date', '<=', $replenishment->to)
                 ->get();
         } else {
             $petties = Petty::where('replenishment_id', $replenishment->id)->get();
@@ -222,8 +222,8 @@ class ReplenishmentController extends Controller
         $replenishment = Replenishment::findOrFail($id);
 
         if ($replenishment->status === 'rejected') {
-            $petties = Petty::whereDate('created_at', '>=', $replenishment->from)
-                ->whereDate('created_at', '<=', $replenishment->to)
+            $petties = Petty::whereDate('paid_date', '>=', $replenishment->from)
+                ->whereDate('paid_date', '<=', $replenishment->to)
                 ->get();
         } else {
             $petties = Petty::where('replenishment_id', $replenishment->id)->get();

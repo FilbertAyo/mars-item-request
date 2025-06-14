@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Petty;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -30,25 +31,35 @@ class PettyExport implements FromView, WithTitle
     }
 
     public function view(): View
-    {
-        $query = Petty::with(['user', 'attachments', 'trips.stops', 'lists', 'trips.startPoint']);
+{
+    $query = Petty::with(['user', 'attachments', 'trips.stops', 'lists', 'trips.startPoint']);
 
-        if ($this->from && $this->to) {
-            $query->whereBetween('created_at', [$this->from, $this->to]);
+    if ($this->from && $this->to) {
+        // Convert dates
+        $from = Carbon::parse($this->from)->startOfDay();
+        $to = Carbon::parse($this->to)->endOfDay();
+
+        // If status is 'paid', filter by paid_date. Otherwise, filter by created_at.
+        if ($this->status && $this->status === 'paid') {
+            $query->whereBetween('paid_date', [$from, $to]);
+        } else {
+            $query->whereBetween('created_at', [$from, $to]);
         }
-
-        if ($this->status) {
-            $query->where('status', $this->status);
-        }
-
-        return view('reports.petty.excel', [
-            'petties' => $query->get(),
-            'department' => $this->department,
-            'from' => $this->from,
-            'to' => $this->to,
-            'status' => $this->status,
-        ]);
     }
+
+    if ($this->status) {
+        $query->where('status', $this->status);
+    }
+
+    return view('reports.petty.excel', [
+        'petties' => $query->get(),
+        'department' => $this->department,
+        'from' => $this->from,
+        'to' => $this->to,
+        'status' => $this->status,
+    ]);
+}
+
 
     public function title(): string
     {

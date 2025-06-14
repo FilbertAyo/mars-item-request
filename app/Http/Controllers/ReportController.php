@@ -62,15 +62,22 @@ class ReportController extends Controller
     {
         $query = Petty::query();
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
         if ($request->filled('from') && $request->filled('to')) {
             $from = Carbon::parse($request->from)->startOfDay();
             $to = Carbon::parse($request->to)->endOfDay();
 
-            $query->whereBetween('created_at', [$from, $to]);
+            // Use different date column depending on status
+            if ($request->status === 'paid') {
+                $query->whereBetween('paid_date', [$from, $to]);
+            } else {
+                $query->whereBetween('created_at', [$from, $to]);
+            }
         }
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+
         $petties = $query->get();
 
         return view('reports.petty.list', compact('petties'));
@@ -78,38 +85,44 @@ class ReportController extends Controller
 
 
 
-    public function downloadPetty(Request $request, $type)
-    {
-        $query = Petty::query();
+ public function downloadPetty(Request $request, $type)
+{
+    $query = Petty::query();
 
-        // Filter by date range
-        if ($request->filled('from') && $request->filled('to')) {
-            $from = Carbon::parse($request->from)->startOfDay();
-            $to = Carbon::parse($request->to)->endOfDay();
+    // Check if both date fields are filled
+    if ($request->filled('from') && $request->filled('to')) {
+        $from = Carbon::parse($request->from)->startOfDay();
+        $to = Carbon::parse($request->to)->endOfDay();
 
+        // Check status and apply appropriate date column
+        if ($request->filled('status') && $request->status === 'paid') {
+            $query->whereBetween('paid_date', [$from, $to]);
+        } else {
             $query->whereBetween('created_at', [$from, $to]);
         }
-
-        // Filter by status (e.g. paid, approved)
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $petties = $query->get();
-
-        // Export to PDF
-        if ($type === 'pdf') {
-            $pdf = Pdf::loadView('reports.petty.pdf', compact('petties'));
-            return $pdf->download('PETTY CASH.pdf');
-        }
-
-        // Export to Excel or CSV
-        if ($type === 'excel') {
-            return Excel::download(new PettyExport($request->from, $request->from, $request->status), 'petty_cash.xlsx');
-        }
-
-        return back();
     }
+
+    // Always filter by status if provided
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $petties = $query->get();
+
+    // Export to PDF
+    if ($type === 'pdf') {
+        $pdf = Pdf::loadView('reports.petty.pdf', compact('petties'));
+        return $pdf->download('PETTY CASH.pdf');
+    }
+
+    // Export to Excel
+    if ($type === 'excel') {
+        return Excel::download(new PettyExport($request->from, $request->to, $request->status), 'petty_cash.xlsx');
+    }
+
+    return back();
+}
+
 
     public function transactionReport(Request $request)
     {
@@ -119,7 +132,7 @@ class ReportController extends Controller
             $from = Carbon::parse($request->from)->startOfDay();
             $to = Carbon::parse($request->to)->endOfDay();
 
-            $query->whereBetween('created_at', [$from, $to]);
+            $query->whereBetween('paid_date', [$from, $to]);
         }
         $query->where('status', 'paid');
 
@@ -138,9 +151,9 @@ class ReportController extends Controller
             $from = Carbon::parse($request->from)->startOfDay();
             $to = Carbon::parse($request->to)->endOfDay();
 
-            $query->whereBetween('created_at', [$from, $to]);
+            $query->whereBetween('paid_date', [$from, $to]);
         }
-        
+
         $transactions = $query->get();
 
         // Export to PDF
@@ -148,7 +161,6 @@ class ReportController extends Controller
             $pdf = Pdf::loadView('reports.transactions.pdf', compact('transactions'));
             return $pdf->download('TRANSACTIONS.pdf');
         }
-
 
         return back();
     }

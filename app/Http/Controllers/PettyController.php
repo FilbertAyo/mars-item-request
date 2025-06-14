@@ -337,15 +337,25 @@ class PettyController extends Controller
     public function c_approve($id)
     {
         $request = Petty::findOrFail($id);
+
+        // Check if already paid
+        $alreadyPaid = ApprovalLog::where('petty_id', $id)
+            ->where('action', 'paid')
+            ->exists();
+
+        if ($alreadyPaid) {
+            return redirect()->back()->with('error', 'This petty cash request has already been paid.');
+        }
+
         $latestDeposit = Deposit::latest()->first();
 
         if (!$latestDeposit) {
             return redirect()->back()->with('error', 'No deposit available.');
         }
 
+        // Deduct amount
         $latestDeposit->remaining -= $request->amount;
         $latestDeposit->save();
-
 
         $log = ApprovalLog::Create([
             'petty_id' => $id,
@@ -353,11 +363,9 @@ class PettyController extends Controller
             'action' => 'paid',
         ]);
 
-        // Change the status to "paid" for the request
         $request->status = 'paid';
-        $request->paid_date = $log->created_at; 
+        $request->paid_date = $log->created_at;
         $request->save();
-
 
         $requester = User::find($request->user_id);
         $name = $requester->name;
