@@ -174,7 +174,8 @@ class PettyController extends Controller
                 'attachments' => 'required|array|min:1',
                 'attachments.*.customer_name' => 'required|string|max:255',
                 'attachments.*.product' => 'required|string|max:255',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048', // max 1MB
+                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048',
+                'is_transporter' => 'nullable|boolean',
             ]);
         }
 
@@ -197,6 +198,7 @@ class PettyController extends Controller
             'reason' => $request->reason,
             'request_type' => $request->request_type,
             'code' => $code,
+            'is_transporter' => $request->is_transporter ?? false,
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -581,6 +583,31 @@ class PettyController extends Controller
         return redirect()->route('petty.index')->with('success', 'Petty Cash request resubmitted successfully.');
     }
 
+
+   public function updateAttachment(Request $request, $id)
+{
+    $request->validate([
+        'attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls|max:2048',
+    ]);
+
+    $petty = Petty::findOrFail($id);
+
+    if ($request->hasFile('attachment')) {
+        $attachment = $request->file('attachment');
+        $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+
+        // Store the file in public/attachment
+        $attachment->move(public_path('attachment'), $attachmentName);
+
+        // Save the path in the model
+        $petty->attachment = 'attachment/' . $attachmentName;
+        $petty->save();
+
+        return redirect()->back()->with('success', 'Attachment updated successfully.');
+    }
+
+    return redirect()->back()->with('error', 'No file uploaded.');
+}
 
     /**
      * Remove the specified resource from storage.

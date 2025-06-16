@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/activate/{id}', [AdminController::class, 'activate'])->name('admin.activate');
     Route::post('/users/{id}/assign-permissions', [AdminController::class, 'assignPermissions'])->name('assign.permissions');
 
+    Route::post('/petty/{id}/upload-attachment', [PettyController::class, 'updateAttachment'])->name('petty.updateAttachment');
+
     Route::resource('warranty', WarrantyController::class);
 });
 

@@ -27,6 +27,42 @@
 
     <div class="row">
 
+        @if ($request->is_transporter == true && $request->attachment == null)
+            <div class="">
+                <button class="btn btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#uploadAttachmentModal">
+                    <i class="bi bi-upload me-1"></i> Upload Attachment
+                </button>
+            </div>
+        @endif
+        <!-- Modal -->
+        <div class="modal fade" id="uploadAttachmentModal" tabindex="-1" aria-labelledby="uploadAttachmentModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{{ route('petty.updateAttachment', $request->id) }}" method="POST"
+                    enctype="multipart/form-data" class="modal-content">
+                    @csrf
+                    @method('POST')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="uploadAttachmentModalLabel">Upload Attachment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="attachment" class="form-label">Choose File <span
+                                    class="text-danger">*</span></label>
+                            <input type="file" name="attachment" id="attachment" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <x-primary-button label="Upload"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
         <div class="card shadow-sm col-12 border-0">
             <div class="card-body">
                 <div class='page-header flex-row justify-content-between'>

@@ -38,7 +38,8 @@
                         <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>No.</th>
+                                    <th>
+                                        No.</th>
                                     <th>Request for</th>
                                     <th>Request type</th>
                                     <th>Amount</th>
@@ -64,7 +65,12 @@
 
                                 @foreach ($requests as $index => $item)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $loop->iteration }}
+                                             @if($item->is_transporter == true &&  $item->attachment == null)
+                                            <img src="{{ asset('image/beep.gif') }}" alt="Route Icon"
+                                            style="width: 44px; height: 44px;" class="me-2">
+                                            @endif
+                                        </td>
                                         <td>{{ $item->request_for }}</td>
                                         <td>{{ $item->request_type }}</td>
                                         <td>{{ number_format($item->amount) }} </td>

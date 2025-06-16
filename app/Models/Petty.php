@@ -9,7 +9,7 @@ class Petty extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'trans_mode_id','department_id', 'code', 'request_for', 'comment', 'amount', 'reason', 'request_type','paid_date', 'attachment', 'status','replenishment_id'];
+    protected $fillable = ['user_id', 'trans_mode_id','department_id', 'code', 'request_for', 'comment', 'amount', 'reason', 'request_type','paid_date', 'attachment','is_transporter', 'status','replenishment_id'];
 
     public function user()
     {

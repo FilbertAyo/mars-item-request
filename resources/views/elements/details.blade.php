@@ -1,4 +1,4 @@
-<div class="mb-4">  
+<div class="mb-4">
 
     @if ($request->request_for == 'Sales Delivery')
         <h5 class="text-secondary mb-3"><strong>Attachments Details</strong></h5>
@@ -24,7 +24,7 @@
                                     data-bs-target="#attachmentModal{{ $loop->index }}" class="btn btn-secondary btn-sm">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
-                                
+
                                 <div class="modal fade" id="attachmentModal{{ $loop->index }}" tabindex="-1"
                                     aria-labelledby="attachmentModalLabel{{ $loop->index }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -83,9 +83,7 @@
         @endif
     @elseif($request->request_for == 'Sales Delivery' || $request->request_for == 'Transport')
         <h5 class="text-secondary mb-3 text-primary"><strong>Transport Route</strong></h5>
-
         <div class="row">
-
             @foreach ($request->trips as $trip)
                 <div class="col-sm-6 col-lg-3">
                     <div class="card shadow-sm p-3">
@@ -145,33 +143,27 @@
 
     @endif
 
-    @if ($request->request_type == 'Reimbursement')
-        <h5 class="text-secondary mb-3 text-primary"><strong>Receipt Attachment</strong></h5>
-
-        <h5 class="text-secondary mb-3 text-primary">
-            <a href="{{ asset($request->attachment) }}" download class="badge bg-primary text-decoration-none ms-2">
-                download
+     @if ($request->is_transporter == true)
+        <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
+        @if (!empty($request->attachment))
+            <a href="{{ asset($request->attachment) }}" download
+                class="btn btn-primary text-white text-decoration-none">
+                <i class="bi bi-download me-2"></i> Download
             </a>
-        </h5>
+        @else
+            <span class="text-danger">No attachment available</span>
+        @endif
+    @else
+        <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
 
-        <!-- Thumbnail Image -->
-        <img src="{{ asset($request->attachment) }}" alt="Loading ..."
-            style="max-height: 200px; max-width: 100%; cursor: pointer;" data-bs-toggle="modal"
-            data-bs-target="#imageModal">
+        @if (!empty($request->attachment))
+            <a href="{{ asset($request->attachment) }}" download
+                class="btn btn-primary text-white text-decoration-none">
+                <i class="bi bi-download me-2"></i> Download
+            </a>
+        @endif
 
-        <!-- Full-Screen Image Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="imageModalLabel">Receipt</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img src="{{ asset($request->attachment) }}" alt="Loading ..." class="img-fluid">
-                    </div>
-                </div>
-            </div>
-        </div>
     @endif
+
+    
 </div>

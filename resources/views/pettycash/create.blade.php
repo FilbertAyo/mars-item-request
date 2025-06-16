@@ -46,7 +46,8 @@
                                 <option value="Petty Cash" {{ old('request_type') == 'Petty Cash' ? 'selected' : '' }}>
                                     Petty Cash</option>
                                 <option value="Reimbursement"
-                                    {{ old('request_type') == 'Reimbursement' ? 'selected' : '' }}>Reimbursement
+                                    {{ old('request_type') == 'Reimbursement' ? 'selected' : '' }} disabled>
+                                    Reimbursement
                                 </option>
                             </select>
                         </div>
@@ -149,7 +150,7 @@
                                         <tr>
                                             <th>Customer Name</th>
                                             <th>Products</th>
-                                            <th>Attachment (*photo < 1Mb)</th>
+                                            <th>Attachment (*photo < 2Mb)</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -189,8 +190,7 @@
                         <div class="row">
                             <div class="col-md-6 col-lg-6 mt-3">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset('image/sdfs.gif') }}" alt="Route Icon"
-                                        style="width: 44px; height: 44px;" class="me-2">
+                                 
                                     <h5 class="mb-0">Transport Route</h5>
                                 </div>
                                 <div class="form-group">
@@ -236,14 +236,35 @@
                                         @endforeach
                                     </select>
                                 </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 mt-3" id="transporter_section" style="display: none;">
+                        <div class="form-group">
+                            <label for="transporter" class="d-block">Is it Transporter? <span
+                                    class="text-danger">*</span></label>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="is_transporter"
+                                    id="transporter_yes" value="1">
+                                <label class="form-check-label" for="transporter_yes">Yes</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="is_transporter"
+                                    id="transporter_no" value="0">
+                                <label class="form-check-label" for="transporter_no">No</label>
                             </div>
                         </div>
                     </div>
 
-
-                    <div class="col-md-12 mt-3" id="attachment_section" style="display: none;">
+                    <div class="col-md-6 mt-3" id="attachment_section" style="display: none;">
                         <div class="form-group">
-                            <label for="attachment">Attach Receipt *:</label>
+                            <label for="attachment">Attachment (jpg, png, pdf) <span
+                                    class="text-danger">*</span></label>
                             <input type="file" name="attachment" id="attachment" class="form-control">
                         </div>
                     </div>
@@ -259,24 +280,34 @@
 
 
     <script>
-        const requestTypeSelect = document.getElementById('request_type'); // Renamed for clarity
-        const requestForSelect = document.getElementById('request_for'); // Renamed for clarity
+        // ========== DOM ELEMENT DECLARATIONS ==========
+        const requestTypeSelect = document.getElementById('request_type');
+        const requestForSelect = document.getElementById('request_for');
         const otherInput = document.getElementById('other_option');
         const finalRequestFor = document.getElementById('final_request_for');
         const form = document.getElementById('pettyForm');
         const attachmentSection = document.getElementById('attachment_section');
-        const attachmentInput = document.getElementById('attachment'); // Get the attachment input itself
+        const officeExpenseSection = document.getElementById('office_expense_section');
+        const routeSection = document.getElementById('route_section');
+        const pettyAttachments = document.getElementById('petty_attachments');
+        const itemsContainer = document.querySelector('#items_container');
+        const addItemBtn = document.getElementById('add_item_btn');
+        const addAttachmentBtn = document.getElementById('add_attachment_btn');
+        const attachmentsContainer = document.querySelector('#attachments_container');
+        const transporterSection = document.getElementById('transporter_section');
+        const transporterYes = document.getElementById('transporter_yes');
+        const transporterNo = document.getElementById('transporter_no');
 
-        // Function to update the hidden input's value
+        let attachmentIndex = 1; // Index for attachment fields
+
+        // ========== UTILITY FUNCTIONS ==========
+
         function updateFinalRequestForValue() {
-            if (requestForSelect.value === 'Others') {
-                finalRequestFor.value = otherInput.value.trim();
-            } else {
-                finalRequestFor.value = requestForSelect.value;
-            }
+            finalRequestFor.value = requestForSelect.value === 'Others' ?
+                otherInput.value.trim() :
+                requestForSelect.value;
         }
 
-        // Function to set/unset required attribute for elements within a container
         function setRequiredForChildren(containerId, isRequired, selector = 'input, select, textarea') {
             const container = document.getElementById(containerId);
             if (container) {
@@ -287,287 +318,125 @@
             }
         }
 
-        // --- Event Listeners and Initial Setup ---
+        // ========== EVENT LISTENERS ==========
 
-        // Initial setup when the page loads (in case of pre-selected values or reloads)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle Request For sections on load
-            const initialRequestForValue = requestForSelect.value;
-            const isOfficeSupplies = initialRequestForValue === 'Office Supplies';
-            const isOthers = initialRequestForValue === 'Others';
-            const isTransportOrSales = (initialRequestForValue === 'Transport' || initialRequestForValue ===
-                'Sales Delivery');
-            const isDelivery = initialRequestForValue == 'Sales Delivery';
-
-            otherInput.style.display = isOthers ? 'block' : 'none';
-            otherInput.required = isOthers;
-
-            document.getElementById('office_expense_section').style.display = isOfficeSupplies ? 'block' : 'none';
-            setRequiredForChildren('office_expense_section', isOfficeSupplies, 'input');
-
-            document.getElementById('route_section').style.display = isTransportOrSales ? 'block' : 'none';
-            setRequiredForChildren('route_section', isTransportOrSales, 'input, select');
-
-            document.getElementById('petty_attachments').style.display = isDelivery ? 'block' : 'none';
-            setRequiredForChildren('petty_attachments', isDelivery, 'input, select');
-
-            updateFinalRequestForValue(); // Call for initial value
-
-            // Handle Request Type sections on load (for attachment)
-            const initialRequestTypeValue = requestTypeSelect.value;
-            const isReimbursement = initialRequestTypeValue === 'Reimbursement';
-            attachmentSection.style.display = isReimbursement ? 'block' : 'none';
-            // Note: 'attachment' is optional by default, so we won't set it to required here
-            // If you want it required for reimbursement, uncomment the next line:
-            // attachmentInput.required = isReimbursement;
-        });
-
-
-        // On 'Request Type' select change (for attachment)
+        // Handle attachment section visibility
         requestTypeSelect.addEventListener('change', function() {
             const isReimbursement = this.value === 'Reimbursement';
             attachmentSection.style.display = isReimbursement ? 'block' : 'none';
-            // If you want the attachment to be REQUIRED for reimbursement, uncomment this:
-            // attachmentInput.required = isReimbursement;
         });
 
 
-        // On 'Request for' select change
+        function handleTransporterChange() {
+            const isTransporter = document.querySelector('input[name="is_transporter"]:checked')?.value === "1";
+            attachmentSection.style.display = isTransporter ? 'block' : 'none';
+        }
+
+        // Add event listeners for transporter radio buttons
+        transporterYes.addEventListener('change', handleTransporterChange);
+        transporterNo.addEventListener('change', handleTransporterChange);
+
+        function toggleTransporterSection(show) {
+            transporterSection.style.display = show ? 'block' : 'none';
+
+            // Toggle required attribute only when visible
+            transporterYes.required = show;
+            transporterNo.required = show;
+
+            if (!show) {
+                // If hiding, clear selection
+                transporterYes.checked = false;
+                transporterNo.checked = false;
+            }
+        }
+
+        // Optional: initialize state on page load
+        window.addEventListener('DOMContentLoaded', handleTransporterChange);
+
+        // Handle form section visibility and required state
         requestForSelect.addEventListener('change', function() {
-            const isOfficeSupplies = this.value === 'Office Supplies';
-            const isOthers = this.value === 'Others';
-            const isTransportOrSales = (this.value === 'Transport' || this.value === 'Sales Delivery');
-            const isDelivery = this.value == 'Sales Delivery';
+            const value = this.value;
+            const isOfficeSupplies = value === 'Office Supplies';
+            const isOthers = value === 'Others';
+            const isTransportOrSales = value === 'Transport' || value === 'Sales Delivery';
+            const isDelivery = value === 'Sales Delivery';
+            const isTransport = value === 'Transport';
 
-
-            // Handle 'Others' input display and requirement
+            // Show/hide "Other" input
             otherInput.style.display = isOthers ? 'block' : 'none';
-            otherInput.required = isOthers; // Dynamically set 'required'
+            otherInput.required = isOthers;
 
-            // Handle 'Office Supplies' section display and requirement for its children
-            document.getElementById('office_expense_section').style.display = isOfficeSupplies ? 'block' : 'none';
+            // Office Supplies section
+            officeExpenseSection.style.display = isOfficeSupplies ? 'block' : 'none';
             setRequiredForChildren('office_expense_section', isOfficeSupplies, 'input');
 
-            // Handle 'Route' section display and requirement for its children
-            document.getElementById('route_section').style.display = isTransportOrSales ? 'block' : 'none';
+            // Route section
+            routeSection.style.display = isTransportOrSales ? 'block' : 'none';
             setRequiredForChildren('route_section', isTransportOrSales, 'input, select');
 
-            document.getElementById('petty_attachments').style.display = isDelivery ? 'block' : 'none';
+            // Attachments for delivery
+            pettyAttachments.style.display = isDelivery ? 'block' : 'none';
             setRequiredForChildren('petty_attachments', isDelivery, 'input, select');
 
-            // Update the final value based on the current selection
+            // Transporter section
+            toggleTransporterSection(isDelivery);
+
+            attachmentSection.style.display = isTransport ? 'block' : 'none';
+            setRequiredForChildren('attachment_section', isTransport, 'input');
+
             updateFinalRequestForValue();
         });
 
-        // Update final value whenever the 'Other reason' input changes
+        // Update final value on typing in "Other"
         otherInput.addEventListener('input', updateFinalRequestForValue);
 
-        // Ensure final value is always updated before form submission
-        form.addEventListener('submit', function() {
-            updateFinalRequestForValue();
-        });
+        // Ensure final value is updated on submit
+        form.addEventListener('submit', updateFinalRequestForValue);
 
-        // Add item (for Office Supplies section)
-        document.getElementById('add_item_btn').addEventListener('click', function() {
-            const isOfficeSuppliesSelected = true; // replace this with your actual condition
-            const tbody = document.querySelector('#items_container tbody');
-
+        // ========== OFFICE SUPPLIES ADD/REMOVE ITEM ==========
+        addItemBtn.addEventListener('click', function() {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-        <td>
-            <input type="text" name="items[]" class="form-control"  ${isOfficeSuppliesSelected ? 'required' : ''}>
-        </td>
-        <td>
-            <input type="number" name="quantity[]" class="form-control"  ${isOfficeSuppliesSelected ? 'required' : ''}>
-        </td>
-        <td>
-            <input type="number" name="price[]" class="form-control"  ${isOfficeSuppliesSelected ? 'required' : ''}>
-        </td>
-        <td>
-            <button type="button" class="btn btn-danger btn-remove-item"><i class="bi bi-trash"></i></button>
-        </td>
-    `;
-            tbody.appendChild(tr);
+            <td><input type="text" name="items[]" class="form-control" required></td>
+            <td><input type="number" name="quantity[]" class="form-control" required></td>
+            <td><input type="number" name="price[]" class="form-control" required></td>
+            <td><button type="button" class="btn btn-danger btn-remove-item"><i class="bi bi-trash"></i></button></td>
+        `;
+            itemsContainer.querySelector('tbody').appendChild(tr);
         });
 
-
-        document.querySelector('#items_container').addEventListener('click', function(e) {
+        itemsContainer.addEventListener('click', function(e) {
             if (e.target.closest('.btn-remove-item')) {
                 e.target.closest('tr').remove();
             }
         });
 
-
-        let attachmentIndex = 1; // Start at 1 because 0 is already used in your HTML
-
-        document.getElementById('add_attachment_btn').addEventListener('click', function() {
-            const isDeliverySelected = true;
-            const tbody = document.querySelector('#attachments_container tbody');
-
+        // ========== ATTACHMENT ADD/REMOVE ==========
+        addAttachmentBtn.addEventListener('click', function() {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-        <td>
-            <input type="text" name="attachments[${attachmentIndex}][customer_name]"
-                class="form-control mb-2" placeholder="Customer Name" ${isDeliverySelected ? 'required' : ''}>
-        </td>
-        <td>
-            <input type="text" name="attachments[${attachmentIndex}][product]"
-                class="form-control mb-2" ${isDeliverySelected ? 'required' : ''}>
-        </td>
-        <td>
-            <input type="file" name="attachments[${attachmentIndex}][file]"
-                class="form-control mb-2" ${isDeliverySelected ? 'required' : ''}>
-        </td>
-        <td>
-            <button type="button" class="btn btn-danger btn-remove-item">
-                <i class="bi bi-trash"></i>
-            </button>
-        </td>
-    `;
-
-            tbody.appendChild(tr);
-            attachmentIndex++; // increment for the next row
+            <td><input type="text" name="attachments[${attachmentIndex}][customer_name]" class="form-control mb-2" placeholder="Customer Name" required></td>
+            <td><input type="text" name="attachments[${attachmentIndex}][product]" class="form-control mb-2" required></td>
+            <td><input type="file" name="attachments[${attachmentIndex}][file]" class="form-control mb-2" required></td>
+            <td><button type="button" class="btn btn-danger btn-remove-item"><i class="bi bi-trash"></i></button></td>
+        `;
+            attachmentsContainer.querySelector('tbody').appendChild(tr);
+            attachmentIndex++;
         });
 
-        document.querySelector('#attachments_container').addEventListener('click', function(e) {
+        attachmentsContainer.addEventListener('click', function(e) {
             if (e.target.closest('.btn-remove-item')) {
                 e.target.closest('tr').remove();
-            }
-        });
-
-
-
-        // Add destination (for Route section)
-        document.getElementById('add_destination').addEventListener('click', function() {
-            const div = document.createElement('div');
-            div.className = 'form-group destination-group mt-2 position-relative';
-
-            const uniqueId = 'destination-' + Date.now(); // unique ID for suggestion container
-            const isTransportOrSalesSelected = (requestForSelect.value === 'Transport' || requestForSelect.value ===
-                'Sales Delivery');
-
-            div.innerHTML = `
-    <label>To where:</label>
-    <div class="input-group">
-        <input type="text" name="destinations[]" class="form-control destination-input" id="${uniqueId}" placeholder="Enter destination" ${isTransportOrSalesSelected ? 'required' : ''} autocomplete="off">
-        <button type="button" class="btn btn-danger btn-remove-destination">
-            <i class="bi bi-trash"></i>
-        </button>
-    </div>
-    <div class="dropdown-menu w-100 suggestion-box" data-for="${uniqueId}" style="display: none;"></div>
-`;
-
-            document.getElementById('destination_fields').appendChild(div);
-        });
-
-
-        document.querySelector('#destination_fields').addEventListener('click', function(e) {
-            if (e.target.closest('.btn-remove-destination')) {
-                e.target.closest('.destination-group').remove();
             }
         });
     </script>
-
 
 
     <script>
-        $(document).ready(function() {
-            // =======================
-            // STATIC INPUT AUTOCOMPLETE
-            // =======================
-            $('#destination-input').on('input', function() {
-                let query = $(this).val();
-                if (query.length < 1) {
-                    $('#destination-suggestions').hide().empty();
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('stops.autocomplete') }}",
-                    data: {
-                        term: query
-                    },
-                    success: function(data) {
-                        let dropdown = $('#destination-suggestions');
-                        dropdown.empty();
-
-                        if (data.length === 0) {
-                            dropdown.hide();
-                            return;
-                        }
-
-                        data.forEach(item => {
-                            dropdown.append(
-                                `<button type="button" class="dropdown-item">${item}</button>`
-                            );
-                        });
-
-                        dropdown.show();
-                    }
-                });
-            });
-
-            // Suggestion click for static input
-            $(document).on('click', '#destination-suggestions .dropdown-item', function() {
-                $('#destination-input').val($(this).text());
-                $('#destination-suggestions').hide();
-            });
-
-            // =======================
-            // DYNAMIC INPUT AUTOCOMPLETE
-            // =======================
-            $(document).on('input', '.destination-input', function() {
-                const $input = $(this);
-                const query = $input.val();
-                const inputId = $input.attr('id');
-                const $dropdown = $(`.suggestion-box[data-for="${inputId}"]`);
-
-                if (query.length < 1) {
-                    $dropdown.hide().empty();
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('stops.autocomplete') }}",
-                    data: {
-                        term: query
-                    },
-                    success: function(data) {
-                        $dropdown.empty();
-
-                        if (data.length === 0) {
-                            $dropdown.hide();
-                            return;
-                        }
-
-                        data.forEach(item => {
-                            $dropdown.append(
-                                `<button type="button" class="dropdown-item">${item}</button>`
-                            );
-                        });
-
-                        $dropdown.show();
-                    }
-                });
-            });
-
-            // Suggestion click for dynamic input
-            $(document).on('click', '.suggestion-box .dropdown-item', function() {
-                const selectedText = $(this).text();
-                const $dropdown = $(this).closest('.suggestion-box');
-                const inputId = $dropdown.data('for');
-                $(`#${inputId}`).val(selectedText);
-                $dropdown.hide();
-            });
-
-            // Hide all dropdowns when clicking outside
-            $(document).click(function(e) {
-                if (!$(e.target).closest('.form-group, .destination-group').length) {
-                    $('#destination-suggestions').hide(); // for static
-                    $('.suggestion-box').hide(); // for dynamic
-                }
-            });
-        });
+        const autocompleteRoute = "{{ route('stops.autocomplete') }}";
     </script>
+    <script src="{{ asset('assets/js/custom/destination.js') }}"></script>
+
+
 
 </x-app-layout>
