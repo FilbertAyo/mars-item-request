@@ -154,9 +154,10 @@
             <span class="text-danger">No attachment available</span>
         @endif
     @else
-        <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
+
 
         @if (!empty($request->attachment))
+         <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
             <a href="{{ asset($request->attachment) }}" download
                 class="btn btn-primary text-white text-decoration-none">
                 <i class="bi bi-download me-2"></i> Download
@@ -165,5 +166,5 @@
 
     @endif
 
-    
+
 </div>
