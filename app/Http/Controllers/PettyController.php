@@ -204,10 +204,13 @@ class PettyController extends Controller
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
             $attachmentName = time() . '_' . $attachment->getClientOriginalName();
-            $attachment->move(public_path('attachment'), $attachmentName);
-            $newRequest->attachment = 'attachment/' . $attachmentName;
+
+            $attachment->storeAs('public/attachments', $attachmentName);
+
+            $newRequest->attachment = 'storage/attachments/' . $attachmentName;
             $newRequest->save();
         }
+
 
         if ($request->request_for === 'Office Supplies' && $request->has('items')) {
             foreach ($request->items as $index => $item) {
@@ -515,12 +518,12 @@ class PettyController extends Controller
             'status' => 'pending',
         ]);
 
-        // 4. Handle Attachment
+
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
             $attachmentName = time() . '_' . $attachment->getClientOriginalName();
-            $attachment->move(public_path('attachment'), $attachmentName);
-            $petty->attachment = 'attachment/' . $attachmentName;
+            $attachment->storeAs('public/attachments', $attachmentName);
+            $petty->attachment = 'storage/attachments/' . $attachmentName;
             $petty->save();
         }
 
@@ -584,30 +587,26 @@ class PettyController extends Controller
     }
 
 
-   public function updateAttachment(Request $request, $id)
-{
-    $request->validate([
-        'attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls|max:2048',
-    ]);
+    public function updateAttachment(Request $request, $id)
+    {
+        $request->validate([
+            'attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls|max:2048',
+        ]);
 
-    $petty = Petty::findOrFail($id);
+        $petty = Petty::findOrFail($id);
 
-    if ($request->hasFile('attachment')) {
-        $attachment = $request->file('attachment');
-        $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->storeAs('public/attachments', $attachmentName);
+            $petty->attachment = 'storage/attachments/' . $attachmentName;
+            $petty->save();
 
-        // Store the file in public/attachment
-        $attachment->move(public_path('attachment'), $attachmentName);
+            return redirect()->back()->with('success', 'Attachment updated successfully.');
+        }
 
-        // Save the path in the model
-        $petty->attachment = 'attachment/' . $attachmentName;
-        $petty->save();
-
-        return redirect()->back()->with('success', 'Attachment updated successfully.');
+        return redirect()->back()->with('error', 'No file uploaded.');
     }
-
-    return redirect()->back()->with('error', 'No file uploaded.');
-}
 
     /**
      * Remove the specified resource from storage.
