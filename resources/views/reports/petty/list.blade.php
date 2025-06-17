@@ -62,29 +62,12 @@
                 <i class="bi bi-file-earmark-excel-fill"></i> Download Excel
             </a>
         </div>
-        <div class="col-4">
-            @can('approve petycash payments')
-                @if (request('status') == 'paid' && request('from') && request('to'))
-                    <form action="{{ route('replenishment.create') }}" method="GET" class="flex justify-content-end">
-                        <input type="hidden" name="from" value="{{ request('from') }}">
-                        <input type="hidden" name="to" value="{{ request('to') }}">
-                        <button class="btn btn-primary w-100">New Replenishment</button>
-                    </form>
-                @endif
-            @endcan
-        </div>
     </div>
-
-
-
 
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>
-                @if (request('status') != 'paid')
-                    <th>Date Issued</th>
-                @endif
-
+                <th>Date Issued</th>
                 <th>Date Paid</th>
                 <th>Particulars</th>
                 <th>Amount (TZS)</th>
@@ -93,11 +76,8 @@
         </thead>
         <tbody>
             @forelse ($petties as $petty)
-                <!-- Summary Row -->
                 <tr>
-                    @if (request('status') != 'paid')
-                        <td>{{ $petty->created_at->format('d/m/Y') }}</td>
-                    @endif
+                    <td>{{ $petty->created_at->format('d/m/Y') }}</td>
                     <td>{{ $petty->paid_date ? \Carbon\Carbon::parse($petty->paid_date)->format('d/m/Y') : '-' }}</td>
                     <td><strong>{{ $petty->request_for }}</strong></td>
                     <td><strong>{{ number_format($petty->amount, 2) }}</strong></td>
@@ -105,9 +85,8 @@
                 </tr>
 
                 <tr>
-                    @if (request('status') != 'paid')
-                        <td></td>
-                    @endif
+
+                    <td></td>
                     <td></td>
                     <td>
                         <div class="mb-1">

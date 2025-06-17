@@ -26,11 +26,23 @@ class ReplenishmentController extends Controller
 
         return view('pettycash.replenishments.index', compact('replenishments'));
     }
+    public function pettycash(Request $request)
+    {
+        // Start with a base query for paid status
+        $query = Petty::where('status', 'paid');
 
-    /**
-     * Show the form for creating a new resource.
-     */
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = Carbon::parse($request->from)->startOfDay();
+            $to = Carbon::parse($request->to)->endOfDay();
 
+            // Use 'paid_date' for filtering since only 'paid' records are fetched
+            $query->whereBetween('paid_date', [$from, $to]);
+        }
+
+        $petties = $query->get();
+
+        return view('pettycash.replenishments.list', compact('petties'));
+    }
 
     public function create(Request $request)
     {
@@ -47,7 +59,7 @@ class ReplenishmentController extends Controller
         })->exists();
 
         if ($overlap) {
-            return redirect()->route('reports.petties')->with('error', 'This range overlaps with an existing replenishment. Please cross-check the dates on your replenishment list and try again.');
+            return redirect()->back()->with('error', 'This range overlaps with an existing replenishment. Please cross-check the dates on your replenishment list and try again.');
         }
 
         // Only sum paid petties without replenishment_id
@@ -55,7 +67,7 @@ class ReplenishmentController extends Controller
         $toInclusive = Carbon::parse($to)->endOfDay();
 
         $totalAmount = Petty::where('status', 'paid')
-            ->whereBetween('created_at', [$fromInclusive, $toInclusive])
+            ->whereBetween('paid_date', [$fromInclusive, $toInclusive])
             ->whereNull('replenishment_id')
             ->sum('amount');
 

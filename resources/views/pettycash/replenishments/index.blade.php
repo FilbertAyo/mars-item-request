@@ -25,7 +25,7 @@
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Replenishment List</h4>
                     @can('approve petycash payments')
-                        <a href="{{ route('reports.petties') }}" class="btn btn-primary"><i
+                        <a href="{{ route('replenishment.pettycash') }}" class="btn btn-primary"><i
                                 class="bi bi-plus-circle me-2"></i> New Replenishment</a>
                     @endcan
                 </div>

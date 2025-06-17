@@ -129,10 +129,27 @@
 
                  @can('view requested pettycash')
                      <li class="nav-item {{ Request::routeIs('replenishment.index') ? 'active' : '' }}">
-                         <a href="{{ route('replenishment.index') }}">
+                         <a data-bs-toggle="collapse" href="#base3">
                              <i class="bi bi-file-ruled"></i>
                              <p>Replenishments</p>
+
+                             <span class="caret"></span>
                          </a>
+                         <div class="collapse" id="base3">
+                             <ul class="nav nav-collapse">
+                                 <li>
+                                     <a href="{{ route('replenishment.index') }}">
+                                         <span class="sub-item">Reports</span>
+                                     </a>
+                                 </li>
+                                 <li>
+                                     <a href="{{ route('replenishment.pettycash') }}">
+                                         <span class="sub-item">Petty cash</span>
+                                     </a>
+                                 </li>
+
+                             </ul>
+                         </div>
                      </li>
                  @endcan
 
