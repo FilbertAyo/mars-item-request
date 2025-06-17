@@ -4,10 +4,15 @@
 
 @if ($chatUser)
     <div class="text-center mb-3">
-        <img src="{{ asset($chatUser->file ?? 'image/prof.jpeg') }}"
-             alt="User Image"
-             class="img-fluid rounded-circle"
-             width="100" height="100">
+        <div style="
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-image: url('{{ asset($chatUser->file ?? 'image/prof.jpeg') }}');
+            background-size: cover;
+            background-position: center;
+            display: inline-block;
+        "></div>
     </div>
 @endif
 
