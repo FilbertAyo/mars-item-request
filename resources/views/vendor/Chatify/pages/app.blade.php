@@ -1,7 +1,8 @@
 <x-app-layout>
 
     @include('Chatify::layouts.headLinks')
-    <div class="messenger">
+   <div class="messenger" style="height: 80vh;">
+
         {{-- ----------------------Users/Groups lists side---------------------- --}}
         <div class="messenger-listView {{ !!$id ? 'conversation-active' : '' }}">
             {{-- Header and search bar --}}

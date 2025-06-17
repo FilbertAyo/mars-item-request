@@ -68,9 +68,19 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-4 text-center">
-                            <img src="{{ asset($user->file ?? 'image/prof.jpeg') }}" alt="User Image"
-                                class="img-fluid rounded-circle " width="300" height="300">
+                            <div
+                                style="
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background-image: url('{{ asset($user->file ?? 'image/prof.jpeg') }}');
+        background-size: cover;
+        background-position: center;
+        display: inline-block;
+    ">
+                            </div>
                         </div>
+
                         <div class="col-md-8">
                             <div class="container">
                                 <div class="row mb-3">

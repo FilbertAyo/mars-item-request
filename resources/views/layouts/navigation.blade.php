@@ -136,13 +136,22 @@
                                     @can('view cashflow movements')
                                         <a class="col-6 col-md-4 p-0" href="{{ route('deposit.index') }}">
                                             <div class="quick-actions-item">
-                                                <div class="avatar-item bg-success rounded-circle">
+                                                <div class="avatar-item bg-secondary rounded-circle">
                                                     <i class="bi bi-wallet"></i>
                                                 </div>
                                                 <span class="text">Payments</span>
                                             </div>
                                         </a>
                                     @endcan
+
+                                      <a class="col-6 col-md-4 p-0" href="{{ route('chatify') }}">
+                                            <div class="quick-actions-item">
+                                                <div class="avatar-item bg-success rounded-circle">
+                                                 <i class="bi bi-chat-dots"></i>
+                                                </div>
+                                                <span class="text">Messages</span>
+                                            </div>
+                                        </a>
                                 </div>
                             </div>
                         </div>

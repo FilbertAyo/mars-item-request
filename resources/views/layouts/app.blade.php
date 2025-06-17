@@ -48,6 +48,8 @@
                     @endif
 
                 </div>
+
+
                 @include('layouts.footer')
             </div>
 
@@ -56,6 +58,38 @@
     </div>
 
     @include('layouts.settings')
+
+
+<a href="{{ route('chatify') }}"
+   id="floating-chat-btn"
+   class="btn position-fixed d-flex align-items-center justify-content-center"
+   style="bottom: 20px; right: 20px; z-index: 9999; width: 70px; height: 70px; border-radius: 50%; transition: background-color 0.5s ease; color: white;">
+   <i id="floating-chat-icon" class="bi bi-chat-dots fs-3"></i>
+</a>
+
+<script>
+  const btn = document.getElementById('floating-chat-btn');
+  const icon = document.getElementById('floating-chat-icon');
+
+  // Icons to cycle through
+  const icons = [
+    { class: 'bi-chat-dots', color: '#198754' },       // Bootstrap green (message)
+    { class: 'bi-whatsapp', color: '#25D366' },        // WhatsApp green
+    { class: 'bi-telephone', color: '#0d6efd' }        // Bootstrap blue (call)
+  ];
+
+  let current = 0;
+
+  setInterval(() => {
+    current = (current + 1) % icons.length;
+    // Change icon class
+    icon.className = 'bi fs-3 ' + icons[current].class;
+    // Change button bg color smoothly
+    btn.style.backgroundColor = icons[current].color;
+  }, 3000); // every 3 seconds
+</script>
+
+
 
 
     <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
