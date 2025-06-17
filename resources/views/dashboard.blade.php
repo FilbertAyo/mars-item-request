@@ -7,7 +7,7 @@
             <h6 class="op-7 mb-2">Welcome back, {{ Auth::user()->name }}</h6>
         </div>
         <div class="ms-md-auto py-2 py-md-0">
-            <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
+            <a href="{{ route('chatify') }}" class="btn btn-label-info btn-round me-2">Messages</a>
         </div>
     </div>
     @can('view cashflow movements')

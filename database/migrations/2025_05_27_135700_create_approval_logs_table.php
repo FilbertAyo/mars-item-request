@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->timestamps();
 
-            $table->foreign('replenishment_id')->references('id')->on('replenishments')->nullOnDelete();
+            // $table->foreign('replenishment_id')->references('id')->on('replenishments')->nullOnDelete();
 
         });
     }
