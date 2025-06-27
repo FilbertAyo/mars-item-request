@@ -92,7 +92,7 @@
                          <div class="collapse" id="submenu">
                              <ul class="nav nav-collapse">
                                  <li>
-                                     <a href="{{ route('petty.list') }}">
+                                     <a href="{{ route('petty.cashier') }}">
                                          <span class="sub-item">Payments</span>
                                          @if ($approvedPettiesCount > 0)
                                              <span class="badge badge-success">{{ $approvedPettiesCount }}</span>
@@ -173,12 +173,12 @@
 
                      @can('approve item purchase')
                          <li class="nav-item {{ Request::routeIs('general.index') ? 'active' : '' }}">
-                             <a data-bs-toggle="collapse" href="#base3">
+                             <a data-bs-toggle="collapse" href="#base8">
                                  <i class="bi bi-clipboard2-check"></i>
                                  <p>Approval</p>
                                  <span class="caret"></span>
                              </a>
-                             <div class="collapse" id="base3">
+                             <div class="collapse" id="base8">
                                  <ul class="nav nav-collapse">
 
                                      <li>

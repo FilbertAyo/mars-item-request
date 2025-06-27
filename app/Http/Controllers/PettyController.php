@@ -103,6 +103,17 @@ class PettyController extends Controller
         return view('pettycash.approval.index', compact('requests'));
     }
 
+       public function requestsCashier()
+    {
+        $requests = Petty::orderBy('created_at', 'desc')->where(
+            'department_id',
+            operator: Auth::user()->department_id
+        )->whereIn('status',['approved','paid'])->get();
+
+        return view('pettycash.approval.index', compact('requests'));
+    }
+
+
     public function all_requests()
     {
         $requests = Petty::orderBy('created_at', 'desc')->get();
@@ -468,7 +479,7 @@ class PettyController extends Controller
                 'attachments' => 'required|array|min:1',
                 'attachments.*.customer_name' => 'required|string|max:255',
                 'attachments.*.product' => 'required|string|max:255',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:1024', // max 1MB
+                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048', // max 1MB
             ]);
         }
 

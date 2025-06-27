@@ -64,9 +64,7 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
     Route::resource('replenishment', ReplenishmentController::class);
     Route::post('/replenishment/initial/approve/{id}', [ReplenishmentController::class, 'firstApprove'])->name('initial.approve');
     Route::post('/replenishment/last/approve/{id}', [ReplenishmentController::class, 'lastApprove'])->name('last.approve');
-
     Route::get('/replenishment/petty/cash/list', [ReplenishmentController::class, 'pettycash'])->name('replenishment.pettycash');
-
     Route::get('/replenishment/{id}/download', [ReplenishmentController::class, 'downloadPDF'])->name('replenishment.download');
 
 
@@ -80,6 +78,8 @@ Route::middleware(['auth', 'permission:view cashflow movements'])->group(functio
     Route::resource('deposit', DepositController::class);
     Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');
     Route::get('/cashflow/download', [DepositController::class, 'download'])->name('cashflow.download');
+    Route::get('pettycash/requests/payments/list', [PettyController::class, 'requestsCashier'])->name('petty.cashier');
+
 });
 
 Route::middleware(['auth', 'permission:request item purchase'])->group(function () {
@@ -104,6 +104,11 @@ Route::middleware(['auth', 'permission:view reports'])->group(function () {
     Route::get('/reports/petty/cash/download/{type}', [ReportController::class, 'downloadPetty'])->name('reports.petties.download');
     Route::get('reports/petty/cash/transactions', [ReportController::class, 'transactionReport'])->name('reports.transaction');
     Route::get('/reports/petty/cash/transaction/download/{type}', [ReportController::class, 'downloadTransaction'])->name('reports.transaction.download');
+
+    Route::get('reports/routes/prices', [ReportController::class, 'routeReport'])->name('reports.routes');
+    Route::get('/reports/routes/download', [ReportController::class, 'downloadRouteReport'])->name('reports.route.download');
+
+
 });
 
 

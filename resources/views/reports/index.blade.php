@@ -23,7 +23,7 @@
     @can('view cashflow movements')
         <div class="col-sm-6 col-md-3">
             <a href="{{ route('reports.petties') }}" class="text-decoration-none">
-                <div class="card card-stats card-light card-round">
+                <div class="card card-stats card-light card-round shadow-sm">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5">
@@ -45,7 +45,7 @@
 
     <div class="col-sm-6 col-md-3">
         <a href="{{ route('reports.users') }}" class="text-decoration-none">
-            <div class="card card-stats card-light card-round">
+            <div class="card card-stats card-light card-round shadow-sm">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-5">
@@ -66,7 +66,7 @@
 
     <div class="col-sm-6 col-md-3">
         <a href="{{ route('reports.transaction') }}" class="text-decoration-none">
-            <div class="card card-stats card-light card-round">
+            <div class="card card-stats card-light card-round shadow-sm">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-5">
@@ -84,6 +84,28 @@
             </div>
         </a>
     </div>
+
+     <div class="col-sm-6 col-md-3">
+        <a href="{{ route('reports.routes') }}" class="text-decoration-none">
+            <div class="card card-stats card-light card-round shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="icon-big text-center">
+                             <i class="bi bi-geo"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-stats">
+                            <div class="numbers">
+                                <div class="h5">Routes Prices</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
 </div>
 
 
