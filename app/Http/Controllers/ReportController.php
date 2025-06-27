@@ -180,7 +180,7 @@ class ReportController extends Controller
 
         $routes = $pickingPoints->map(function ($trip) {
             return [
-                'pick_point' => $trip->name ?? 'Pick Point',
+                'pick_point' => $trip->startPoint->name ?? 'Pick Point',
                 'destinations' => $trip->stops->pluck('destination'),
                 'petty_amount' => $trip->petty->amount ?? 0,
                 'transport_mode' => optional($trip->petty->transMode)->name ?? 'N/A',
@@ -201,7 +201,7 @@ class ReportController extends Controller
 
     $routes = $pickingPoints->map(function ($trip) {
         return [
-            'pick_point' => $trip->name ?? 'Pick Point',
+            'pick_point' => $trip->startPoint->name ?? 'Pick Point',
             'destinations' => $trip->stops->pluck('destination'),
             'petty_amount' => $trip->petty->amount ?? 0,
             'transport_mode' => optional($trip->petty->transMode)->name ?? 'N/A',
