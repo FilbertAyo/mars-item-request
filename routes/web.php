@@ -13,9 +13,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
-use Illuminate\Support\Facades\Artisan;
-use PhpOffice\PhpSpreadsheet\Calculation\TextData\Replace;
 
 Route::get('/', [DashboardController::class, 'redirect'])->middleware(['auth', 'verified']);
 
@@ -50,6 +47,16 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'permission:request pettycash'])->group(function () {
     Route::resource('petty', PettyController::class);
+    Route::get('/pettycash/request/step1', [PettyController::class, 'step1'])->name('petty.create.step1');
+    Route::post('/pettycash/request/step1', [PettyController::class, 'storeStep1'])->name('petty.store.step1');
+    Route::get('/pettycash/request/step2', [PettyController::class, 'step2'])->name('petty.create.step2');
+    Route::post('/pettycash/request/step2', [PettyController::class, 'storeStep2'])->name('petty.store.step2');
+    Route::get('/pettycash/request/step3', [PettyController::class, 'step3'])->name('petty.create.step3');
+    Route::post('/pettycash/request/step3', [PettyController::class, 'storeStep3'])->name('petty.store.step3');
+    Route::get('/pettycash/request/step4', [PettyController::class, 'step4'])->name('petty.create.step4');
+    Route::post('/pettycash/request/step4', [PettyController::class, 'storeStep4'])->name('petty.store.step4');
+
+
     Route::get('/autocomplete-stops', [PettyController::class, 'autocomplete'])->name('stops.autocomplete');
 });
 
@@ -66,7 +73,6 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
     Route::post('/replenishment/last/approve/{id}', [ReplenishmentController::class, 'lastApprove'])->name('last.approve');
     Route::get('/replenishment/petty/cash/list', [ReplenishmentController::class, 'pettycash'])->name('replenishment.pettycash');
     Route::get('/replenishment/{id}/download', [ReplenishmentController::class, 'downloadPDF'])->name('replenishment.download');
-
 
 });
 
@@ -107,7 +113,6 @@ Route::middleware(['auth', 'permission:view reports'])->group(function () {
 
     Route::get('reports/routes/prices', [ReportController::class, 'routeReport'])->name('reports.routes');
     Route::get('/reports/routes/download', [ReportController::class, 'downloadRouteReport'])->name('reports.route.download');
-
 
 });
 

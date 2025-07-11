@@ -102,7 +102,7 @@
                             <div class="quick-actions-items">
                                 <div class="row m-0">
                                     @can('request pettycash')
-                                        <a class="col-6 col-md-4 p-0" href="{{ route('petty.create') }}">
+                                        <a class="col-6 col-md-4 p-0" href="{{ route('petty.create.step1') }}">
                                             <div class="quick-actions-item">
                                                 <div class="avatar-item bg-warning rounded-circle">
                                                     <i class="bi bi-card-list"></i>

@@ -24,7 +24,7 @@
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Requests List</h4>
                     @can('request pettycash')
-                        <a href="{{ route('petty.create') }}" class="btn btn-primary">
+                        <a href="{{ route('petty.create.step1') }}" class="btn btn-primary">
                             <span class="btn-label">
                                 <i class="bi bi-plus-lg"></i>
                             </span>

@@ -18,7 +18,8 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $attachment->name }}</td>
-                            <td>{{ $attachment->product_name }}</td>
+                            <td>{!! nl2br(e($attachment->product_name)) !!}
+                            </td>
                             <td>
                                 <a href="#" data-bs-toggle="modal"
                                     data-bs-target="#attachmentModal{{ $loop->index }}" class="btn btn-secondary btn-sm">
@@ -36,8 +37,8 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                <img src="{{ asset('storage/' . $attachment->attachment) }}"
-                                                    alt="Attachment" class="img-fluid rounded">
+                                                <img src="{{ asset($attachment->attachment) }}" alt="Attachment"
+                                                    class="img-fluid rounded">
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +144,7 @@
 
     @endif
 
-     @if ($request->is_transporter == true)
+    @if ($request->is_transporter == true)
         <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
         @if (!empty($request->attachment))
             <a href="{{ asset($request->attachment) }}" download
@@ -154,10 +155,8 @@
             <span class="text-danger">No attachment available</span>
         @endif
     @else
-
-
         @if (!empty($request->attachment))
-         <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
+            <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
             <a href="{{ asset($request->attachment) }}" download
                 class="btn btn-primary text-white text-decoration-none">
                 <i class="bi bi-download me-2"></i> Download
