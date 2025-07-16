@@ -92,7 +92,7 @@
                                             <a href="{{ route('petty.show', Hashids::encode($item->id)) }}"
                                                 class="btn btn-sm btn-secondary text-white"><i
                                                     class="bi bi-eye"></i></a>
-                                            @if ($item->status == 'pending' || $item->status == 'resubmission')
+                                            {{-- @if ($item->status == 'pending' || $item->status == 'resubmission')
                                                 <a href="{{ route('petty.edit', Hashids::encode($item->id)) }}"
                                                     class="btn btn-sm btn-secondary">
                                                     <i class="bi bi-pencil-square"></i>
@@ -102,7 +102,7 @@
                                                     onclick="showEditBlockedNotice()">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </button>
-                                            @endif
+                                            @endif --}}
 
                                         </td>
                                     </tr>
