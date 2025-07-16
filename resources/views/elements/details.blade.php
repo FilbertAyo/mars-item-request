@@ -37,8 +37,12 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                <img src="{{ asset($attachment->attachment) }}" alt="Attachment"
-                                                    class="img-fluid rounded">
+                                                @php
+                                                    $filePath = public_path($attachment->attachment);
+                                                    $fallbackPath = 'storage' . asset($attachment->attachment);
+                                                @endphp
+                                                <img src="{{ file_exists($filePath) ? asset($attachment->attachment) : $fallbackPath }}"
+                                                    alt="Attachment">
                                             </div>
                                         </div>
                                     </div>
@@ -145,6 +149,16 @@
     @endif
 
     @if ($request->is_transporter == true)
+        <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
+        @if (!empty($request->attachment))
+            <a href="{{ asset($request->attachment) }}" download
+                class="btn btn-primary text-white text-decoration-none">
+                <i class="bi bi-download me-2"></i> Download
+            </a>
+        @else
+            <span class="text-danger">No attachment available</span>
+        @endif
+    @elseif($request->request_for == 'Office Supplies')
         <h5 class="text-secondary mb-3 text-primary"><strong>Attachment</strong></h5>
         @if (!empty($request->attachment))
             <a href="{{ asset($request->attachment) }}" download

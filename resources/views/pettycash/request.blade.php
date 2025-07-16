@@ -66,7 +66,7 @@
                                 @foreach ($requests as $index => $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}
-                                             @if($item->is_transporter == true &&  $item->attachment == null)
+                                             @if($item->is_transporter == true &&  $item->attachment == null || $item->request_for == 'Office Supplies' && $item->attachment == null)
                                             <img src="{{ asset('image/beep.gif') }}" alt="Route Icon"
                                             style="width: 44px; height: 44px;" class="me-2">
                                             @endif

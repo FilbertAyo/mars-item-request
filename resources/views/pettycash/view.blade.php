@@ -33,6 +33,12 @@
                     <i class="bi bi-upload me-1"></i> Upload Attachment
                 </button>
             </div>
+        @elseif($request->request_for == 'Office Supplies' && $request->attachment == null)
+            <div class="">
+                <button class="btn btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#uploadAttachmentModal">
+                    <i class="bi bi-upload me-1"></i> Upload Attachment
+                </button>
+            </div>
         @endif
         <!-- Modal -->
         <div class="modal fade" id="uploadAttachmentModal" tabindex="-1" aria-labelledby="uploadAttachmentModalLabel"
