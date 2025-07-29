@@ -9,7 +9,7 @@
             @method('PUT')
         @endif
 
-        <div class="card">
+        <div class="card shadow-none border">
             <div class="card-header">
                 <div class="card-title">Deliveries Attachments</div>
             </div>

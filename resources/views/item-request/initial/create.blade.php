@@ -27,7 +27,7 @@
 
     <form method="POST" action="{{ route('item-request.store') }}" enctype="multipart/form-data" id="pettyForm">
         @csrf
-        <div class="card">
+        <div class="card shadow-none border">
             <div class="card-header">
                 <div class="card-title">Request Info</div>
             </div>

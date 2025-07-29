@@ -16,7 +16,7 @@
     @can('view cashflow movements')
         <div class="row">
             <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round shadow-none border">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-icon">
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round shadow-none border">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-icon">
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round shadow-none border">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-icon">
@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round shadow-none border">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-icon">

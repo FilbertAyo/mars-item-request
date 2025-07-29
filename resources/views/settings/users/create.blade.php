@@ -32,7 +32,7 @@
 
             <form method="POST" action="{{ route('admin.store') }}">
                 @csrf
-                <div class="card">
+                <div class="card shadow-none border">
                     <div class="card-header">
                         <div class="card-title">Fill the Details</div>
                     </div>

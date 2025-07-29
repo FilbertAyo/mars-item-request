@@ -904,21 +904,6 @@ class PettyController extends Controller
     }
 
 
-    public function edit(Request $request, $hashid)
-    {
-        $id = Hashids::decode($hashid);
-        $pickingPoints = StartPoint::all()->where('status', 'active');
-        $trans = TransMode::all()->where('status', 'active');
-
-        $petty = Petty::findOrFail($id[0]);
-        $items = PettyList::where('petty_id', $petty->id)->get();
-
-        return view('pettycash.resubmission', compact('petty', 'pickingPoints', 'items', 'trans'));
-    }
-
-
-
-
     public function updateAttachment(Request $request, $id)
     {
         $request->validate([
@@ -940,11 +925,5 @@ class PettyController extends Controller
         return redirect()->back()->with('error', 'No file uploaded.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Petty $petty)
-    {
-        //
-    }
+
 }

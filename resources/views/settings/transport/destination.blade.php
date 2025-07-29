@@ -20,7 +20,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-none border">
                 <div class="card-body">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d507136.3907891347!2d38.924628115660624!3d-6.76948018622701!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x185c4bae169bd6f1%3A0x940f6b26a086a1dd!2sDar%20es%20Salaam!5e0!3m2!1sen!2stz!4v1748330065301!5m2!1sen!2stz"
@@ -32,7 +32,7 @@
 
 
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-none border">
 
                 <div class="card-header" style="display: flex;justify-content: space-between;">
                     <h4>Destination Points</h4>

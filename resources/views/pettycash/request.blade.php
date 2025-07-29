@@ -19,7 +19,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-none border">
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Requests List</h4>
@@ -92,8 +92,8 @@
                                             <a href="{{ route('petty.show', Hashids::encode($item->id)) }}"
                                                 class="btn btn-sm btn-secondary text-white"><i
                                                     class="bi bi-eye"></i></a>
-                                            {{-- @if ($item->status == 'pending' || $item->status == 'resubmission')
-                                                <a href="{{ route('petty.edit', Hashids::encode($item->id)) }}"
+                                            @if ($item->status == 'pending' || $item->status == 'resubmission')
+                                                <a href="{{ route('petty.update.step1', Hashids::encode($item->id)) }}"
                                                     class="btn btn-sm btn-secondary">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
@@ -102,7 +102,7 @@
                                                     onclick="showEditBlockedNotice()">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </button>
-                                            @endif --}}
+                                            @endif
 
                                         </td>
                                     </tr>

@@ -34,7 +34,7 @@
                 @csrf
                 @method('PUT')
 
-                <div class="card">
+                <div class="card shadow-none border">
                     <div class="card-header">
                         <div class="card-title">Edit Details</div>
                     </div>

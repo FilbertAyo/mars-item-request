@@ -22,7 +22,7 @@
     <div class="row">
 
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-none border">
 
                 <div class="card-header mb-1" style="display: flex;justify-content: space-between;">
                     <h4 class="h3 mb-3"> Branches List</h4>
