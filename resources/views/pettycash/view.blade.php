@@ -115,7 +115,7 @@
                                 @elseif($request->status == 'rejected')
                                     <span class="btn bg-secondary text-white">{{ $request->status }}</span>
                                 @elseif($request->status == 'resubmission')
-                                    <a href="{{ route('petty.edit', Hashids::encode($request->id)) }}"
+                                    <a href="{{ route('petty.update.step1', Hashids::encode($request->id)) }}"
                                         class="btn btn-label-danger"><i
                                             class="bi bi-pencil-square me-2"></i>{{ $request->status }}</a>
                                 @else

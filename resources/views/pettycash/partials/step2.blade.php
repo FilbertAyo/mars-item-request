@@ -1,8 +1,15 @@
 @extends('pettycash.create')
 
 @section('content')
-    <form method="POST" action="{{ route('petty.store.step2') }}" enctype="multipart/form-data" id="pettyForm">
+    <form method="POST"
+        action="{{ $mode == 'edit' ? route('petty.update.step2', Hashids::encode($pettyCash->id)) : route('petty.store.step2') }}"
+        enctype="multipart/form-data" id="pettyForm">
+
         @csrf
+        @if ($mode == 'edit')
+            @method('PUT')
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <div class="card-title"><i class="bi bi-clipboard me-2"></i>Office Materials</div>
@@ -25,27 +32,61 @@
                                     </thead>
                                     <tbody>
                                         @php
-                                            $items = old('items', session('step2.items', ['']));
-                                            $quantities = old('quantity', session('step2.quantity', ['']));
-                                            $prices = old('price', session('step2.price', ['']));
+                                            $itemsFromOld = old('item_name', []);
+                                            $quantitiesFromOld = old('quantity', []);
+                                            $pricesFromOld = old('price', []);
+
+                                            $itemsData = [];
+
+                                            if (!empty($itemsFromOld)) {
+                                                foreach ($itemsFromOld as $i => $val) {
+                                                    $itemsData[] = [
+                                                        'item_name' => $itemsFromOld[$i] ?? '',
+                                                        'quantity' => $quantitiesFromOld[$i] ?? '',
+                                                        'price' => $pricesFromOld[$i] ?? '',
+                                                    ];
+                                                }
+                                            } elseif (session()->has('step2')) {
+                                                $sessionItems = session('step2.items', []);
+                                                $sessionQuantities = session('step2.quantity', []);
+                                                $sessionPrices = session('step2.price', []);
+
+                                                foreach ($sessionItems as $i => $val) {
+                                                    $itemsData[] = [
+                                                        'item_name' => $sessionItems[$i] ?? '',
+                                                        'quantity' => $sessionQuantities[$i] ?? '',
+                                                        'price' => $sessionPrices[$i] ?? '',
+                                                    ];
+                                                }
+                                            } elseif (!empty($items)) {
+                                                foreach ($items as $item) {
+                                                    $itemsData[] = [
+                                                        'item_name' => $item['item_name'] ?? '',
+                                                        'quantity' => $item['quantity'] ?? '',
+                                                        'price' => $item['price'] ?? '',
+                                                    ];
+                                                }
+                                            } else {
+                                                $itemsData[] = ['item_name' => '', 'quantity' => '', 'price' => ''];
+                                            }
                                         @endphp
 
-                                        @foreach ($items as $index => $item)
+                                        @foreach ($itemsData as $index => $entry)
                                             <tr class="mb-2">
                                                 <td>
                                                     <input type="text" name="items[]" class="form-control"
                                                         placeholder="eg. Rims paper"
-                                                        value="{{ old("items.$index", $item) }}">
+                                                        value="{{ old("items.$index", $entry['item_name']) }}">
                                                 </td>
                                                 <td>
                                                     <input type="number" name="quantity[]" class="form-control"
                                                         placeholder="eg. 10"
-                                                        value="{{ old("quantity.$index", $quantities[$index] ?? '') }}">
+                                                        value="{{ old("quantity.$index", $entry['quantity']) }}">
                                                 </td>
                                                 <td>
                                                     <input type="number" name="price[]" class="form-control"
                                                         placeholder="eg. 1000"
-                                                        value="{{ old("price.$index", $prices[$index] ?? '') }}">
+                                                        value="{{ old("price.$index", $entry['price']) }}">
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger btn-remove-item">
@@ -54,6 +95,7 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+
                                     </tbody>
                                 </table>
                             </div>
@@ -65,11 +107,11 @@
             </div>
 
             <div class="card-action">
-                <a href="{{ route('petty.create.step1') }}" class="btn btn-secondary me-2">Back</a>
-                <x-primary-button label="Submit" />
+                <a href="{{ $mode == 'edit' ? route('petty.edit.step1', Hashids::encode($pettyCash->id)) : route('petty.create.step1') }}"
+                    class="btn btn-secondary me-2">Back</a>
 
+                <x-primary-button label="{{ $mode == 'edit' ? 'Update' : 'Submit' }}" />
             </div>
-
         </div>
     </form>
 

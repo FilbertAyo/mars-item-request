@@ -74,9 +74,23 @@ class PettyController extends Controller
         return $code;
     }
 
-    public function step1()
+    public function step1(Request $request, $id = null)
     {
-        return view('pettycash.partials.step1');
+        $mode = $id ? 'edit' : 'create';
+        $pettyCash = null;
+
+        if ($id) {
+            $decoded = Hashids::decode($id);
+
+            if (empty($decoded)) {
+                abort(404, 'Invalid ID');
+            }
+
+            $pettyCashId = $decoded[0];
+            $pettyCash = Petty::findOrFail($pettyCashId);
+        }
+
+        return view('pettycash.partials.step1', compact('mode', 'pettyCash'));
     }
 
     public function storeStep1(Request $request)
@@ -104,10 +118,62 @@ class PettyController extends Controller
         }
     }
 
-    public function step2()
+    public function updateStep1(Request $request, $hashid)
     {
-        return view('pettycash.partials.step2');
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404, 'Invalid ID');
+        }
+
+        $id = $decoded[0];
+        $pettyCash = Petty::findOrFail($id);
+
+        $validated = $request->validate([
+            'user_id' => 'required|integer',
+            'department_id' => 'required|integer',
+            'request_for' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'reason' => 'nullable|string|max:1000',
+            'request_type' => 'required|string',
+        ]);
+
+        $pettyCash->update($validated);
+
+        // Optionally store in session for step continuity
+        session(['step1' => $validated]);
+
+        // Redirect based on request type
+        if ($request->request_for === 'Office Supplies') {
+            return redirect()->route('petty.edit.step2', $hashid);
+        } elseif ($request->request_for === 'Sales Delivery' || $request->request_for === 'Transport') {
+            return redirect()->route('petty.edit.step3', $hashid);
+        }
     }
+
+
+    public function step2(Request $request, $id = null)
+    {
+        $mode = $id ? 'edit' : 'create';
+        $pettyCash = null;
+        $items = [];
+
+        if ($id) {
+            $decoded = Hashids::decode($id);
+
+            if (empty($decoded)) {
+                abort(404, 'Invalid ID');
+            }
+
+            $pettyCashId = $decoded[0];
+            $pettyCash = Petty::findOrFail($pettyCashId);
+
+            // Fetch related items
+            $items = $pettyCash->lists()->get(['item_name', 'quantity', 'price'])->toArray();
+        }
+
+        return view('pettycash.partials.step2', compact('mode', 'pettyCash', 'items'));
+    }
+
 
     public function storeStep2(Request $request)
     {
@@ -159,11 +225,89 @@ class PettyController extends Controller
         return redirect()->route('petty.index')->with('success', 'Petty cash request created successfully!');
     }
 
-    public function step3()
+    public function updateStep2(Request $request, $id)
     {
-        $pickingPoints = StartPoint::all()->where('status', 'active');
-        $trans = TransMode::all()->where('status', 'active');
-        return view('pettycash.partials.step3', compact('pickingPoints', 'trans'));
+        $decoded = Hashids::decode($id);
+
+        if (empty($decoded)) {
+            abort(404, 'Invalid ID');
+        }
+
+        $pettyCashId = $decoded[0];
+        $petty = Petty::findOrFail($pettyCashId);
+
+        $validated = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*' => 'required|string|max:255',
+            'quantity' => 'required|array|min:1',
+            'quantity.*' => 'required|numeric|min:1',
+            'price' => 'required|array|min:1',
+            'price.*' => 'required|numeric|min:0',
+        ]);
+
+        // Delete existing items first (or you could update them instead)
+        $petty->items()->delete();
+        $petty->status = 'pending';
+        $petty->save();
+
+        foreach ($validated['items'] as $i => $item) {
+            PettyList::create([
+                'petty_id' => $petty->id,
+                'item_name' => $item,
+                'quantity' => $validated['quantity'][$i],
+                'price' => $validated['price'][$i],
+            ]);
+        }
+
+        ApprovalLog::Create([
+            'petty_id' =>  $petty->id,
+            'user_id' => Auth::user()->id,
+            'action' => 'resubmitted',
+        ]);
+
+        session()->forget(['step1', 'step2']);
+
+        return redirect()->route('petty.index')->with('success', 'Petty cash items updated successfully!');
+    }
+
+
+    public function step3(Request $request, $id = null)
+    {
+        $mode = $id ? 'edit' : 'create';
+        $pettyCash = null;
+        $trip = null;
+        $stops = [];
+
+        if ($id) {
+            $decoded = Hashids::decode($id);
+
+            if (empty($decoded)) {
+                abort(404, 'Invalid ID');
+            }
+
+            $pettyCashId = $decoded[0];
+            $pettyCash = Petty::findOrFail($pettyCashId);
+
+            // Get associated trip
+            $trip = Trip::where('petty_id', $pettyCash->id)->first();
+
+
+            if ($trip) {
+                $stops = Stop::where('trip_id', $trip->id)->pluck('destination')->toArray();
+            }
+        }
+
+        $pickingPoints = StartPoint::where('status', 'active')->get();
+        $trans = TransMode::where('status', 'active')->get();
+
+        return view('pettycash.partials.step3', compact(
+            'mode',
+            'pettyCash',
+            'pickingPoints',
+            'trans',
+            'trip',
+            'stops'
+        ));
     }
 
     public function storeStep3(Request $request)
@@ -256,10 +400,125 @@ class PettyController extends Controller
         return redirect()->route('petty.create.step1')->with('error', 'Invalid request type.');
     }
 
-    public function step4()
+
+    public function updateStep3(Request $request, $hashid)
     {
-        return view('pettycash.partials.step4');
+        $id = Hashids::decode($hashid)[0] ?? null;
+        $petty = Petty::findOrFail($id);
+
+        if (!session()->has('step1')) {
+            return redirect()->route('petty.edit.step1', $hashid)->with('error', 'Please complete all fields first.');
+        }
+
+        $validated = $request->validate([
+            'from_place' => 'required|integer',
+            'destinations' => 'required|array|min:1',
+            'destinations.*' => 'required|string|max:255',
+            'trans_mode_id' => 'required|integer',
+            'is_transporter' => 'nullable|boolean',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        ]);
+
+        // Handle file upload
+        $attachmentPath = $petty->attachment;
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->storeAs('public/attachments', $attachmentName);
+            $attachmentPath = 'storage/attachments/' . $attachmentName;
+        }
+
+        $step1 = session('step1');
+
+        // Merge and update Petty
+        $data = array_merge($step1, [
+            'trans_mode_id' => $validated['trans_mode_id'],
+            'is_transporter' => $validated['is_transporter'] ?? false,
+            'attachment' => $attachmentPath,
+            'status' => 'pending',
+        ]);
+
+        $petty->update($data);
+
+        // Check condition to determine next step
+        if ($step1['request_for'] === 'Transport') {
+            $trip = $petty->trips()->firstOrCreate([], [
+                'from_place' => $validated['from_place'],
+            ]);
+
+            // Delete and re-create destinations
+            $trip->stops()->delete();
+            foreach ($validated['destinations'] as $destination) {
+                $trip->stops()->create(['destination' => $destination]);
+            }
+
+            session()->forget(['step1', 'step3']);
+
+            ApprovalLog::Create([
+                'petty_id' =>  $petty->id,
+                'user_id' => Auth::user()->id,
+                'action' => 'resubmitted',
+            ]);
+
+            return redirect()->route('petty.index')->with('success', 'Petty cash request for Transport updated successfully!');
+        }
+
+        if ($step1['request_for'] === 'Sales Delivery') {
+            session([
+                'petty_id' => $petty->id,
+                'step3' => $validated,
+                'trip_data' => [
+                    'from_place' => $validated['from_place'],
+                    'destinations' => $validated['destinations'],
+                ]
+            ]);
+            return redirect()->route('petty.edit.step4', $hashid);
+        }
+
+        return redirect()->route('petty.edit.step1', $hashid)->with('error', 'Invalid request type.');
     }
+
+
+    public function step4($id = null)
+    {
+        $mode = $id ? 'edit' : 'create';
+        $pettyCash = null;
+        $attachments = [];
+
+        if ($id) {
+            $decoded = Hashids::decode($id);
+
+            if (empty($decoded)) {
+                abort(404, 'Invalid ID');
+            }
+
+            $pettyCashId = $decoded[0];
+            $pettyCash = Petty::with('attachments')->findOrFail($pettyCashId);
+            $attachments = $pettyCash->attachments ?? [];
+
+            foreach ($attachments as $attachment) {
+                $rawProducts = $attachment->product_name;
+
+                $products = collect(explode(',', $rawProducts))
+                    ->map(fn($item) => trim($item))
+                    ->filter()
+                    ->map(function ($item) {
+                        $parts = explode('-', $item, 2); // limit to 2 parts
+                        return [
+                            'name' => trim($parts[0] ?? ''),
+                            'qty' => trim($parts[1] ?? ''),
+                        ];
+                    })
+                    ->toArray();
+
+                $attachment->products = $products;
+            }
+        }
+
+        return view('pettycash.partials.step4', compact('mode', 'pettyCash', 'attachments'));
+    }
+
+
 
     public function storeStep4(Request $request)
     {
@@ -319,7 +578,7 @@ class PettyController extends Controller
         session()->forget(['step1', 'step3', 'petty_id', 'trip_data']);
 
 
-           $requester = Auth::user();
+        $requester = Auth::user();
         $users = User::permission('first pettycash approval')
             ->where('department_id', $requester->department_id)
             ->get();
@@ -341,6 +600,93 @@ class PettyController extends Controller
         return redirect()->route('petty.index')->with('success', 'Petty cash for Sales Delivery submitted successfully.');
     }
 
+
+    public function updateStep4(Request $request, $id)
+    {
+        $decoded = Hashids::decode($id);
+        if (empty($decoded)) {
+            abort(404, 'Invalid ID');
+        }
+
+        $pettyId = $decoded[0];
+
+        $validated = $request->validate([
+            'attachments' => 'required|array|min:1',
+            'attachments.*.customer_name' => 'required|string|max:255',
+            'attachments.*.products' => 'required|array|min:1',
+            'attachments.*.products.*.name' => 'required|string|max:255',
+            'attachments.*.products.*.qty' => 'required|integer|min:1',
+            'attachments.*.file' => 'nullable|file|mimes:jpg,png,jpeg,pdf|max:2048',
+        ]);
+
+        $petty = Petty::with('attachments')->findOrFail($pettyId);
+        $petty->status = 'pending';
+        $petty->save();
+
+        // Remove old attachments (optional: delete files from storage too)
+        foreach ($petty->attachments as $attachment) {
+            // Optional: delete old file
+            // if ($attachment->attachment && \Storage::disk('public')->exists(str_replace('storage/', '', $attachment->attachment))) {
+            //     \Storage::disk('public')->delete(str_replace('storage/', '', $attachment->attachment));
+            // }
+            $attachment->delete();
+        }
+
+        // Save new attachments
+        foreach ($request->attachments as $attachment) {
+            $productLines = [];
+
+            foreach ($attachment['products'] as $product) {
+                $productLines[] = $product['name'] . ' - ' . $product['qty'];
+            }
+
+            $productString = implode("\n", $productLines);
+
+            $filePath = null;
+            if (!empty($attachment['file'])) {
+                $filePath = $attachment['file']->store('attachments', 'public');
+            }
+
+            PettyAttachment::create([
+                'petty_id' => $pettyId,
+                'name' => $attachment['customer_name'],
+                'product_name' => $productString,
+                'attachment' => $filePath ? 'storage/' . $filePath : null,
+            ]);
+        }
+
+        // Optional: update trip data if needed
+        if ($request->has('trip_data')) {
+            $tripData = $request->trip_data;
+
+            // Remove existing trip and stops
+            if ($petty->trip) {
+                $petty->trip->stops()->delete();
+                $petty->trip->delete();
+            }
+
+            $trip = Trip::create([
+                'petty_id' => $pettyId,
+                'from_place' => $tripData['from_place'],
+            ]);
+
+            foreach ($tripData['destinations'] as $destination) {
+                $trip->stops()->create([
+                    'destination' => $destination,
+                ]);
+            }
+        }
+
+        ApprovalLog::Create([
+            'petty_id' =>  $petty->id,
+            'user_id' => Auth::user()->id,
+            'action' => 'resubmitted',
+        ]);
+
+        session()->forget(['step1', 'step3', 'petty_id', 'trip_data']);
+
+        return redirect()->route('petty.index')->with('success', 'Petty cash attachments updated successfully.');
+    }
 
 
     public function show($hashid)
@@ -570,158 +916,7 @@ class PettyController extends Controller
         return view('pettycash.resubmission', compact('petty', 'pickingPoints', 'items', 'trans'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Petty $petty)
-    {
-        $request->validate([
-            'user_id' => 'required|string',
-            'request_for' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0',
-            'reason' => 'nullable|string|max:1000',
-            'request_type' => 'required|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-        ]);
 
-        if ($request->department_id === null) {
-            return redirect()->back()->with('error', 'You must be a member of a department to update Petty cash. Please contact Admin.');
-        }
-
-        // Office Supplies specific validation
-        if ($request->request_for === 'Office Supplies') {
-            $request->validate([
-                'items' => 'required|array|min:1',
-                'items.*' => 'required|string|max:255',
-                'quantity' => 'required|array',
-                'quantity.*' => 'nullable|numeric|min:0',
-                'price' => 'required|array',
-                'price.*' => 'nullable|numeric|min:0',
-            ]);
-        }
-
-        if ($request->request_for === 'Sales Delivery') {
-            $request->validate([
-                'attachments' => 'required|array|min:1',
-                'attachments.*.customer_name' => 'required|string|max:255',
-                'attachments.*.product' => 'required|string|max:255',
-                'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048', // max 1MB
-            ]);
-        }
-
-        if (in_array($request->request_for, ['Sales Delivery', 'Transport'])) {
-            $request->validate([
-                'from_place' => 'required|string',
-                'destinations' => 'required|array|min:1',
-                'destinations.*' => 'required|string|max:255',
-            ]);
-        }
-
-        $petty->lists()->delete();
-        $petty->trips()->delete();
-        $petty->attachments()->delete();
-
-
-        if ($petty->status === 'resubmission') {
-            $requester = User::find($request->user_id);
-
-            // Get all users with the specific permission and same department
-            $users = User::permission('first pettycash approval')
-                ->where('department_id', $requester->department_id)
-                ->get();
-
-            // Prepare email data
-            $name = $requester->name;
-            $reason = $request->request_for;
-            $id = $request->id;
-            $encodedId = Hashids::encode($id);
-
-
-            $emails = $users->pluck('email')->toArray();
-            if (empty($emails)) {
-                return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
-            }
-            Mail::to($emails)->send(new ResubmissionMail($name,  $reason, $encodedId));
-        }
-
-        $petty->update([
-            'user_id' => $request->user_id,
-            'department_id' => $request->department_id,
-            'trans_mode_id' => $request->trans_mode_id,
-            'request_for' => $request->request_for,
-            'amount' => $request->amount,
-            'reason' => $request->reason,
-            'request_type' => $request->request_type,
-            'status' => 'pending',
-        ]);
-
-
-        if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
-            $attachmentName = time() . '_' . $attachment->getClientOriginalName();
-            $attachment->storeAs('public/attachments', $attachmentName);
-            $petty->attachment = 'storage/attachments/' . $attachmentName;
-            $petty->save();
-        }
-
-        // 5. Rebuild Office Supplies if applicable
-        if ($request->request_for === 'Office Supplies' && $request->has('items')) {
-            foreach ($request->items as $index => $item) {
-                PettyList::create([
-                    'petty_id' => $petty->id,
-                    'item_name' => $item,
-                    'quantity' => $request->quantity[$index] ?? null,
-                    'price' => $request->price[$index] ?? null,
-                ]);
-            }
-        }
-
-        // 6. Rebuild Trip and Stops if applicable
-        if ($request->request_for === 'Transport') {
-            $newTrip = Trip::create([
-                'petty_id' => $petty->id,
-                'from_place' => $request->from_place,
-            ]);
-
-            foreach ($request->destinations as $destination) {
-                $newTrip->stops()->create([
-                    'destination' => $destination,
-                ]);
-            }
-        } elseif ($request->request_for === 'Sales Delivery') {
-
-            foreach ($request->attachments as $attachment) {
-                $filePath = $attachment['file']->store('attachments', 'public');
-
-                PettyAttachment::create([
-                    'petty_id' => $petty->id,
-                    'name' => $attachment['customer_name'],
-                    'product_name' => $attachment['product'],
-                    'attachment' => $filePath
-                ]);
-            }
-
-            $newTrip = Trip::create([
-                'petty_id' => $petty->id,
-                'from_place' => $request->from_place,
-            ]);
-
-            foreach ($request->destinations as $destination) {
-                $newTrip->stops()->create([
-                    'destination' => $destination,
-                ]);
-            }
-        }
-
-        ApprovalLog::Create([
-            'petty_id' =>  $petty->id,
-            'user_id' => Auth::user()->id,
-            'action' => 'resubmitted',
-        ]);
-
-
-        return redirect()->route('petty.index')->with('success', 'Petty Cash request resubmitted successfully.');
-    }
 
 
     public function updateAttachment(Request $request, $id)

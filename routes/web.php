@@ -47,14 +47,27 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'permission:request pettycash'])->group(function () {
     Route::resource('petty', PettyController::class);
+
     Route::get('/pettycash/request/step1', [PettyController::class, 'step1'])->name('petty.create.step1');
+    Route::get('/pettycash/step1/{id}', [PettyController::class, 'step1'])->name('petty.edit.step1');
     Route::post('/pettycash/request/step1', [PettyController::class, 'storeStep1'])->name('petty.store.step1');
+    Route::put('/pettycash/step1/{id}', [PettyController::class, 'updateStep1'])->name('petty.update.step1');
+
     Route::get('/pettycash/request/step2', [PettyController::class, 'step2'])->name('petty.create.step2');
+    Route::get('/pettycash/step2/{id}', [PettyController::class, 'step2'])->name('petty.edit.step2');
+    Route::put('/pettycash/step2/{id}', [PettyController::class, 'updateStep2'])->name('petty.update.step2');
     Route::post('/pettycash/request/step2', [PettyController::class, 'storeStep2'])->name('petty.store.step2');
+
     Route::get('/pettycash/request/step3', [PettyController::class, 'step3'])->name('petty.create.step3');
+    Route::get('/pettycash/step3/{id}', [PettyController::class, 'step3'])->name('petty.edit.step3');
     Route::post('/pettycash/request/step3', [PettyController::class, 'storeStep3'])->name('petty.store.step3');
+    Route::put('/pettycash/step3/{id}', [PettyController::class, 'updateStep3'])->name('petty.update.step3');
+
     Route::get('/pettycash/request/step4', [PettyController::class, 'step4'])->name('petty.create.step4');
+    Route::get('/pettycash/step4/{id}', [PettyController::class, 'step4'])->name('petty.edit.step4');
     Route::post('/pettycash/request/step4', [PettyController::class, 'storeStep4'])->name('petty.store.step4');
+    Route::put('/pettycash/step4/{id}', [PettyController::class, 'updateStep4'])->name('petty.update.step4');
+
 
 
     Route::get('/autocomplete-stops', [PettyController::class, 'autocomplete'])->name('stops.autocomplete');

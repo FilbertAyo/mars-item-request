@@ -1,8 +1,14 @@
 @extends('pettycash.create')
 
 @section('content')
-    <form method="POST" action="{{ route('petty.store.step4') }}" enctype="multipart/form-data" id="pettyForm">
+    <form method="POST"
+        action="{{ $mode == 'edit' ? route('petty.update.step4', Hashids::encode($pettyCash->id)) : route('petty.store.step4') }}"
+        enctype="multipart/form-data" id="pettyForm">
         @csrf
+        @if ($mode == 'edit')
+            @method('PUT')
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <div class="card-title">Deliveries Attachments</div>
@@ -23,8 +29,82 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
+                                    @php
+                                        $attachmentsData = old('attachments', $attachments);
+                                    @endphp
+
                                     <tbody>
-                                        <tr class="mb-2">
+                                        @foreach ($attachmentsData as $i => $attach)
+                                            <tr class="mb-2">
+                                                <td>
+                                                    <input type="text"
+                                                        name="attachments[{{ $i }}][customer_name]"
+                                                        class="form-control mb-2" placeholder="Customer Name"
+                                                        value="{{ old("attachments.$i.customer_name", $attach->name ?? '') }}"
+                                                        required>
+                                                </td>
+                                                <td>
+                                                    <div class="products-table">
+                                                        <table class="table table-sm table-borderless">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Product</th>
+                                                                    <th>Qty</th>
+                                                                    <th><button type="button"
+                                                                            class="btn btn-sm btn-success add-product"><i
+                                                                                class="bi bi-plus"></i></button></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="product-rows">
+                                                                @php
+                                                                    $products = $attach->products ?? [
+                                                                        ['name' => '', 'qty' => ''],
+                                                                    ];
+                                                                @endphp
+                                                                @foreach ($products as $j => $product)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input type="text"
+                                                                                name="attachments[{{ $i }}][products][{{ $j }}][name]"
+                                                                                class="form-control"
+                                                                                value="{{ $product['name'] ?? '' }}"
+                                                                                required>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="number"
+                                                                                name="attachments[{{ $i }}][products][{{ $j }}][qty]"
+                                                                                class="form-control"
+                                                                                value="{{ $product['qty'] ?? '' }}"
+                                                                                required>
+                                                                        </td>
+                                                                        <td>
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-danger remove-product"><i
+                                                                                    class="bi bi-trash"></i></button>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="file" name="attachments[{{ $i }}][file]"
+                                                        class="form-control mb-2">
+                                                    @if (isset($attach->attachment))
+                                                        <a href="{{ asset($attach->attachment) }}" target="_blank">View
+                                                            existing</a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-remove-item">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                          <tr class="mb-2">
                                             <td>
                                                 <input type="text" name="attachments[0][customer_name]"
                                                     class="form-control mb-2" placeholder="Customer Name" required>
@@ -71,6 +151,7 @@
                                             </td>
                                         </tr>
                                     </tbody>
+
                                 </table>
                             </div>
                             <button type="button" id="add_attachment_btn" class="btn btn-secondary mt-2">Add
@@ -82,8 +163,11 @@
             </div>
 
             <div class="card-action">
-                <a href="{{ route('petty.create.step3') }}" class="btn btn-secondary me-2">Back</a>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="{{ $mode == 'edit' ? route('petty.edit.step3', Hashids::encode($pettyCash->id)) : route('petty.create.step3') }}"
+                    class="btn btn-secondary me-2">Back</a>
+
+                <x-primary-button label="{{ $mode == 'edit' ? 'Update' : 'Submit' }}" />
+
             </div>
 
         </div>
