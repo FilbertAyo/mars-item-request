@@ -336,17 +336,15 @@ class PettyController extends Controller
 
         $step1 = session('step1');
 
-        // Merge all data for Petty creation
         $data = array_merge($step1, [
             'trans_mode_id' => $validated['trans_mode_id'],
             'is_transporter' => $validated['is_transporter'] ?? false,
             'attachment' => $attachmentPath,
         ]);
 
-        $newPetty = Petty::create($data);
-
-        // Check condition to determine next step
         if ($step1['request_for'] === 'Transport') {
+            $newPetty = Petty::create($data);
+
             $trip = Trip::create([
                 'petty_id' => $newPetty->id,
                 'from_place' => $validated['from_place'],
@@ -358,8 +356,6 @@ class PettyController extends Controller
                 ]);
             }
 
-
-
             session()->forget(['step1', 'step3']);
 
             $requester = Auth::user();
@@ -367,38 +363,36 @@ class PettyController extends Controller
                 ->where('department_id', $requester->department_id)
                 ->get();
 
-            // Prepare email data
             $name = $requester->name;
             $reason = $newPetty->request_for;
             $new_id = $newPetty->id;
             $encodedId = Hashids::encode($new_id);
 
-            // Get only their email addresses
             $emails = $users->pluck('email')->toArray();
             if (empty($emails)) {
                 return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
             }
-            Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
+            Mail::to($emails)->send(new PettyRequestMail($name, $reason, $encodedId));
 
             return redirect()->route('petty.index')->with('success', 'Petty cash request for Transport created successfully!');
         }
 
         if ($step1['request_for'] === 'Sales Delivery') {
+            // Store all necessary data to session and wait for step 4
             session([
-                'petty_id' => $newPetty->id,
                 'step3' => $validated,
                 'trip_data' => [
                     'from_place' => $validated['from_place'],
                     'destinations' => $validated['destinations'],
-                ]
+                ],
+                'step3_payload' => $data, // Hold off on creating Petty now
             ]);
             return redirect()->route('petty.create.step4');
         }
 
-
-        // Fallback if request_for is something else or invalid
         return redirect()->route('petty.create.step1')->with('error', 'Invalid request type.');
     }
+
 
 
     public function updateStep3(Request $request, $hashid)
@@ -522,7 +516,7 @@ class PettyController extends Controller
 
     public function storeStep4(Request $request)
     {
-        if (!session()->has('petty_id') || !session()->has('step3')) {
+        if (!session()->has('step3_payload') || !session()->has('step3')) {
             return redirect()->route('petty.create.step1')->with('error', 'Please complete all fields first.');
         }
 
@@ -535,9 +529,11 @@ class PettyController extends Controller
             'attachments.*.file' => 'required|file|mimes:jpg,png,jpeg,pdf|max:2048',
         ]);
 
-
-        $pettyId = session('petty_id');
-        $pettyReason = session('request_for');
+        // Create Petty now from step3_payload
+        $pettyData = session('step3_payload');
+        $petty = Petty::create($pettyData);
+        $pettyId = $petty->id;
+        $pettyReason = $petty->request_for;
         $tripData = session('trip_data');
 
         // Save attachments
@@ -560,7 +556,6 @@ class PettyController extends Controller
             ]);
         }
 
-
         // Save trip & stops if present
         if ($tripData) {
             $trip = Trip::create([
@@ -575,8 +570,7 @@ class PettyController extends Controller
             }
         }
 
-        session()->forget(['step1', 'step3', 'petty_id', 'trip_data']);
-
+        session()->forget(['step1', 'step3', 'step3_payload', 'trip_data']);
 
         $requester = Auth::user();
         $users = User::permission('first pettycash approval')
@@ -589,16 +583,16 @@ class PettyController extends Controller
         $new_id = $pettyId;
         $encodedId = Hashids::encode($new_id);
 
-        // Get only their email addresses
         $emails = $users->pluck('email')->toArray();
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
         }
-        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
 
+        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
 
         return redirect()->route('petty.index')->with('success', 'Petty cash for Sales Delivery submitted successfully.');
     }
+
 
 
     public function updateStep4(Request $request, $id)
@@ -924,6 +918,4 @@ class PettyController extends Controller
 
         return redirect()->back()->with('error', 'No file uploaded.');
     }
-
-
 }
