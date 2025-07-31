@@ -42,7 +42,9 @@
                                                     $fallbackPath = 'storage' . asset($attachment->attachment);
                                                 @endphp
                                                 <img src="{{ file_exists($filePath) ? asset($attachment->attachment) : $fallbackPath }}"
-                                                    alt="Attachment">
+                                                    alt="Attachment" class="img-fluid"
+                                                    style="max-height: 80vh; object-fit: contain;">
+
                                             </div>
                                         </div>
                                     </div>
