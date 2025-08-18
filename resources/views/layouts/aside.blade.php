@@ -202,6 +202,7 @@
                  @endcan
 
 
+                 @can('warranty management')
                  <li class="nav-section">
                      <span class="sidebar-mini-icon">
                          <i class="fa fa-ellipsis-h"></i>
@@ -216,6 +217,24 @@
                          <p>Collections</p>
                      </a>
                  </li>
+                 @endcan
+
+                 @can('mars website management')
+                     <li class="nav-section">
+                         <span class="sidebar-mini-icon">
+                             <i class="fa fa-ellipsis-h"></i>
+                         </span>
+                         <h4 class="text-section">Website Settings</h4>
+                     </li>
+
+
+                     <li class="nav-item {{ Request::routeIs('catalogues.index') ? 'active' : '' }}">
+                         <a href="{{ route('catalogues.index') }}">
+                             <i class="bi bi-journal-text"></i>
+                             <p>Catalogues</p>
+                         </a>
+                     </li>
+                 @endcan
 
 
                  @can('view reports')

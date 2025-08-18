@@ -15,14 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $user = User::factory()->create([
             'name' => 'Mars Communications',
             'email' => 'marscommunication.team@gmail.com',
             'phone' => '0755237692',
             'status' => 'active',
-            'password' => Hash::make('Mars@2025'), // always hash passwords
+            'password' => Hash::make('Mars@2025'),
         ]);
 
         $user->syncPermissions(Permission::all());

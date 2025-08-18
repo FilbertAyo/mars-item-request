@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CatalogueController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ItemRequestController;
@@ -68,8 +69,6 @@ Route::middleware(['auth', 'permission:request pettycash'])->group(function () {
     Route::post('/pettycash/request/step4', [PettyController::class, 'storeStep4'])->name('petty.store.step4');
     Route::put('/pettycash/step4/{id}', [PettyController::class, 'updateStep4'])->name('petty.update.step4');
 
-
-
     Route::get('/autocomplete-stops', [PettyController::class, 'autocomplete'])->name('stops.autocomplete');
 });
 
@@ -86,7 +85,6 @@ Route::middleware(['auth', 'permission:view requested pettycash'])->group(functi
     Route::post('/replenishment/last/approve/{id}', [ReplenishmentController::class, 'lastApprove'])->name('last.approve');
     Route::get('/replenishment/petty/cash/list', [ReplenishmentController::class, 'pettycash'])->name('replenishment.pettycash');
     Route::get('/replenishment/{id}/download', [ReplenishmentController::class, 'downloadPDF'])->name('replenishment.download');
-
 });
 
 Route::middleware(['auth', 'permission:last pettycash approval'])->group(function () {
@@ -98,7 +96,6 @@ Route::middleware(['auth', 'permission:view cashflow movements'])->group(functio
     Route::get('/pettycash/flow', [DepositController::class, 'cashflow'])->name('cashflow.index');
     Route::get('/cashflow/download', [DepositController::class, 'download'])->name('cashflow.download');
     Route::get('pettycash/requests/payments/list', [PettyController::class, 'requestsCashier'])->name('petty.cashier');
-
 });
 
 Route::middleware(['auth', 'permission:request item purchase'])->group(function () {
@@ -126,9 +123,7 @@ Route::middleware(['auth', 'permission:view reports'])->group(function () {
 
     Route::get('reports/routes/prices', [ReportController::class, 'routeReport'])->name('reports.routes');
     Route::get('/reports/routes/download', [ReportController::class, 'downloadRouteReport'])->name('reports.route.download');
-
 });
-
 
 Route::middleware(['auth', 'permission:view settings'])->group(function () {
     Route::get('/settings/routes', [TransportController::class, 'routes'])->name('settings.routes');
@@ -139,8 +134,14 @@ Route::middleware(['auth', 'permission:view settings'])->group(function () {
     Route::patch('/transport/mode/{id}/toggle', [TransportController::class, 'transStatus'])->name('trans.toggle');
 });
 
+Route::middleware(['auth', 'permission:catalogue management'])->group(function () {
+    Route::get('/catalogues/list', [CatalogueController::class, 'index'])->name('catalogues.index');
+    Route::get('/catalogues/{id}/show', [CatalogueController::class, 'show'])->name('catalogues.show');
+    Route::post('/', [CatalogueController::class, 'store'])->name('catalogues.store');
+    Route::post('/catalogue/{id}/upload-file', [CatalogueController::class, 'storeFile'])->name('catalogue.file.store');
+    Route::get('/{id}/edit', [CatalogueController::class, 'edit'])->name('catalogues.edit');
+    Route::put('/{id}', [CatalogueController::class, 'update'])->name('catalogues.update');
+    Route::delete('/{id}', [CatalogueController::class, 'destroy'])->name('catalogues.destroy');
+});
 
 require __DIR__ . '/auth.php';
-
-
-

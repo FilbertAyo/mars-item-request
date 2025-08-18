@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\EmployeeConfirmation;
 use App\Mail\FirstApprovalMail;
 use App\Mail\LastApprovalMail;
 use App\Mail\PettyRequestMail;
 use App\Mail\RejectMail;
-use App\Mail\ResubmissionMail;
 use App\Mail\ResubmitMail;
 use App\Mail\SuccessPayment;
 use App\Models\ApprovalLog;
@@ -32,6 +30,60 @@ use Illuminate\Support\Facades\Auth;
 
 class PettyController extends Controller
 {
+    /**
+     * Helper: Encode an integer ID using Hashids
+     */
+    private function encodeHashId(int $id): string
+    {
+        return Hashids::encode($id);
+    }
+
+    /**
+     * Helper: Build common petty mail arguments [requesterName, reason, encodedId]
+     */
+    private function buildPettyMailArgs(Petty $petty): array
+    {
+        $requester = User::find($petty->user_id);
+        $name = $requester?->name ?? 'User';
+        $reason = $petty->request_for;
+        $encodedId = $this->encodeHashId($petty->id);
+        return [$name, $reason, $encodedId];
+    }
+
+    /**
+     * Helper: Get emails of users in a department who have a specific permission
+     */
+    private function collectDepartmentEmails(string $permission, int $departmentId): array
+    {
+        return User::permission($permission)
+            ->where('department_id', $departmentId)
+            ->pluck('email')
+            ->filter()
+            ->unique()
+            ->toArray();
+    }
+
+    /**
+     * Helper: Safely send an email and log failures. Returns true if attempted and recipients existed.
+     */
+    private function trySendMail(array|string $recipients, object $mailable): bool
+    {
+        if (empty($recipients)) {
+            return false;
+        }
+        try {
+            Mail::to($recipients)->send($mailable);
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('PettyController: Failed to send email', [
+                'recipients' => $recipients,
+                'mailable' => get_class($mailable),
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -205,22 +257,12 @@ class PettyController extends Controller
         session()->forget(['step1', 'step2']);
 
         $requester = Auth::user();
-        $users = User::permission('first pettycash approval')
-            ->where('department_id', $requester->department_id)
-            ->get();
-
-        // Prepare email data
-        $name = $requester->name;
-        $reason = $newPetty->request_for;
-        $new_id = $newPetty->id;
-        $encodedId = Hashids::encode($new_id);
-
-        // Get only their email addresses
-        $emails = $users->pluck('email')->toArray();
+        $emails = $this->collectDepartmentEmails('first pettycash approval', $requester->department_id);
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
         }
-        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
+        [$name, $reason, $encodedId] = $this->buildPettyMailArgs($newPetty);
+        $this->trySendMail($emails, new PettyRequestMail($name, $reason, $encodedId));
 
         return redirect()->route('petty.index')->with('success', 'Petty cash request created successfully!');
     }
@@ -359,20 +401,12 @@ class PettyController extends Controller
             session()->forget(['step1', 'step3']);
 
             $requester = Auth::user();
-            $users = User::permission('first pettycash approval')
-                ->where('department_id', $requester->department_id)
-                ->get();
-
-            $name = $requester->name;
-            $reason = $newPetty->request_for;
-            $new_id = $newPetty->id;
-            $encodedId = Hashids::encode($new_id);
-
-            $emails = $users->pluck('email')->toArray();
+            $emails = $this->collectDepartmentEmails('first pettycash approval', $requester->department_id);
             if (empty($emails)) {
                 return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
             }
-            Mail::to($emails)->send(new PettyRequestMail($name, $reason, $encodedId));
+            [$name, $reason, $encodedId] = $this->buildPettyMailArgs($newPetty);
+            $this->trySendMail($emails, new PettyRequestMail($name, $reason, $encodedId));
 
             return redirect()->route('petty.index')->with('success', 'Petty cash request for Transport created successfully!');
         }
@@ -572,22 +606,12 @@ class PettyController extends Controller
         session()->forget(['step1', 'step3', 'step3_payload', 'trip_data']);
 
         $requester = Auth::user();
-        $users = User::permission('first pettycash approval')
-            ->where('department_id', $requester->department_id)
-            ->get();
-
-        // Prepare email data
-        $name = $requester->name;
-        $reason = $pettyReason;
-        $new_id = $pettyId;
-        $encodedId = Hashids::encode($new_id);
-
-        $emails = $users->pluck('email')->toArray();
+        $emails = $this->collectDepartmentEmails('first pettycash approval', $requester->department_id);
         if (empty($emails)) {
             return redirect()->back()->with('error', 'The request was not successfully because there is no verifier appointed in your department');
         }
-
-        Mail::to($emails)->send(new PettyRequestMail($name,  $reason, $encodedId));
+        [$name, $reason, $encodedId] = $this->buildPettyMailArgs($petty);
+        $this->trySendMail($emails, new PettyRequestMail($name, $reason, $encodedId));
 
         return redirect()->route('petty.index')->with('success', 'Petty cash for Sales Delivery submitted successfully.');
     }
@@ -770,17 +794,9 @@ class PettyController extends Controller
         // Get the requester
         $requester = User::find($request->user_id);
 
-        $users = User::permission('last pettycash approval')
-            ->where('department_id', $request->department_id)
-            ->get();
-
-        $name = $requester->name;
-        $emails = $users->pluck('email')->toArray();
-        $reason = $request->request_for;
-        $encodedId = Hashids::encode($id);
-        if ($emails) {
-            Mail::to($emails)->send(new FirstApprovalMail($name, $reason,  $encodedId));
-        }
+        $emails = $this->collectDepartmentEmails('last pettycash approval', $request->department_id);
+        [$name, $reason, $encodedId] = $this->buildPettyMailArgs($request);
+        $this->trySendMail($emails, new FirstApprovalMail($name, $reason, $encodedId));
 
         return redirect()->back()->with('success', 'Request approved and status updated');
     }
@@ -799,18 +815,9 @@ class PettyController extends Controller
 
         $requester = User::find($request->user_id);
 
-        $users = User::permission('approve petycash payments')
-            ->where('department_id', $request->department_id)
-            ->get();
-
-        $name = $requester->name;
-        $emails = $users->pluck('email')->toArray();
-        $reason = $request->request_for;
-        $encodedId = Hashids::encode($id);
-
-        if ($emails) {
-            Mail::to($emails)->send(new LastApprovalMail($name, $reason,  $encodedId));
-        }
+        $emails = $this->collectDepartmentEmails('approve petycash payments', $request->department_id);
+        [$name, $reason, $encodedId] = $this->buildPettyMailArgs($request);
+        $this->trySendMail($emails, new LastApprovalMail($name, $reason, $encodedId));
 
         return redirect()->back()->with('success', 'Request approved and status updated');
     }
@@ -848,13 +855,10 @@ class PettyController extends Controller
         $request->paid_date = $log->created_at;
         $request->save();
 
+        [$name, $reason, $encodedId] = $this->buildPettyMailArgs($request);
         $requester = User::find($request->user_id);
-        $name = $requester->name;
-        $requester_email = $requester->email;
-        $reason = $request->request_for;
-        $encodedId = Hashids::encode($id);
-
-        Mail::to($requester_email)->send(new SuccessPayment($name, $reason,  $encodedId));
+        $requester_email = $requester?->email;
+        $this->trySendMail($requester_email ?? '', new SuccessPayment($name, $reason, $encodedId));
 
         return redirect()->back()->with('success', 'Payment done successfully, and the amount has been deducted from your deposit.');
     }
@@ -877,18 +881,15 @@ class PettyController extends Controller
             $petty->status = $request->action;
             $petty->save();
 
+            [$name, $reason, $encodedId] = $this->buildPettyMailArgs($petty);
             $requester = User::find($petty->user_id);
-            $name = $requester->name;
-            $requester_email = $requester->email;
-            $reason = $petty->request_for;
-            $encodedId = Hashids::encode($id);
-
+            $requester_email = $requester?->email;
 
             if ($request->action === 'rejected') {
-                Mail::to($requester_email)->send(new RejectMail($name, $reason, $encodedId));
+                $this->trySendMail($requester_email ?? '', new RejectMail($name, $reason, $encodedId));
                 return redirect()->back()->with('success', 'This request was rejected and feedback sent successfully.');
             } else {
-                Mail::to($requester_email)->send(new ResubmitMail($name, $reason, $encodedId));
+                $this->trySendMail($requester_email ?? '', new ResubmitMail($name, $reason, $encodedId));
                 return redirect()->back()->with('success', 'You recommended resubmission for this petty cash request and feedback was sent successfully.');
             }
         }

@@ -32,7 +32,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'users management settings',
             'update other settings',
             'approve final item purchase',
-
+            'warranty management',
+            'mars website management',
+            'catalogue management',
         ];
 
         foreach ($permissions as $permission) {

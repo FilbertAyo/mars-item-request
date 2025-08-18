@@ -2,7 +2,7 @@
 
 
     <div class="col-md-12 mt-3">
-        <div class="card card-profile">
+        <div class="card card-profile shadow-none border">
             <div class="card-header" style="background-image: url('{{ asset('assets/img/blogpost.jpg') }}')">
                 <div class="profile-picture">
                     <a type="button" class="avatar avatar-xxl" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin: 0;">
