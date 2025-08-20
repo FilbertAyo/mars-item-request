@@ -46,20 +46,44 @@
                 @foreach ($catalogues as $catalogue)
                     <div class="col-md-6 col-xl-3">
                         <div class="card position-relative h-100 shadow-none border">
-                            <a href="{{ route('catalogues.show', $catalogue->id) }}" class="stretched-link"></a>
                             <div class="card-body text-center">
                                 <h4 class="mb-3">{{ $catalogue->name }}</h4>
+
                                 @if ($catalogue->logo)
-                                    <img src="{{ asset($catalogue->logo) }}" alt="{{ $catalogue->name }}"
-                                        class="img-fluid mx-auto d-block" style="height: 150px; object-fit: contain;">
+                                    <img src="{{ asset($catalogue->logo) }}"
+                                         alt="{{ $catalogue->name }}"
+                                         class="img-fluid mx-auto d-block"
+                                         style="height: 150px; object-fit: contain;">
                                 @else
                                     <p>No Logo</p>
                                 @endif
+
+                                <!-- Action buttons -->
+                                <div class="d-flex justify-content-center gap-2 mt-3">
+                                    <!-- View button -->
+                                    <a href="{{ route('catalogues.show', $catalogue->id) }}"
+                                       class="btn btn-primary btn-sm">
+                                        View
+                                    </a>
+
+                                    <!-- Delete button -->
+                                    <form action="{{ route('catalogues.destroy', $catalogue->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Are you sure you want to delete this catalogue?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+
+
         </div>
     </div>
 </x-app-layout>

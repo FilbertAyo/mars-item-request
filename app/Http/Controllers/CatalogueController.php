@@ -153,27 +153,17 @@ class CatalogueController extends Controller
         return redirect()->back()->with('success', 'New catalogue file uploaded.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Catalogue $catalogue)
+    public function destroy($id)
     {
-        //
-    }
+        $catalogue = Catalogue::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Catalogue $catalogue)
-    {
-        //
-    }
+        // If logo exists, delete the file
+        if ($catalogue->logo && file_exists(public_path($catalogue->logo))) {
+            unlink(public_path($catalogue->logo));
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Catalogue $catalogue)
-    {
-        //
+        $catalogue->delete();
+
+        return redirect()->back()->with('success', 'Catalogue deleted successfully.');
     }
 }
