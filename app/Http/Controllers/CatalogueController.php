@@ -95,11 +95,11 @@ class CatalogueController extends Controller
             $logo = $request->file('logo');
             $logoName = time() . '_' . $logo->getClientOriginalName();
 
-            // Store in storage/app/public/logo
-            $logo->storeAs('public/logo', $logoName);
+            // Store in storage/attachments/logo
+            $logo->storeAs('attachments/logo', $logoName, 'public');
 
             // Save path for Blade asset()
-            $logoPath = 'storage/logo/' . $logoName;
+            $logoPath = 'storage/attachments/logo/' . $logoName;
         }
 
         Catalogue::create([
@@ -109,7 +109,6 @@ class CatalogueController extends Controller
 
         return redirect()->back()->with('success', 'Catalogue added successfully.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -140,11 +139,11 @@ class CatalogueController extends Controller
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
 
-            // Store in storage/app/public/catalogue_files
-            $file->storeAs('public/catalogue_files', $fileName);
+            // Store in storage/attachments/catalogue_files
+            $file->storeAs('attachments/catalogue_files', $fileName, 'public');
 
             // Save path for Blade asset()
-            $filePath = 'storage/catalogue_files/' . $fileName;
+            $filePath = 'storage/attachments/catalogue_files/' . $fileName;
         }
 
         CatalogueFile::create([
