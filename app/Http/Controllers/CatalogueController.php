@@ -89,17 +89,22 @@ class CatalogueController extends Controller
             'logo' => 'required|image|max:4048',
         ]);
 
-        // Generate a unique name for the image
-        $logo = $request->file('logo');
-        $logoName = time() . '_' . $logo->getClientOriginalName();
+        $logoPath = null;
 
+        if ($request->hasFile('logo')) {
+            $logo = $request->file('logo');
+            $logoName = time() . '_' . $logo->getClientOriginalName();
 
-        $logoPath = $logo->storeAs('logo', $logoName, 'public');
+            // Store in storage/app/public/logo
+            $logo->storeAs('public/logo', $logoName);
 
-        // Save as storage/logo/... so asset() can load it
+            // Save path for Blade asset()
+            $logoPath = 'storage/logo/' . $logoName;
+        }
+
         Catalogue::create([
             'name' => $request->name,
-            'logo' => 'storage/' . $logoPath,
+            'logo' => $logoPath,
         ]);
 
         return redirect()->back()->with('success', 'Catalogue added successfully.');
@@ -129,17 +134,22 @@ class CatalogueController extends Controller
             ->where('status', 'visible')
             ->update(['status' => 'expired']);
 
-        // Generate unique file name
-        $file = $request->file('file');
-        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = null;
 
-        // Store the file in storage/app/public/catalogue_files using the "public" disk
-        $filePath = $file->storeAs('catalogue_files', $fileName, 'public');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
 
-        // Save as storage/catalogue_files/... so asset() can load it
+            // Store in storage/app/public/catalogue_files
+            $file->storeAs('public/catalogue_files', $fileName);
+
+            // Save path for Blade asset()
+            $filePath = 'storage/catalogue_files/' . $fileName;
+        }
+
         CatalogueFile::create([
             'catalogue_id' => $catalogueId,
-            'file_path' => 'storage/' . $filePath, // <-- important
+            'file_path' => $filePath,
             'status' => 'visible',
             'user_id' => $request->user_id
         ]);
