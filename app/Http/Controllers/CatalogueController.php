@@ -93,20 +93,17 @@ class CatalogueController extends Controller
         $logo = $request->file('logo');
         $logoName = time() . '_' . $logo->getClientOriginalName();
 
-        // Store the file in storage/app/public/logo
-        $logoPath = $logo->storeAs('public/logo', $logoName);
 
-        // Get the public URL using Storage facade
-        $logoUrl = Storage::url($logoPath);
+        $logoPath = $logo->storeAs('logo', $logoName, 'public');
 
+        // Save as storage/logo/... so asset() can load it
         Catalogue::create([
             'name' => $request->name,
-            'logo' => $logoUrl,
+            'logo' => 'storage/' . $logoPath,
         ]);
 
         return redirect()->back()->with('success', 'Catalogue added successfully.');
     }
-
 
     /**
      * Display the specified resource.
@@ -121,7 +118,7 @@ class CatalogueController extends Controller
     public function storeFile(Request $request, $catalogueId)
     {
         $request->validate([
-           'file' => 'required|mimes:pdf|max:51200', // 50MB in KB
+            'file' => 'required|mimes:pdf|max:51200', // 50MB
             'user_id' => 'required|string'
         ]);
 
@@ -136,16 +133,13 @@ class CatalogueController extends Controller
         $file = $request->file('file');
         $fileName = time() . '_' . $file->getClientOriginalName();
 
-        // Store the file in storage/app/public/catalogue_files
-        $filePath = $file->storeAs('public/catalogue_files', $fileName);
+        // Store the file in storage/app/public/catalogue_files using the "public" disk
+        $filePath = $file->storeAs('catalogue_files', $fileName, 'public');
 
-        // Get the public URL using Storage facade
-        $fileUrl = Storage::url($filePath);
-
-        // Save new file as visible
+        // Save as storage/catalogue_files/... so asset() can load it
         CatalogueFile::create([
             'catalogue_id' => $catalogueId,
-            'file_path' => $fileUrl,
+            'file_path' => 'storage/' . $filePath, // <-- important
             'status' => 'visible',
             'user_id' => $request->user_id
         ]);
@@ -157,7 +151,6 @@ class CatalogueController extends Controller
     {
         $catalogue = Catalogue::findOrFail($id);
 
-        // If logo exists, delete the file
         if ($catalogue->logo && file_exists(public_path($catalogue->logo))) {
             unlink(public_path($catalogue->logo));
         }
