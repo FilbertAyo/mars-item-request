@@ -106,7 +106,7 @@
 
                 <!-- Partner Section -->
                 <div class="border p-4 mb-3">
-                    <h2 class="text-xl font-bold mb-4">Partners <span class="text-danger text-sm">* No Background</span> </h2>
+                    <h2 class="text-xl font-bold mb-4">Partners <small class="text-danger">* No Background</small> </h2>
 
                     {{-- Form to Add Partner --}}
                     <form wire:submit.prevent="savePartner" class="space-y-4">
@@ -144,7 +144,7 @@
 
                 <!-- Service Section -->
                 <div class="border p-4 mb-3">
-                    <h2 class="text-xl font-bold mb-4">Services <span class="text-danger text-sm">* (W:1080 H:1080)px</span> </h2>
+                    <h2 class="text-xl font-bold mb-4">Services <small class="text-danger">* (W:1080 H:1080)px</small> </h2>
 
                     {{-- Form (Create / Update) --}}
                     <form wire:submit.prevent="{{ $service_id ? 'updateService' : 'saveService' }}" class="space-y-3">
