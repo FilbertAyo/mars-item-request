@@ -13,6 +13,7 @@ use App\Http\Controllers\ReplenishmentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\WarrantyController;
+use App\Livewire\WebsitePanel;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'redirect'])->middleware(['auth', 'verified']);
@@ -143,5 +144,12 @@ Route::middleware(['auth', 'permission:catalogue management'])->group(function (
     Route::put('/{id}', [CatalogueController::class, 'update'])->name('catalogues.update');
     Route::delete('/{id}', [CatalogueController::class, 'destroy'])->name('catalogues.destroy');
 });
+
+Route::middleware(['auth', 'permission:mars website management'])->group(function () {
+    Route::get('/website-settings', function () {
+        return view('website.index');
+    })->name('website.settings');
+});
+
 
 require __DIR__ . '/auth.php';

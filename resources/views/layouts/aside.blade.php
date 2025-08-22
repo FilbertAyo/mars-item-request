@@ -227,10 +227,16 @@
                          <h4 class="text-section">Website Settings</h4>
                      </li>
 
+                     <li class="nav-item {{ Request::routeIs('catalogues.index') ? 'active' : '' }}">
+                        <a href="{{ route('website.settings') }}">
+                            <i class="bi bi-sliders"></i>
+                            <p>Home Settings</p>
+                        </a>
+                    </li>
 
                      <li class="nav-item {{ Request::routeIs('catalogues.index') ? 'active' : '' }}">
                          <a href="{{ route('catalogues.index') }}">
-                             <i class="bi bi-journal-text"></i>
+                            <i class="bi bi-tv"></i>
                              <p>Catalogues</p>
                          </a>
                      </li>

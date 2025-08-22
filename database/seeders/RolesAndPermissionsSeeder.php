@@ -35,6 +35,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'warranty management',
             'mars website management',
             'catalogue management',
+            
         ];
 
         foreach ($permissions as $permission) {
