@@ -67,6 +67,7 @@ class WebsiteController extends Controller
     {
         $branches = Branch::all()->map(function($branch){
             return [
+                'id'=>$branch->id,
                 'name'=>$branch->name,
                 'region'=>$branch->region,
                 'location_url'=>$branch->location_url,
