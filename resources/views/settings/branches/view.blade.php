@@ -44,6 +44,8 @@
                 </div>
 
                 <div class="card-body">
+                    <iframe src="{{ $branch->location_url }}" width="100%" height="300" class="py-3"></iframe>
+
                     <div class="table-responsive">
                         <table id="multi-filter-select" class="display table table-striped table-hover">
                             <thead>

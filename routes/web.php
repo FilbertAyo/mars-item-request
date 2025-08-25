@@ -28,10 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/picture/update', [ProfileController::class, 'updateProfile'])->name('profile.image');
 
     //branches
-    Route::get('/branches/list', [BranchController::class, 'index'])->name('branches');
-    Route::post('/add/branch', [BranchController::class, 'store'])->name('branches.store');
-    Route::delete('/destroy/branch/{hashid}', [BranchController::class, 'destroy'])->name('branch.destroy');
-    Route::get('/branch/{hashid}', [BranchController::class, 'show'])->name('branch.show');
+    Route::get('/branches', [BranchController::class, 'index'])->name('branches');          // list
+    Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');    // create
+    Route::put('/branches/{hashid}', [BranchController::class, 'update'])->name('branch.update'); // update
+    Route::delete('/branches/{hashid}', [BranchController::class, 'destroy'])->name('branch.destroy'); // delete
+    Route::get('/branches/{hashid}', [BranchController::class, 'show'])->name('branch.show');       // show
+
+
     Route::get('/departments/by/branch/{branchId}', [DepartmentController::class, 'getDepartmentsByBranch'])->name('departments.byBranch');
 
     Route::resource('department', DepartmentController::class);
@@ -149,7 +152,12 @@ Route::middleware(['auth', 'permission:mars website management'])->group(functio
     Route::get('/website-settings', function () {
         return view('website.index');
     })->name('website.settings');
+    Route::get('/branches-locations', function () {
+        return view('website.branches');
+    })->name('branch.settings');
 });
+
+
 
 
 require __DIR__ . '/auth.php';

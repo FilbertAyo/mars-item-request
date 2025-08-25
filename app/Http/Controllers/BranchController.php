@@ -27,21 +27,29 @@ class BranchController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255', // Add validation rules for the fields you need
+        $id = $request->branch_id ? Hashids::decode($request->branch_id)[0] : null;
 
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+            'location_url' => 'required|url|max:500',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        Branch::create($validatedData);
+        if ($id) {
+            $branch = Branch::findOrFail($id);
+            $branch->update($validatedData);
+            $message = 'Branch updated successfully';
+        } else {
+            Branch::create($validatedData);
+            $message = 'Branch created successfully';
+        }
 
-        return redirect()->back()->with('success', 'New branch added successfully');
+        return redirect()->back()->with('success', $message);
     }
+
 
     /**
      * Display the specified resource.
@@ -56,25 +64,23 @@ class BranchController extends Controller
         return view('settings.branches.view', compact('branch', 'departments'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $hashid)
     {
-        //
+        $id = Hashids::decode($hashid)[0] ?? null;
+        $branch = Branch::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+            'location_url' => 'required|url|max:500',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $branch->update($validatedData);
+
+        return redirect()->back()->with('success', 'Branch updated successfully');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($hashid)
     {
         $id = Hashids::decode($hashid);

@@ -10,6 +10,9 @@ class Branch extends Model
      use HasFactory;
     protected $fillable = [
         'name',
+        'region',
+        'location_url',
+        'status'
     ];
 
     public function departments()

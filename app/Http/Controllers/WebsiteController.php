@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Faq;
 use Illuminate\Http\Request;
 use App\Models\Website;
@@ -60,5 +61,19 @@ class WebsiteController extends Controller
         });
 
         return response()->json($faqs);
+    }
+
+    public function branches()
+    {
+        $branches = Branch::all()->map(function($branch){
+            return [
+                'name'=>$branch->name,
+                'region'=>$branch->region,
+                'location_url'=>$branch->location_url,
+                'status'=>$branch->status
+            ];
+        });
+
+        return response()->json($branches);
     }
 }

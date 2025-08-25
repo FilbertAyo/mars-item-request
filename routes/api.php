@@ -14,4 +14,6 @@ Route::get('/website/partners', [WebsiteController::class, 'partners']);
 Route::get('/website/services', [WebsiteController::class, 'services']);
 Route::get('/website/faqs', [WebsiteController::class, 'faq']);
 
+Route::get('/website/branches',[WebsiteController::class,'branches']);
+
 
