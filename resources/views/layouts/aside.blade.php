@@ -234,13 +234,6 @@
                         </a>
                     </li>
 
-                     <li class="nav-item {{ Request::routeIs('branch.settings') ? 'active' : '' }}">
-                        <a href="{{ route('branch.settings') }}">
-                            <i class="bi bi-sliders"></i>
-                            <p>Branches</p>
-                        </a>
-                    </li>
-
                      <li class="nav-item {{ Request::routeIs('catalogues.index') ? 'active' : '' }}">
                          <a href="{{ route('catalogues.index') }}">
                             <i class="bi bi-tv"></i>
